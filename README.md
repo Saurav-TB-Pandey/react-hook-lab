@@ -1,7 +1,9 @@
 # react-hook-lab
 
-A lightweight collection of reusable React hooks for async work, browser APIs,
-DOM observers, state helpers, and timers.
+[![npm version](https://img.shields.io/npm/v/react-hook-lab.svg)](https://www.npmjs.com/package/react-hook-lab)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
+
+A lightweight collection of reusable React hooks for async work, browser APIs, DOM observers, state helpers, and timers. Written in TypeScript.
 
 ## Installation
 
@@ -9,8 +11,7 @@ DOM observers, state helpers, and timers.
 npm install react-hook-lab
 ```
 
-`react` is a peer dependency, so install it in your app if it is not already
-there.
+`react` is a peer dependency, so install it in your app if it is not already there.
 
 ## Import
 
@@ -19,9 +20,8 @@ Import hooks from the package root:
 ```tsx
 import {
   useDebounce,
-  useAsyncDebounce,
+  useLocalStorage,
   useWidth,
-  usePrevious,
 } from "react-hook-lab";
 ```
 
@@ -33,45 +33,63 @@ import hooks from "react-hook-lab";
 const width = hooks.useWidth();
 ```
 
-## Examples
+## Features
 
-See [examples.tsx](./examples.tsx) for a single component that demonstrates all
-exported hooks.
+- **TypeScript Ready**: Built with TypeScript for full type safety.
+- **Lightweight**: Zero dependencies (only `react` as a peer dependency).
+- **Tree-shakable**: Exported individually for modern bundlers.
 
+## Quick Examples
+
+### State: `useLocalStorage`
 ```tsx
-import { useDebounce, useWidth } from "react-hook-lab";
+import { useLocalStorage } from "react-hook-lab";
 
-export function SearchSummary() {
-  const search = useDebounce("  hello world  ", 300);
-  const width = useWidth();
+function ThemeToggle() {
+  const [theme, setTheme] = useLocalStorage("theme", "light");
+  return (
+    <button onClick={() => setTheme(theme === "light" ? "dark" : "light")}>
+      Toggle to {theme === "light" ? "dark" : "light"} theme
+    </button>
+  );
+}
+```
+
+### DOM: `useClickOutside`
+```tsx
+import { useRef, useState } from "react";
+import { useClickOutside } from "react-hook-lab";
+
+function Dropdown() {
+  const [isOpen, setIsOpen] = useState(false);
+  const ref = useRef(null);
+
+  useClickOutside(ref, () => setIsOpen(false));
 
   return (
-    <div>
-      <p>Search: {search}</p>
-      <p>Window width: {width}</p>
+    <div ref={ref}>
+      <button onClick={() => setIsOpen(true)}>Open Menu</button>
+      {isOpen && <div>Menu Content</div>}
     </div>
   );
 }
 ```
 
-## Hooks
+## Available Hooks
 
 ### Async
-
 - `useDebounce(value, delay?, options?)`
 - `useThrottle(value, delay?, options?)`
 - `useAsync(asyncFunction, dependencies?, options?)`
 - `useAsyncDebounce(callback, delay?)`
 
 ### Browser
-
 - `useClipboard(timeout?)`
 - `useLocalStorage(key, initialValue)`
 - `useSessionStorage(key, initialValue)`
 - `useOnlineStatus()`
 
 ### DOM
-
 - `useClickOutside(ref, handler, options?)`
 - `useIntersectionObserver(ref, options?)`
 - `useResizeObserver(ref, options?)`
@@ -79,16 +97,16 @@ export function SearchSummary() {
 - `useWidth()`
 
 ### State
-
 - `useBoolean(initialValue?)`
 - `useCounter(initialValue?, options?)`
 - `usePrevious(value, defaultValue?)`
 - `useToggle(defaultValue, reverseValue?)`
 
 ### Time
-
 - `useTimeout(callback, delay)`
 - `useInterval(callback, delay)`
+
+See [examples.tsx](./examples.tsx) for a single component that demonstrates all exported hooks.
 
 ## Development
 
@@ -99,8 +117,7 @@ npm run build
 npm test
 ```
 
-`npm run build` emits the CommonJS runtime files and TypeScript declaration
-files used by the npm package entrypoint.
+`npm run build` emits the CommonJS runtime files and TypeScript declaration files used by the npm package entrypoint.
 
 ## Publish Checklist
 
@@ -120,5 +137,4 @@ npm login
 npm publish
 ```
 
-The package exposes only the root import path, so consumers should import from
-`"react-hook-lab"`.
+The package exposes only the root import path, so consumers should import from `"react-hook-lab"`.
