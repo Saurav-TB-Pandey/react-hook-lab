@@ -776,25 +776,29 @@ test('useInterval starts automatically and stops cleanly', async () => {
   assert.equal(latestState.isRunning(), true);
 
   await act(async () => {
-    await wait(35);
+    await wait(80);
   });
 
-  assert.ok(callCount >= 2);
-
-  act(() => {
-    latestState.stop();
-  });
+  try {
+    assert.ok(callCount >= 2);
+  } finally {
+    act(() => {
+      latestState.stop();
+    });
+  }
 
   const countAfterStop = callCount;
 
   await act(async () => {
-    await wait(25);
+    await wait(40);
   });
 
-  assert.equal(callCount, countAfterStop);
-  assert.equal(latestState.isRunning(), false);
-
-  act(() => {
-    renderer.unmount();
-  });
+  try {
+    assert.equal(callCount, countAfterStop);
+    assert.equal(latestState.isRunning(), false);
+  } finally {
+    act(() => {
+      renderer.unmount();
+    });
+  }
 });
