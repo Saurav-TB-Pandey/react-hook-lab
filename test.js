@@ -249,7 +249,7 @@ test('useClipboard copies text and resets copied state', async () => {
   });
 
   function TestComponent() {
-    latestState = useClipboard(10);
+    latestState = useClipboard(100);
     return null;
   }
 
@@ -268,7 +268,7 @@ test('useClipboard copies text and resets copied state', async () => {
   assert.equal(latestState.error, null);
 
   await act(async () => {
-    await wait(20);
+    await wait(150);
   });
 
   assert.equal(latestState.copied, false);
