@@ -1,0 +1,93 @@
+{
+  "name": "react-hook-lab",
+  "version": "1.0.0",
+  "description": "Lightweight TypeScript React hooks for debounce, async state, browser storage, DOM observers, clipboard, window width, counters, toggles, intervals, and timeouts.",
+  "main": "index.js",
+  "types": "index.d.ts",
+  "sideEffects": false,
+  "exports": {
+    ".": {
+      "types": "./index.d.ts",
+      "require": "./index.js",
+      "default": "./index.js"
+    }
+  },
+  "scripts": {
+    "build": "tsc",
+    "typecheck": "tsc --noEmit",
+    "test": "node test.js",
+    "prepublishOnly": "npm run typecheck && npm run build && npm test",
+    "pack:dry-run": "npm pack --dry-run"
+  },
+  "keywords": [
+    "react",
+    "reactjs",
+    "react-hooks",
+    "hooks",
+    "custom-hooks",
+    "typescript",
+    "ts",
+    "javascript",
+    "frontend",
+    "web",
+    "utility",
+    "utilities",
+    "ui",
+    "debounce",
+    "use-debounce",
+    "throttle",
+    "use-throttle",
+    "async",
+    "use-async",
+    "state",
+    "browser",
+    "dom",
+    "clipboard",
+    "localstorage",
+    "sessionstorage",
+    "resize-observer",
+    "intersection-observer",
+    "window-size",
+    "width",
+    "counter",
+    "toggle",
+    "interval",
+    "timeout"
+  ],
+  "author": {
+    "name": "Saurav_TB_Pandey"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Saurav-TB-Pandey/react-hook-lab.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Saurav-TB-Pandey/react-hook-lab/issues"
+  },
+  "homepage": "https://github.com/Saurav-TB-Pandey/react-hook-lab#readme",
+  "engines": {
+    "node": ">=16"
+  },
+  "packageManager": "npm@10",
+  "publishConfig": {
+    "access": "public"
+  },
+  "files": [
+    "index.js",
+    "index.d.ts",
+    "examples.tsx",
+    "src",
+    "README.md"
+  ],
+  "peerDependencies": {
+    "react": ">=16.8.0"
+  },
+  "devDependencies": {
+    "@types/react": "^18.3.5",
+    "@types/react-test-renderer": "^18.3.1",
+    "react": "^18.3.1",
+    "react-test-renderer": "^18.3.1",
+    "typescript": "^5.6.3"
+  }
+}
