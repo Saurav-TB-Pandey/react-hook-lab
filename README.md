@@ -4,12 +4,12 @@
 [![npm downloads](https://img.shields.io/npm/dt/react-hook-lab.svg)](https://www.npmjs.com/package/react-hook-lab)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 [![TypeScript](https://img.shields.io/badge/TypeScript-Ready-blue.svg)](https://www.typescriptlang.org/)
-[![Bundle Size](https://img.shields.io/bundlephobia/minzip/react-hook-lab)](https://bundlephobia.com/package/react-hook-lab)
 ![Visitor Count](https://visitor-badge.laobi.icu/badge?page_id=Saurav-TB-Pandey.react-hook-lab)
 
 A lightweight collection of reusable React hooks for async work, browser APIs, DOM observers, state helpers, and timers. Written completely in TypeScript.
 
 ## Table of Contents
+
 - [Installation](#installation)
 - [Hooks Overview](#hooks-overview)
 - [API Documentation](#api-documentation)
@@ -30,33 +30,34 @@ npm install react-hook-lab
 
 ## Hooks Overview
 
-| Hook | Category | Description |
-|------|----------|-------------|
-| `useAsync` | Async | Resolve promises with state tracking (loading, error, value). |
-| `useAsyncDebounce` | Async | Debounce an asynchronous callback. |
-| `useDebounce` | Async | Delay state updates by a given time. |
-| `useThrottle` | Async | Limit the rate at which a state can update. |
-| `useClipboard` | Browser | Read and write text to the user's clipboard. |
-| `useLocalStorage` | Browser | Persist state in `localStorage`. |
-| `useSessionStorage` | Browser | Persist state in `sessionStorage`. |
-| `useOnlineStatus` | Browser | Track the browser's online/offline network status. |
-| `useClickOutside` | DOM | Detect clicks outside a specified element. |
-| `useElementSize` | DOM | Track the width and height of an HTML element. |
-| `useIntersectionObserver` | DOM | Detect visibility of an element on screen. |
-| `useResizeObserver` | DOM | Track an element's dimensions as it resizes. |
-| `useWidth` | DOM | Track the global window inner width. |
-| `useBoolean` | State | Manage a boolean state with specific methods (on, off, toggle). |
-| `useCounter` | State | Manage a numeric counter with min/max bounds. |
-| `usePrevious` | State | Store the previous value of a state or prop. |
-| `useToggle` | State | Toggle between two generic values. |
-| `useInterval` | Time | Set up a declarative `setInterval` that cleans up properly. |
-| `useTimeout` | Time | Set up a declarative `setTimeout` that cleans up properly. |
+| Hook                      | Category | Description                                                     |
+| ------------------------- | -------- | --------------------------------------------------------------- |
+| `useAsync`                | Async    | Resolve promises with state tracking (loading, error, value).   |
+| `useAsyncDebounce`        | Async    | Debounce an asynchronous callback.                              |
+| `useDebounce`             | Async    | Delay state updates by a given time.                            |
+| `useThrottle`             | Async    | Limit the rate at which a state can update.                     |
+| `useClipboard`            | Browser  | Read and write text to the user's clipboard.                    |
+| `useLocalStorage`         | Browser  | Persist state in `localStorage`.                                |
+| `useSessionStorage`       | Browser  | Persist state in `sessionStorage`.                              |
+| `useOnlineStatus`         | Browser  | Track the browser's online/offline network status.              |
+| `useClickOutside`         | DOM      | Detect clicks outside a specified element.                      |
+| `useElementSize`          | DOM      | Track the width and height of an HTML element.                  |
+| `useIntersectionObserver` | DOM      | Detect visibility of an element on screen.                      |
+| `useResizeObserver`       | DOM      | Track an element's dimensions as it resizes.                    |
+| `useWidth`                | DOM      | Track the global window inner width.                            |
+| `useBoolean`              | State    | Manage a boolean state with specific methods (on, off, toggle). |
+| `useCounter`              | State    | Manage a numeric counter with min/max bounds.                   |
+| `usePrevious`             | State    | Store the previous value of a state or prop.                    |
+| `useToggle`               | State    | Toggle between two generic values.                              |
+| `useInterval`             | Time     | Set up a declarative `setInterval` that cleans up properly.     |
+| `useTimeout`              | Time     | Set up a declarative `setTimeout` that cleans up properly.      |
 
 ## API Documentation
 
 ### Async Hooks
 
 #### `useAsync`
+
 Execute a promise-returning function and track its loading state, value, and any errors.
 
 ```tsx
@@ -64,7 +65,7 @@ import { useAsync } from "react-hook-lab";
 
 function UserProfile({ userId }) {
   const { execute, status, value, error } = useAsync(
-    () => fetch(`/api/users/${userId}`).then(res => res.json()),
+    () => fetch(`/api/users/${userId}`).then((res) => res.json()),
     [userId]
   );
 
@@ -75,6 +76,7 @@ function UserProfile({ userId }) {
 ```
 
 #### `useDebounce`
+
 Debounce a fast-changing value. The debounced value will only reflect the latest value after the specified delay has passed.
 
 ```tsx
@@ -91,6 +93,7 @@ function SearchInput() {
 ```
 
 #### `useThrottle`
+
 Throttle a state value so that it updates at most once every specified number of milliseconds.
 
 ```tsx
@@ -105,6 +108,7 @@ function ScrollTracker() {
 ```
 
 #### `useAsyncDebounce`
+
 Debounce an asynchronous callback. Useful for preventing spam API calls.
 
 ```tsx
@@ -120,6 +124,7 @@ function Example() {
 ### Browser Hooks
 
 #### `useClipboard`
+
 Copy text to the clipboard and temporarily display a copied state.
 
 ```tsx
@@ -128,15 +133,12 @@ import { useClipboard } from "react-hook-lab";
 function CopyButton() {
   const { copy, copied, error } = useClipboard(2000); // Reset 'copied' after 2s
 
-  return (
-    <button onClick={() => copy("Text to copy!")}>
-      {copied ? "Copied!" : "Copy"}
-    </button>
-  );
+  return <button onClick={() => copy("Text to copy!")}>{copied ? "Copied!" : "Copy"}</button>;
 }
 ```
 
 #### `useLocalStorage`
+
 Synchronize state with `localStorage`.
 
 ```tsx
@@ -149,6 +151,7 @@ function ThemeToggle() {
 ```
 
 #### `useSessionStorage`
+
 Synchronize state with `sessionStorage`.
 
 ```tsx
@@ -156,11 +159,12 @@ import { useSessionStorage } from "react-hook-lab";
 
 function FormCache() {
   const [name, setName] = useSessionStorage("form-name", "");
-  return <input value={name} onChange={e => setName(e.target.value)} />;
+  return <input value={name} onChange={(e) => setName(e.target.value)} />;
 }
 ```
 
 #### `useOnlineStatus`
+
 Detect whether the browser has an active network connection.
 
 ```tsx
@@ -175,6 +179,7 @@ function Status() {
 ### DOM Hooks
 
 #### `useClickOutside`
+
 Trigger a callback when the user clicks outside a specific DOM element.
 
 ```tsx
@@ -197,6 +202,7 @@ function Dropdown() {
 ```
 
 #### `useElementSize`
+
 Track the height and width of a specific DOM element.
 
 ```tsx
@@ -206,12 +212,17 @@ import { useElementSize } from "react-hook-lab";
 function ResizeBox() {
   const ref = useRef<HTMLDivElement>(null);
   const { width, height } = useElementSize(ref);
-  
-  return <div ref={ref}>Size: {width}px x {height}px</div>;
+
+  return (
+    <div ref={ref}>
+      Size: {width}px x {height}px
+    </div>
+  );
 }
 ```
 
 #### `useIntersectionObserver`
+
 Track whether a DOM element is currently visible in the viewport.
 
 ```tsx
@@ -228,6 +239,7 @@ function LazyImage() {
 ```
 
 #### `useResizeObserver`
+
 React to changes in a DOM element's dimensions using the native ResizeObserver API.
 
 ```tsx
@@ -243,6 +255,7 @@ function Resizable() {
 ```
 
 #### `useWidth`
+
 Track the global inner window width.
 
 ```tsx
@@ -257,6 +270,7 @@ function View() {
 ### State Hooks
 
 #### `useBoolean`
+
 Easily manage boolean state with dedicated `on`, `off`, and `toggle` methods.
 
 ```tsx
@@ -269,6 +283,7 @@ function Modal() {
 ```
 
 #### `useCounter`
+
 Manage numeric state with built-in min and max bounds.
 
 ```tsx
@@ -281,6 +296,7 @@ function Cart() {
 ```
 
 #### `usePrevious`
+
 Access the previous value of a state or prop after a render.
 
 ```tsx
@@ -291,11 +307,16 @@ function Counter() {
   const [count, setCount] = useState(0);
   const prevCount = usePrevious(count);
 
-  return <div>Now: {count}, Before: {prevCount}</div>;
+  return (
+    <div>
+      Now: {count}, Before: {prevCount}
+    </div>
+  );
 }
 ```
 
 #### `useToggle`
+
 Toggle between two values of any type.
 
 ```tsx
@@ -310,6 +331,7 @@ function Mode() {
 ### Time Hooks
 
 #### `useInterval`
+
 A declarative `setInterval` hook that handles cleanup and React's closure staleness issues.
 
 ```tsx
@@ -320,11 +342,12 @@ function Clock() {
   const [time, setTime] = useState(0);
 
   // Set delay to `null` to pause the interval
-  useInterval(() => setTime(t => t + 1), 1000);
+  useInterval(() => setTime((t) => t + 1), 1000);
 }
 ```
 
 #### `useTimeout`
+
 A declarative `setTimeout` hook.
 
 ```tsx
@@ -335,7 +358,7 @@ function AutoCloseMessage() {
   const [show, setShow] = useState(true);
 
   useTimeout(() => setShow(false), 5000);
-  
+
   if (!show) return null;
   return <div>This will disappear in 5 seconds!</div>;
 }
