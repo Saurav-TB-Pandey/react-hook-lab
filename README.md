@@ -108,33 +108,3 @@ function Dropdown() {
 
 See [examples.tsx](./examples.tsx) for a single component that demonstrates all exported hooks.
 
-## Development
-
-```bash
-npm install
-npm run typecheck
-npm run build
-npm test
-```
-
-`npm run build` emits the CommonJS runtime files and TypeScript declaration files used by the npm package entrypoint.
-
-## Publish Checklist
-
-Before publishing:
-
-```bash
-npm run typecheck
-npm run build
-npm test
-npm run pack:dry-run
-```
-
-Then publish:
-
-```bash
-npm login
-npm publish
-```
-
-The package exposes only the root import path, so consumers should import from `"react-hook-lab"`.
