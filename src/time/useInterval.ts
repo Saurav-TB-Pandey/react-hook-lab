@@ -7,10 +7,7 @@ export interface UseIntervalReturn {
   isRunning: () => boolean;
 }
 
-export function useInterval(
-  callback: () => void,
-  delay: number
-): UseIntervalReturn {
+export function useInterval(callback: () => void, delay: number): UseIntervalReturn {
   const intervalRef = useRef<ReturnType<typeof setInterval>>();
   const callbackRef = useRef(callback);
 

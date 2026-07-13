@@ -13,10 +13,7 @@ export const useClipboard = (timeout = 2000) => {
 
   const copy = useCallback(
     async (text: string) => {
-      if (
-        typeof navigator === "undefined" ||
-        !navigator.clipboard
-      ) {
+      if (typeof navigator === "undefined" || !navigator.clipboard) {
         setState({
           copied: false,
           error: new Error("Clipboard API is not supported."),

@@ -95,3 +95,9 @@ Thumbs.db
 .vscode/
 *.swp
 *.swo
+
+# Ignore generated compiled files from TypeScript
+src/**/*.js
+src/**/*.d.ts
+index.js
+index.d.ts

@@ -1,11 +1,6 @@
-import {
-  RefObject,
-  useEffect,
-  useState,
-} from "react";
+import { RefObject, useEffect, useState } from "react";
 
-export interface UseIntersectionObserverOptions
-  extends IntersectionObserverInit {
+export interface UseIntersectionObserverOptions extends IntersectionObserverInit {
   freezeOnceVisible?: boolean;
 }
 
@@ -18,18 +13,11 @@ export function useIntersectionObserver<T extends HTMLElement>(
   ref: RefObject<T>,
   options: UseIntersectionObserverOptions = {}
 ): UseIntersectionObserverReturn {
-  const {
-    threshold = 0,
-    root = null,
-    rootMargin = "0px",
-    freezeOnceVisible = false,
-  } = options;
+  const { threshold = 0, root = null, rootMargin = "0px", freezeOnceVisible = false } = options;
 
-  const [entry, setEntry] =
-    useState<IntersectionObserverEntry>();
+  const [entry, setEntry] = useState<IntersectionObserverEntry>();
 
-  const frozen =
-    freezeOnceVisible && entry?.isIntersecting;
+  const frozen = freezeOnceVisible && entry?.isIntersecting;
 
   useEffect(() => {
     if (typeof window === "undefined") return;
@@ -56,13 +44,7 @@ export function useIntersectionObserver<T extends HTMLElement>(
     return () => {
       observer.disconnect();
     };
-  }, [
-    ref,
-    threshold,
-    root,
-    rootMargin,
-    frozen,
-  ]);
+  }, [ref, threshold, root, rootMargin, frozen]);
 
   return {
     isIntersecting: !!entry?.isIntersecting,

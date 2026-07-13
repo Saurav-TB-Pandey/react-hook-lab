@@ -1,0 +1,9 @@
+# Exclude TypeScript source files
+src/**/*.ts
+!src/**/*.d.ts
+
+# Exclude test and dev files
+examples.tsx
+test.js
+tsconfig.json
+.github/

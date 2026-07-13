@@ -8,9 +8,7 @@ export interface UseBooleanReturn {
   toggle: () => void;
 }
 
-export function useBoolean(
-  initialValue = false
-): UseBooleanReturn {
+export function useBoolean(initialValue = false): UseBooleanReturn {
   const [value, setValue] = useState(initialValue);
 
   const setTrue = useCallback(() => {

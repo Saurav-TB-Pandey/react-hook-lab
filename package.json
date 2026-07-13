@@ -1,7 +1,7 @@
 {
   "name": "react-hook-lab",
-  "version": "1.0.0",
-  "description": "Lightweight TypeScript React hooks for debounce, async state, browser storage, DOM observers, clipboard, window width, counters, toggles, intervals, and timeouts.",
+  "version": "1.0.1",
+  "description": "A lightweight collection of reusable React hooks for async operations, browser APIs, DOM observers, state management, timers, and utilities. Built with TypeScript.",
   "main": "index.js",
   "types": "index.d.ts",
   "sideEffects": false,
@@ -16,44 +16,42 @@
     "build": "tsc",
     "typecheck": "tsc --noEmit",
     "test": "node test.js",
+    "lint": "eslint \"src/**/*.{ts,tsx}\"",
+    "format": "prettier --write \"src/**/*.{ts,tsx}\"",
     "prepublishOnly": "npm run typecheck && npm run build && npm test",
     "pack:dry-run": "npm pack --dry-run"
   },
   "keywords": [
     "react-hook-lab",
     "react",
-    "reactjs",
+    "react-hook",
     "react-hooks",
-    "hooks",
-    "custom-hooks",
+    "hook-library",
+    "react-library",
     "typescript",
-    "ts",
-    "javascript",
-    "frontend",
-    "web",
-    "utility",
-    "utilities",
-    "ui",
+    "typescript-hooks",
+    "custom-hooks",
+    "usehooks",
     "debounce",
-    "use-debounce",
     "throttle",
-    "use-throttle",
     "async",
-    "use-async",
-    "state",
     "browser",
-    "dom",
     "clipboard",
-    "localstorage",
-    "sessionstorage",
+    "local-storage",
+    "session-storage",
     "resize-observer",
     "intersection-observer",
     "window-size",
-    "width",
+    "dom",
+    "state-management",
+    "timer",
     "counter",
     "toggle",
-    "interval",
-    "timeout"
+    "frontend",
+    "use-hooks",
+    "hooks",
+    "react-utils",
+    "utility-hooks"
   ],
   "author": {
     "name": "Saurav_TB_Pandey"
@@ -61,7 +59,8 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Saurav-TB-Pandey/react-hook-lab.git"
+    "url": "git+https://github.com/Saurav-TB-Pandey/react-hook-lab.git",
+    "directory": "."
   },
   "bugs": {
     "url": "https://github.com/Saurav-TB-Pandey/react-hook-lab/issues"
@@ -77,16 +76,23 @@
   "files": [
     "index.js",
     "index.d.ts",
-    "examples.tsx",
-    "src",
-    "README.md"
+    "src/**/*.js",
+    "src/**/*.d.ts",
+    "README.md",
+    "LICENSE"
   ],
   "peerDependencies": {
-    "react": ">=16.8.0"
+    "react": "^16.8 || ^17 || ^18 || ^19"
   },
   "devDependencies": {
     "@types/react": "^18.3.5",
     "@types/react-test-renderer": "^18.3.1",
+    "@typescript-eslint/eslint-plugin": "^8.63.0",
+    "@typescript-eslint/parser": "^8.63.0",
+    "eslint": "^8.57.1",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-react-hooks": "^7.1.1",
+    "prettier": "^3.9.5",
     "react": "^18.3.1",
     "react-test-renderer": "^18.3.1",
     "typescript": "^5.6.3"

@@ -6,9 +6,7 @@ export interface ElementSize {
   height: number;
 }
 
-export function useElementSize<T extends HTMLElement>(
-  ref: RefObject<T>
-): ElementSize {
+export function useElementSize<T extends HTMLElement>(ref: RefObject<T>): ElementSize {
   const { width, height } = useResizeObserver(ref);
 
   return {

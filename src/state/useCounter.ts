@@ -14,23 +14,12 @@ export interface UseCounterReturn {
   reset: () => void;
 }
 
-export function useCounter(
-  initialValue = 0,
-  options: UseCounterOptions = {}
-): UseCounterReturn {
-  const {
-    min = Number.MIN_SAFE_INTEGER,
-    max = Number.MAX_SAFE_INTEGER,
-    step = 1,
-  } = options;
+export function useCounter(initialValue = 0, options: UseCounterOptions = {}): UseCounterReturn {
+  const { min = Number.MIN_SAFE_INTEGER, max = Number.MAX_SAFE_INTEGER, step = 1 } = options;
 
   const [count, setCount] = useState(initialValue);
 
-  const clamp = useCallback(
-    (value: number) =>
-      Math.min(max, Math.max(min, value)),
-    [min, max]
-  );
+  const clamp = useCallback((value: number) => Math.min(max, Math.max(min, value)), [min, max]);
 
   const set = useCallback(
     (value: number) => {

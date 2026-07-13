@@ -5,18 +5,10 @@ export interface UseDebounceOptions<T> {
   leading?: boolean;
 }
 
-export function useDebounce<T>(
-  value: T,
-  delay = 300,
-  options: UseDebounceOptions<T> = {}
-): T {
-  const {
-    initialValue = value,
-    leading = false,
-  } = options;
+export function useDebounce<T>(value: T, delay = 300, options: UseDebounceOptions<T> = {}): T {
+  const { initialValue = value, leading = false } = options;
 
-  const [debouncedValue, setDebouncedValue] =
-    useState<T>(initialValue);
+  const [debouncedValue, setDebouncedValue] = useState<T>(initialValue);
 
   const isFirstRender = useRef(true);
 
@@ -28,10 +20,7 @@ export function useDebounce<T>(
     }
 
     const timeout = setTimeout(() => {
-      const nextValue =
-        typeof value === "string"
-          ? value.trim()
-          : value;
+      const nextValue = typeof value === "string" ? value.trim() : value;
 
       setDebouncedValue(nextValue as T);
     }, delay);

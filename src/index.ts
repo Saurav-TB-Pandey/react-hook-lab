@@ -4,18 +4,8 @@ export * from "./dom";
 export * from "./state";
 export * from "./time";
 
-import {
-  useAsync,
-  useAsyncDebounce,
-  useDebounce,
-  useThrottle,
-} from "./async";
-import {
-  useClipboard,
-  useLocalStorage,
-  useOnlineStatus,
-  useSessionStorage,
-} from "./browser";
+import { useAsync, useAsyncDebounce, useDebounce, useThrottle } from "./async";
+import { useClipboard, useLocalStorage, useOnlineStatus, useSessionStorage } from "./browser";
 import {
   useClickOutside,
   useElementSize,
@@ -23,16 +13,8 @@ import {
   useResizeObserver,
   useWidth,
 } from "./dom";
-import {
-  useBoolean,
-  useCounter,
-  usePrevious,
-  useToggle,
-} from "./state";
-import {
-  useInterval,
-  useTimeout,
-} from "./time";
+import { useBoolean, useCounter, usePrevious, useToggle } from "./state";
+import { useInterval, useTimeout } from "./time";
 
 export default {
   useAsync,

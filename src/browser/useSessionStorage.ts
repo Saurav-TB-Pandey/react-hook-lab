@@ -1,9 +1,6 @@
 import { useEffect, useState } from "react";
 
-export function useSessionStorage<T>(
-  key: string,
-  initialValue: T
-) {
+export function useSessionStorage<T>(key: string, initialValue: T) {
   const readValue = (): T => {
     if (typeof window === "undefined") return initialValue;
 

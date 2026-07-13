@@ -7,10 +7,7 @@ export interface UseTimeoutReturn {
   isActive: () => boolean;
 }
 
-export function useTimeout(
-  callback: () => void,
-  delay: number
-): UseTimeoutReturn {
+export function useTimeout(callback: () => void, delay: number): UseTimeoutReturn {
   const timeoutRef = useRef<ReturnType<typeof setTimeout>>();
   const callbackRef = useRef(callback);
 

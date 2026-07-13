@@ -1,13 +1,7 @@
 import { RefObject, useEffect } from "react";
 
 type EventType =
-  | "mousedown"
-  | "mouseup"
-  | "touchstart"
-  | "touchend"
-  | "pointerdown"
-  | "pointerup"
-  | "click";
+  "mousedown" | "mouseup" | "touchstart" | "touchend" | "pointerdown" | "pointerup" | "click";
 
 export interface UseClickOutsideOptions {
   enabled?: boolean;
@@ -19,10 +13,7 @@ export function useClickOutside<T extends HTMLElement>(
   handler: (event: Event) => void,
   options: UseClickOutsideOptions = {}
 ) {
-  const {
-    enabled = true,
-    events = ["mousedown", "touchstart"],
-  } = options;
+  const { enabled = true, events = ["mousedown", "touchstart"] } = options;
 
   useEffect(() => {
     if (!enabled) return;
@@ -45,14 +36,10 @@ export function useClickOutside<T extends HTMLElement>(
       }
     };
 
-    events.forEach((eventName) =>
-      document.addEventListener(eventName, listener)
-    );
+    events.forEach((eventName) => document.addEventListener(eventName, listener));
 
     return () => {
-      events.forEach((eventName) =>
-        document.removeEventListener(eventName, listener)
-      );
+      events.forEach((eventName) => document.removeEventListener(eventName, listener));
     };
   }, [ref, handler, enabled, events]);
 }

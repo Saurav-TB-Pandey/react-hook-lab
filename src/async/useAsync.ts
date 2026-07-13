@@ -1,10 +1,4 @@
-import {
-  DependencyList,
-  useCallback,
-  useEffect,
-  useRef,
-  useState,
-} from "react";
+import { DependencyList, useCallback, useEffect, useRef, useState } from "react";
 
 export interface UseAsyncOptions<T> {
   immediate?: boolean;
@@ -26,14 +20,9 @@ export function useAsync<T>(
   dependencies: DependencyList = [],
   options: UseAsyncOptions<T> = {}
 ): UseAsyncReturn<T> {
-  const {
-    immediate = true,
-    initialData,
-  } = options;
+  const { immediate = true, initialData } = options;
 
-  const [data, setData] = useState<T | undefined>(
-    initialData
-  );
+  const [data, setData] = useState<T | undefined>(initialData);
 
   const [loading, setLoading] = useState(immediate);
 

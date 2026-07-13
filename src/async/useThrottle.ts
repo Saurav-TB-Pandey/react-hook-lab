@@ -21,18 +21,10 @@ export interface UseThrottleOptions {
  * @example
  * const throttledSearch = useThrottle(search, 500);
  */
-export function useThrottle<T>(
-  value: T,
-  delay = 300,
-  options: UseThrottleOptions = {}
-): T {
-  const {
-    leading = true,
-    trailing = true,
-  } = options;
+export function useThrottle<T>(value: T, delay = 300, options: UseThrottleOptions = {}): T {
+  const { leading = true, trailing = true } = options;
 
-  const [throttledValue, setThrottledValue] =
-    useState(value);
+  const [throttledValue, setThrottledValue] = useState(value);
 
   const lastExecuted = useRef(0);
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);

@@ -1,8 +1,4 @@
-import {
-  RefObject,
-  useEffect,
-  useState,
-} from "react";
+import { RefObject, useEffect, useState } from "react";
 
 export interface Size {
   width: number;
@@ -26,8 +22,7 @@ export function useResizeObserver<T extends HTMLElement>(
 ): UseResizeObserverReturn {
   const { box = "content-box" } = options;
 
-  const [entry, setEntry] =
-    useState<ResizeObserverEntry>();
+  const [entry, setEntry] = useState<ResizeObserverEntry>();
 
   const [size, setSize] = useState<Size>({
     width: 0,
@@ -44,16 +39,12 @@ export function useResizeObserver<T extends HTMLElement>(
     if (!element) return;
 
     const observer = new ResizeObserver(([observerEntry]) => {
-      const { width, height } =
-        observerEntry.contentRect;
+      const { width, height } = observerEntry.contentRect;
 
       setEntry(observerEntry);
 
       setSize((prev) => {
-        if (
-          prev.width === width &&
-          prev.height === height
-        ) {
+        if (prev.width === width && prev.height === height) {
           return prev;
         }
 
