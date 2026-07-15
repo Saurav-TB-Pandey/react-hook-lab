@@ -61,11 +61,34 @@ async function generateArticle(geminiApiKey, prompt) {
   }
 
   try {
-    return JSON.parse(cleanJsonStr);
+    const parsedData = JSON.parse(cleanJsonStr);
+    
+    // Validate the shape of the data
+    if (!parsedData.title || typeof parsedData.title !== 'string') throw new Error('Missing or invalid "title"');
+    if (!parsedData.body_markdown || typeof parsedData.body_markdown !== 'string') throw new Error('Missing or invalid "body_markdown"');
+    if (!parsedData.linkedin_post || typeof parsedData.linkedin_post !== 'string') throw new Error('Missing or invalid "linkedin_post"');
+    
+    // Validate tags
+    if (!Array.isArray(parsedData.tags)) throw new Error('Missing or invalid "tags" array');
+    if (parsedData.tags.length > 4) {
+      console.warn('AI generated more than 4 tags. Truncating to 4.');
+      parsedData.tags = parsedData.tags.slice(0, 4);
+    }
+    
+    // Ensure all tags are alphanumeric and lowercase
+    parsedData.tags = parsedData.tags.map(tag => {
+      const sanitized = tag.replace(/[^a-zA-Z0-9]/g, '').toLowerCase();
+      if (!sanitized) throw new Error(`Tag "${tag}" became empty after sanitization.`);
+      return sanitized;
+    });
+
+    return parsedData;
+    
   } catch (err) {
-    console.error('Failed to parse Gemini output as JSON. Raw output:');
+    console.error('Failed to parse or validate Gemini output. Error:', err.message);
+    console.error('Raw output from AI:');
     console.error(cleanJsonStr);
-    throw new Error('Gemini output was not valid JSON.');
+    throw new Error(`LLM output validation failed: ${err.message}`);
   }
 }
 

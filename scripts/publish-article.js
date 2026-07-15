@@ -48,10 +48,11 @@ async function main() {
     // 3. Publish to platforms
     
     // -> Dev.to
-    await publishToDevTo(process.env.DEVTO_API_KEY, articleData);
+    const devtoResult = await publishToDevTo(process.env.DEVTO_API_KEY, articleData);
+    const devtoUrl = devtoResult ? devtoResult.url : null;
     
     // -> LinkedIn
-    await publishToLinkedIn(articleData);
+    await publishToLinkedIn(articleData, devtoUrl);
     
     // -> You can add more platforms here in the future
     // await publishToHashnode(process.env.HASHNODE_API_KEY, articleData);
