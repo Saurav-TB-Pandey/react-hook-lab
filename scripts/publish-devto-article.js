@@ -69,32 +69,57 @@ Return ONLY a valid JSON object (do not wrap it in markdown code blocks like \`\
 }`;
 
   // Call Gemini API
-  console.log('Calling Gemini API...');
-  const geminiUrl = `https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent?key=${geminiApiKey}`;
-  
-  try {
-    const geminiRes = await fetch(geminiUrl, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        contents: [{ parts: [{ text: prompt }] }],
-      }),
-    });
+  console.log('Calling Gemini API (with fallbacks)...');
+  const fallbackModels = [
+    'gemini-3.5-flash',
+    'gemini-flash-latest',
+    'gemini-3.1-flash-lite',
+    'gemini-3.1-pro-preview',
+    'gemini-pro-latest',
+    'gemini-3-flash-preview',
+    'gemini-2.5-pro',
+    'gemma-4-31b-it'
+  ];
 
-    if (!geminiRes.ok) {
-      const err = await geminiRes.text();
-      console.error(`Gemini API Error: ${geminiRes.status} ${geminiRes.statusText}\n${err}`);
-      process.exit(1);
-    }
+  let rawText = null;
 
-    const geminiData = await geminiRes.json();
-    const rawText = geminiData.candidates?.[0]?.content?.parts?.[0]?.text;
+  for (const model of fallbackModels) {
+    const geminiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${geminiApiKey}`;
+    console.log(`Trying model: ${model}...`);
     
-    if (!rawText) {
-       console.error('Invalid response from Gemini:', JSON.stringify(geminiData, null, 2));
-       process.exit(1);
-    }
+    try {
+      const geminiRes = await fetch(geminiUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          contents: [{ parts: [{ text: prompt }] }],
+        }),
+      });
 
+      if (!geminiRes.ok) {
+        const err = await geminiRes.text();
+        console.warn(`  -> Failed with status ${geminiRes.status}: ${err}`);
+        continue;
+      }
+
+      const geminiData = await geminiRes.json();
+      rawText = geminiData.candidates?.[0]?.content?.parts?.[0]?.text;
+      
+      if (rawText) {
+         console.log(`  -> Success! Generated using ${model}`);
+         break;
+      }
+    } catch (e) {
+      console.warn(`  -> Exception when trying ${model}:`, e.message);
+    }
+  }
+
+  if (!rawText) {
+     console.error('All attempted Gemini models failed. Exiting.');
+     process.exit(1);
+  }
+
+  try {
     // Clean up potential markdown code block wrapping from the JSON response
     let cleanJsonStr = rawText.trim();
     if (cleanJsonStr.startsWith('```json')) {
