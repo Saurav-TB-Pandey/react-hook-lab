@@ -101,3 +101,5 @@ src/**/*.js
 src/**/*.d.ts
 index.js
 index.d.ts
+.env
+scripts/auth/
