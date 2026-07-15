@@ -3,6 +3,7 @@ const path = require('path');
 const { getChangesSummary } = require('./git-utils');
 const { generateArticle } = require('./gemini-utils');
 const { publishToDevTo } = require('./platforms/devto');
+const { publishToLinkedIn } = require('./platforms/linkedin');
 
 const { getArticlePrompt } = require('./prompts');
 
@@ -48,6 +49,9 @@ async function main() {
     
     // -> Dev.to
     await publishToDevTo(process.env.DEVTO_API_KEY, articleData);
+    
+    // -> LinkedIn
+    await publishToLinkedIn(articleData);
     
     // -> You can add more platforms here in the future
     // await publishToHashnode(process.env.HASHNODE_API_KEY, articleData);

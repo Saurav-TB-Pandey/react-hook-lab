@@ -26,19 +26,20 @@ function getChangesSummary() {
 
   for (const c of commits) {
     try {
-      // Check if this commit actually changed anything in the src/ directory
-      const changedSrcFiles = execSync(`git diff-tree --no-commit-id --name-only -r ${c.id} src/`, { encoding: 'utf8' }).trim();
-      
-      if (!changedSrcFiles) {
-        console.log(`Commit ${c.id} did not touch the src/ folder. Skipping.`);
-        continue; // Skip this commit
-      }
+      // TEMPORARILY COMMENTED OUT FOR TESTING
+      // // Check if this commit actually changed anything in the src/ directory
+      // const changedSrcFiles = execSync(`git diff-tree --no-commit-id --name-only -r ${c.id} src/`, { encoding: 'utf8' }).trim();
+      // 
+      // if (!changedSrcFiles) {
+      //   console.log(`Commit ${c.id} did not touch the src/ folder. Skipping.`);
+      //   continue; // Skip this commit
+      // }
 
       validCommitCount++;
       changesSummary += `- Commit Message: ${c.message}\n`;
       
-      // Get the diff ONLY for the src/ directory
-      const diffStr = execSync(`git show ${c.id} --stat -p -- src/`, { encoding: 'utf8' });
+      // Get the diff for the ENTIRE commit (temporarily changed from src/ to . for testing)
+      const diffStr = execSync(`git show ${c.id} --stat -p -- .`, { encoding: 'utf8' });
       const truncatedDiff = diffStr.length > 20000 ? diffStr.substring(0, 20000) + '\n... [DIFF TRUNCATED]' : diffStr;
       changesSummary += `  Diff:\n${truncatedDiff}\n\n`;
     } catch (e) {
