@@ -19,7 +19,9 @@
     "lint": "eslint \"src/**/*.{ts,tsx}\"",
     "format": "prettier --write \"src/**/*.{ts,tsx}\"",
     "prepublishOnly": "npm run typecheck && npm run build && npm test",
-    "pack:dry-run": "npm pack --dry-run"
+    "pack:dry-run": "npm pack --dry-run",
+    "auth:google": "node scripts/auth/get-google-token.js",
+    "auth:linkedin": "node scripts/auth/get-linkedin-token.js"
   },
   "keywords": [
     "react-hook-lab",
