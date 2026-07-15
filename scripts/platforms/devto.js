@@ -20,7 +20,10 @@ async function publishToDevTo(apiKey, articleData) {
         title: articleData.title,
         body_markdown: articleData.body_markdown,
         published: true, // Set to true for live articles
-        tags: articleData.tags || ['react-hook-lab', 'react', 'webdev', 'opensource']
+        tags: (articleData.tags || ['reacthooklab', 'react', 'webdev', 'opensource'])
+                .map(t => t.replace(/[^a-zA-Z0-9]/g, '').toLowerCase())
+                .filter(t => t.length > 0)
+                .slice(0, 4) // Dev.to allows max 4 tags
       }
     })
   });

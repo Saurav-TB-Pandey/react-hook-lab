@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback } from "react";
 
 /**
  * A custom hook for managing steps in a wizard or multi-step form.
@@ -11,11 +11,14 @@ export function useStep(maxStep: number, initialStep: number = 1) {
   const canGoToNextStep = currentStep < maxStep;
   const canGoToPrevStep = currentStep > 1;
 
-  const setStep = useCallback((step: number) => {
-    if (step >= 1 && step <= maxStep) {
-      setCurrentStep(step);
-    }
-  }, [maxStep]);
+  const setStep = useCallback(
+    (step: number) => {
+      if (step >= 1 && step <= maxStep) {
+        setCurrentStep(step);
+      }
+    },
+    [maxStep]
+  );
 
   const goToNextStep = useCallback(() => {
     if (canGoToNextStep) setCurrentStep((step) => step + 1);
@@ -26,7 +29,7 @@ export function useStep(maxStep: number, initialStep: number = 1) {
   }, [canGoToPrevStep]);
 
   const reset = useCallback(() => setCurrentStep(initialStep), [initialStep]);
-
+  console.log("testing");
   return [
     currentStep,
     {
@@ -35,7 +38,7 @@ export function useStep(maxStep: number, initialStep: number = 1) {
       canGoToNextStep,
       canGoToPrevStep,
       setStep,
-      reset
-    }
+      reset,
+    },
   ] as const;
 }
