@@ -30,15 +30,17 @@ async function main() {
     process.exit(1);
   }
 
-  // 1. Get changes
-  const { repoName, changesSummary, commitCount } = getChangesSummary();
+  // 1. Get code changes
+  const { changesSummary, commitCount } = getChangesSummary();
   if (!changesSummary) {
-    return; // No commits to process
+    console.log('No relevant changes to publish.');
+    process.exit(0);
   }
-  
+
   console.log(`Analyzing changes for ${commitCount} commits...`);
 
-  const prompt = getArticlePrompt(repoName, changesSummary);
+  // 2. Build Prompt
+  const prompt = getArticlePrompt(changesSummary);
 
   try {
     // 2. Generate article using Gemini
@@ -46,14 +48,14 @@ async function main() {
     console.log(`Generated Article Title: ${articleData.title}`);
 
     // 3. Publish to platforms
-    
+
     // -> Dev.to
     const devtoResult = await publishToDevTo(process.env.DEVTO_API_KEY, articleData);
     const devtoUrl = devtoResult ? devtoResult.url : null;
-    
+
     // -> LinkedIn
-    await publishToLinkedIn(articleData, devtoUrl);
-    
+    // await publishToLinkedIn(articleData, devtoUrl);
+
     // -> You can add more platforms here in the future
     // await publishToHashnode(process.env.HASHNODE_API_KEY, articleData);
     // await publishToMedium(process.env.MEDIUM_API_KEY, articleData);
