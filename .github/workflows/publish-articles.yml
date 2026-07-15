@@ -1,4 +1,4 @@
-name: Publish Dev.to Article
+name: Publish Articles
 
 on:
   push:
