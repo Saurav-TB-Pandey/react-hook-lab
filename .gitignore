@@ -102,4 +102,4 @@ src/**/*.d.ts
 index.js
 index.d.ts
 .env
-scripts/get-linkedin-token.js
+scripts/auth/

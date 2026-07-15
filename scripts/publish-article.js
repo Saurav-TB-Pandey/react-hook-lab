@@ -4,6 +4,7 @@ const { getChangesSummary } = require('./git-utils');
 const { generateArticle } = require('./gemini-utils');
 const { publishToDevTo } = require('./platforms/devto');
 const { publishToLinkedIn } = require('./platforms/linkedin');
+const { publishToBlogger } = require('./platforms/blogger');
 
 const { getArticlePrompt } = require('./prompts');
 
@@ -54,12 +55,16 @@ async function main() {
     const devtoUrl = devtoResult ? devtoResult.url : null;
 
     // -> LinkedIn
-    // await publishToLinkedIn(articleData, devtoUrl);
+    await publishToLinkedIn(articleData, devtoUrl);
 
-    // -> You can add more platforms here in the future
-    // await publishToHashnode(process.env.HASHNODE_API_KEY, articleData);
-    // await publishToMedium(process.env.MEDIUM_API_KEY, articleData);
-
+    // -> Blogger
+    const googleToken = process.env.GOOGLE_ACCESS_TOKEN;
+    const blogId = process.env.BLOGGER_BLOG_ID;
+    if (googleToken && blogId) {
+      await publishToBlogger(googleToken, blogId, articleData);
+    } else {
+      console.log('Skipping Blogger: Missing GOOGLE_ACCESS_TOKEN or BLOGGER_BLOG_ID');
+    }
   } catch (error) {
     console.error('\nAn error occurred during the publishing process:');
     console.error(error.message || error);
