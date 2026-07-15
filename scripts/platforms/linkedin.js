@@ -42,10 +42,10 @@ async function publishToLinkedIn(articleData) {
 
   try {
     console.log('Publishing to LinkedIn...');
-    
+
     // 1. Get the Author URN
     const authorUrn = await getAuthorUrn(token);
-    
+
     // 2. Publish the post
     const res = await fetch('https://api.linkedin.com/v2/ugcPosts', {
       method: 'POST',
@@ -77,9 +77,9 @@ async function publishToLinkedIn(articleData) {
     }
 
     const data = await res.json();
-    console.log('✅ Successfully published to LinkedIn!');
+    console.log('✅ Successfully published the article to LinkedIn!');
     console.log(`LinkedIn Post ID: ${data.id}`);
-    
+
   } catch (error) {
     console.error('An error occurred while publishing to LinkedIn:');
     console.error(error.message);
