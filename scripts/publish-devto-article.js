@@ -70,7 +70,7 @@ Return ONLY a valid JSON object (do not wrap it in markdown code blocks like \`\
 
   // Call Gemini API
   console.log('Calling Gemini API...');
-  const geminiUrl = `https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash-latest:generateContent?key=${geminiApiKey}`;
+  const geminiUrl = `https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent?key=${geminiApiKey}`;
   
   try {
     const geminiRes = await fetch(geminiUrl, {
