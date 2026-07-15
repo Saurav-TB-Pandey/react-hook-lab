@@ -50,21 +50,23 @@ async function main() {
 
     // 3. Publish to platforms
 
-    // -> Dev.to
-    const devtoResult = await publishToDevTo(process.env.DEVTO_API_KEY, articleData);
-    const devtoUrl = devtoResult ? devtoResult.url : null;
-
-    // -> LinkedIn
-    await publishToLinkedIn(articleData, devtoUrl);
-
-    // -> Blogger
+    // -> Blogger (Publish first to get canonical URL)
+    let bloggerUrl = null;
     const googleToken = process.env.GOOGLE_ACCESS_TOKEN;
     const blogId = process.env.BLOGGER_BLOG_ID;
     if (googleToken && blogId) {
-      await publishToBlogger(googleToken, blogId, articleData);
+      const bloggerResult = await publishToBlogger(googleToken, blogId, articleData);
+      bloggerUrl = bloggerResult ? bloggerResult.url : null;
     } else {
       console.log('Skipping Blogger: Missing GOOGLE_ACCESS_TOKEN or BLOGGER_BLOG_ID');
     }
+
+    // -> Dev.to (Pass Blogger URL as canonical_url)
+    const devtoResult = await publishToDevTo(process.env.DEVTO_API_KEY, articleData, bloggerUrl);
+    const devtoUrl = devtoResult ? devtoResult.url : null;
+
+    // -> LinkedIn
+    await publishToLinkedIn(articleData, bloggerUrl);
   } catch (error) {
     console.error('\nAn error occurred during the publishing process:');
     console.error(error.message || error);

@@ -1,7 +1,7 @@
 /**
  * Publishes an article to Dev.to.
  */
-async function publishToDevTo(apiKey, articleData) {
+async function publishToDevTo(apiKey, articleData, canonicalUrl = null) {
   if (!apiKey) {
     console.log('Skipping Dev.to publication: DEVTO_API_KEY is not set.');
     return;
@@ -20,6 +20,7 @@ async function publishToDevTo(apiKey, articleData) {
         title: articleData.title,
         body_markdown: articleData.body_markdown,
         published: true, // Set to true for live articles
+        canonical_url: canonicalUrl || undefined,
         tags: (articleData.tags || ['reacthooklab', 'react', 'webdev', 'opensource'])
                 .map(t => t.replace(/[^a-zA-Z0-9]/g, '').toLowerCase())
                 .filter(t => t.length > 0)
