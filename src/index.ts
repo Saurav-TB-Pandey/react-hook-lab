@@ -13,7 +13,7 @@ import {
   useResizeObserver,
   useWidth,
 } from "./dom";
-import { useBoolean, useCounter, usePrevious, useToggle } from "./state";
+import { useBoolean, useCounter, usePrevious, useSharedState, useToggle } from "./state";
 import { useInterval, useTimeout } from "./time";
 
 export default {
@@ -34,6 +34,7 @@ export default {
   useCounter,
   usePrevious,
   useToggle,
+  useSharedState,
   useInterval,
   useTimeout,
 };

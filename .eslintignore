@@ -2,6 +2,4 @@ node_modules/
 dist/
 src/**/*.js
 src/**/*.d.ts
-index.js
-index.d.ts
-test.js
+playground/

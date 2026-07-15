@@ -97,9 +97,7 @@ Thumbs.db
 *.swo
 
 # Ignore generated compiled files from TypeScript
-src/**/*.js
-src/**/*.d.ts
-index.js
-index.d.ts
+dist/
 .env
 scripts/auth/
+playground/

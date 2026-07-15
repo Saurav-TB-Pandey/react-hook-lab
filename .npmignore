@@ -4,7 +4,8 @@ src/**/*.ts
 
 # Exclude test and dev files
 examples.tsx
-test.js
+tests/
 tsconfig.json
 .github/
 scripts/
+playground/

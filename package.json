@@ -1,21 +1,21 @@
 {
   "name": "react-hook-lab",
-  "version": "1.0.2",
+  "version": "1.1.0",
   "description": "A lightweight collection of reusable React hooks for async operations, browser APIs, DOM observers, state management, timers, and utilities. Built with TypeScript.",
-  "main": "index.js",
-  "types": "index.d.ts",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "sideEffects": false,
   "exports": {
     ".": {
-      "types": "./index.d.ts",
-      "require": "./index.js",
-      "default": "./index.js"
+      "types": "./dist/index.d.ts",
+      "require": "./dist/index.js",
+      "default": "./dist/index.js"
     }
   },
   "scripts": {
     "build": "tsc",
     "typecheck": "tsc --noEmit",
-    "test": "node test.js",
+    "test": "node --test tests/*.test.js",
     "lint": "eslint \"src/**/*.{ts,tsx}\"",
     "format": "prettier --write \"src/**/*.{ts,tsx}\"",
     "prepublishOnly": "npm run typecheck && npm run build && npm test",
@@ -53,7 +53,10 @@
     "use-hooks",
     "hooks",
     "react-utils",
-    "utility-hooks"
+    "utility-hooks",
+    "shared-state",
+    "broadcast-channel",
+    "use-shared-state"
   ],
   "author": {
     "name": "Saurav_TB_Pandey"
@@ -76,10 +79,7 @@
     "access": "public"
   },
   "files": [
-    "index.js",
-    "index.d.ts",
-    "src/**/*.js",
-    "src/**/*.d.ts",
+    "dist",
     "README.md",
     "LICENSE"
   ],
