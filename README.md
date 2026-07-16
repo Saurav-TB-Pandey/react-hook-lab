@@ -48,6 +48,7 @@ npm install react-hook-lab
 | `useBoolean`              | State    | Manage a boolean state with specific methods (on, off, toggle). |
 | `useCounter`              | State    | Manage a numeric counter with min/max bounds.                   |
 | `usePrevious`             | State    | Store the previous value of a state or prop.                    |
+| `useSharedState`          | State    | Share state seamlessly across components and browser tabs.      |
 | `useToggle`               | State    | Toggle between two generic values.                              |
 | `useInterval`             | Time     | Set up a declarative `setInterval` that cleans up properly.     |
 | `useTimeout`              | Time     | Set up a declarative `setTimeout` that cleans up properly.      |
@@ -312,6 +313,25 @@ function Counter() {
       Now: {count}, Before: {prevCount}
     </div>
   );
+}
+```
+
+#### `useSharedState`
+
+Share state across different components and synchronize it in real-time across multiple browser tabs using `BroadcastChannel`. Works exactly like `useState`.
+
+```tsx
+import { useSharedState } from "react-hook-lab";
+
+function ComponentA() {
+  const [theme, setTheme] = useSharedState("theme", "light");
+  return <button onClick={() => setTheme("dark")}>Theme A: {theme}</button>;
+}
+
+function ComponentB() {
+  // Shares the exact same state as ComponentA, even across tabs!
+  const [theme, setTheme] = useSharedState("theme", "light");
+  return <button onClick={() => setTheme("light")}>Theme B: {theme}</button>;
 }
 ```
 
