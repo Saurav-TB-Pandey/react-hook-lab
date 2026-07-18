@@ -1,6 +1,6 @@
 {
   "name": "react-hook-lab",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "A lightweight collection of reusable React hooks for async operations, browser APIs, DOM observers, state management, timers, and utilities. Built with TypeScript.",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -20,8 +20,8 @@
     "format": "prettier --write \"src/**/*.{ts,tsx}\"",
     "prepublishOnly": "npm run typecheck && npm run build && npm test",
     "pack:dry-run": "npm pack --dry-run",
-    "auth:google": "node scripts/auth/get-google-token.js",
-    "auth:linkedin": "node scripts/auth/get-linkedin-token.js"
+    "auth:google": "npx kill-port 3000 && node scripts/auth/get-google-token.js",
+    "auth:linkedin": "npx kill-port 3000 && node scripts/auth/get-linkedin-token.js"
   },
   "keywords": [
     "react-hook-lab",
@@ -34,6 +34,8 @@
     "typescript-hooks",
     "custom-hooks",
     "usehooks",
+    "useRenderReason",
+    "render-diagnostics",
     "debounce",
     "throttle",
     "async",
@@ -56,7 +58,8 @@
     "utility-hooks",
     "shared-state",
     "broadcast-channel",
-    "use-shared-state"
+    "use-shared-state",
+    "useSharedState"
   ],
   "author": {
     "name": "Saurav_TB_Pandey"

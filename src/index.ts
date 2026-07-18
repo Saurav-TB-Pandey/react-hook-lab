@@ -3,6 +3,7 @@ export * from "./browser";
 export * from "./dom";
 export * from "./state";
 export * from "./time";
+export * from "./debug";
 
 import { useAsync, useAsyncDebounce, useDebounce, useThrottle } from "./async";
 import { useClipboard, useLocalStorage, useOnlineStatus, useSessionStorage } from "./browser";
@@ -15,6 +16,7 @@ import {
 } from "./dom";
 import { useBoolean, useCounter, usePrevious, useSharedState, useToggle } from "./state";
 import { useInterval, useTimeout } from "./time";
+import { useRenderReason } from "./debug";
 
 export default {
   useAsync,
@@ -37,4 +39,5 @@ export default {
   useSharedState,
   useInterval,
   useTimeout,
+  useRenderReason,
 };
