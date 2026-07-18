@@ -5,6 +5,7 @@ const { generateArticle } = require('./gemini-utils');
 const { publishToDevTo } = require('./platforms/devto');
 const { publishToLinkedIn } = require('./platforms/linkedin');
 const { publishToBlogger } = require('./platforms/blogger');
+const { fetchPastAnalytics } = require('./analytics');
 
 const { getArticlePrompt } = require('./prompts');
 
@@ -40,11 +41,14 @@ async function main() {
 
   console.log(`Analyzing changes for ${commitCount} commits...`);
 
+  // 1b. Fetch analytics
+  const analyticsSummary = await fetchPastAnalytics();
+
   // 2. Build Prompt
-  const prompt = getArticlePrompt(changesSummary);
+  const prompt = getArticlePrompt(changesSummary, analyticsSummary);
 
   try {
-    // 2. Generate article using Gemini
+    // 3. Generate article using Gemini
     const articleData = await generateArticle(geminiApiKey, prompt);
     console.log(`Generated Article Title: ${articleData.title}`);
 
