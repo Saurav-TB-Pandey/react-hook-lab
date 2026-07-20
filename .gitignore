@@ -98,6 +98,5 @@ Thumbs.db
 
 # Ignore generated compiled files from TypeScript
 dist/
-.env
 scripts/auth/
 playground/
