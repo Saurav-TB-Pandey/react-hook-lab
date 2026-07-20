@@ -18,8 +18,9 @@ export class Channel {
 
     try {
       this.channel = new BroadcastChannel(CHANNEL_NAME);
-      if (typeof (this.channel as any).unref === "function") {
-        (this.channel as any).unref();
+      const channel = this.channel as BroadcastChannel & { unref?: () => void };
+      if (typeof channel.unref === "function") {
+        channel.unref();
       }
     } catch {
       this.channel = null;

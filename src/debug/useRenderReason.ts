@@ -181,10 +181,12 @@ function classifyChange(key: string, from: unknown, to: unknown, deep: boolean):
 function extractContextChanges(deep: boolean): PropChange[] {
   const changes: PropChange[] = [];
   try {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const owner = (React as any).__SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED?.ReactCurrentOwner?.current;
     if (!owner || !owner.alternate || !owner.alternate.dependencies) return changes;
 
     let dep = owner.alternate.dependencies.firstContext;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const dispatcher = (React as any).__SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED?.ReactCurrentDispatcher?.current;
 
     while (dep) {
@@ -219,7 +221,7 @@ function extractContextChanges(deep: boolean): PropChange[] {
       
       dep = dep.next;
     }
-  } catch (e) {
+  } catch {
     // Silently fail if internal React Fiber structure changes
   }
   return changes;
@@ -231,7 +233,7 @@ export function useRenderReason(
   watched: Record<string, unknown>,
   options: UseRenderReasonOptions = {}
 ): RenderReasonInfo {
-  const isProd = typeof process !== 'undefined' && (process as any).env.NODE_ENV === 'production';
+  const isProd = typeof process !== 'undefined' && process.env.NODE_ENV === 'production';
   const {
     deep = true,
     ignore = [],
