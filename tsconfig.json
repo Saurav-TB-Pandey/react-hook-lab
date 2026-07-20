@@ -12,5 +12,5 @@
     "lib": ["ES2019", "DOM"],
     "outDir": "./dist"
   },
-  "include": ["index.ts"]
+  "include": ["index.ts", "src/**/*.d.ts"]
 }
