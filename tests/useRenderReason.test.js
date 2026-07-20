@@ -168,3 +168,75 @@ test('useRenderReason detects suspiciously frequent renders', () => {
 
   assert.ok(latestInfo.isSuspiciouslyFrequent, 'Should be flagged as suspiciously frequent');
 });
+
+test('useRenderReason tracks context primitive changes', () => {
+  let latestInfo = null;
+  const MyContext = React.createContext('default');
+  MyContext.displayName = 'MyContext';
+
+  function TestComponent() {
+    React.useContext(MyContext);
+    useRenderReason('TestComponent', {}, {
+      logToConsole: false,
+      onRender: (info) => {
+        latestInfo = info;
+      }
+    });
+    return null;
+  }
+
+  function App({ val }) {
+    return React.createElement(MyContext.Provider, { value: val }, React.createElement(TestComponent));
+  }
+
+  const root = TestRenderer.create(React.createElement(App, { val: 'initial' }));
+
+  act(() => {
+    root.update(React.createElement(App, { val: 'changed' }));
+  });
+
+  assert.ok(latestInfo, 'Should trigger on re-render');
+  assert.equal(latestInfo.changes.length, 1);
+  assert.equal(latestInfo.changes[0].key, 'Context(MyContext)');
+  assert.equal(latestInfo.changes[0].type, 'primitive-changed');
+  assert.equal(latestInfo.changes[0].from, 'initial');
+  assert.equal(latestInfo.changes[0].to, 'changed');
+});
+
+test('useRenderReason tracks context reference-changed-value-same', () => {
+  let latestInfo = null;
+  const MyContext = React.createContext({ theme: 'light' });
+  MyContext.displayName = 'ThemeContext';
+
+  function TestComponent() {
+    React.useContext(MyContext);
+    useRenderReason('TestComponent', {}, {
+      logToConsole: false,
+      onRender: (info) => {
+        latestInfo = info;
+      }
+    });
+    return null;
+  }
+
+  function App({ obj }) {
+    return React.createElement(MyContext.Provider, { value: obj }, React.createElement(TestComponent));
+  }
+
+  // Create two distinct objects with the same content
+  const obj1 = { theme: 'dark' };
+  const obj2 = { theme: 'dark' };
+
+  const root = TestRenderer.create(React.createElement(App, { obj: obj1 }));
+
+  act(() => {
+    root.update(React.createElement(App, { obj: obj2 }));
+  });
+
+  assert.ok(latestInfo, 'Should trigger on re-render');
+  assert.equal(latestInfo.changes.length, 1);
+  assert.equal(latestInfo.changes[0].key, 'Context(ThemeContext)');
+  assert.equal(latestInfo.changes[0].type, 'reference-changed-value-same');
+  assert.deepEqual(latestInfo.changes[0].from, obj1);
+  assert.deepEqual(latestInfo.changes[0].to, obj2);
+});

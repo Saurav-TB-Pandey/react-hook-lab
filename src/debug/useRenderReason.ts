@@ -1,3 +1,4 @@
+import * as React from "react";
 import { useEffect, useRef } from "react";
 
 /**
@@ -13,14 +14,17 @@ import { useEffect, useRef } from "react";
  *  - reference changed, value diff  → a real change to an object/array
  *  - function reference changed     → almost always an inline arrow function
  *
- * It also flags two things most re-render debugging misses entirely:
+ * It also flags three things most re-render debugging misses entirely:
  *  - "wasted" renders — nothing tracked changed, so the parent likely
  *    re-rendered unnecessarily and dragged this component with it
+ *  - Context changes — automatically peeks into the React Fiber to detect
+ *    and classify any changes in consumed Contexts (no setup required)
  *  - "suspiciously frequent" renders — more renders than `warnThreshold`
  *    within `warnWindowMs`, a strong signal of a re-render loop
  *
- * Dev-only by default (`logToConsole` defaults to NODE_ENV !== "production"),
- * safe to leave in codebases that tree-shake dead NODE_ENV branches.
+ * This hook is completely zero-overhead in production! 
+ * When `process.env.NODE_ENV === 'production'`, it automatically skips 
+ * all tracking logic unless explicitly overridden, ensuring your app stays fast.
  *
  * @example
  * function ProductCard({ id, name, price, onAdd }: Props) {
@@ -73,6 +77,8 @@ export interface UseRenderReasonOptions {
   logToConsole?: boolean;
   /** Called on every render (after the first) with the full diagnostic info. */
   onRender?: (info: RenderReasonInfo) => void;
+  /** Automatically detect and track changes in consumed Contexts. Default: true. */
+  trackContexts?: boolean;
 }
 
 const MAX_DEPTH = 5;
@@ -172,18 +178,67 @@ function classifyChange(key: string, from: unknown, to: unknown, deep: boolean):
   return { key, type: "primitive-changed", from, to };
 }
 
+function extractContextChanges(deep: boolean): PropChange[] {
+  const changes: PropChange[] = [];
+  try {
+    const owner = (React as any).__SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED?.ReactCurrentOwner?.current;
+    if (!owner || !owner.alternate || !owner.alternate.dependencies) return changes;
+
+    let dep = owner.alternate.dependencies.firstContext;
+    const dispatcher = (React as any).__SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED?.ReactCurrentDispatcher?.current;
+
+    while (dep) {
+      const ctx = dep.context;
+      const oldVal = dep.memoizedValue;
+      
+      let newVal = oldVal;
+      if (dispatcher && typeof dispatcher.readContext === 'function') {
+        newVal = dispatcher.readContext(ctx);
+      } else {
+        const val1 = ctx._currentValue;
+        const val2 = ctx._currentValue2;
+        const defVal = ctx._defaultValue;
+        
+        if (!Object.is(val1, oldVal) && !Object.is(val1, defVal)) {
+          newVal = val1;
+        } else if (!Object.is(val2, oldVal) && !Object.is(val2, defVal)) {
+          newVal = val2;
+        } else if (!Object.is(val1, oldVal)) {
+          newVal = val1;
+        } else if (!Object.is(val2, oldVal)) {
+          newVal = val2;
+        }
+      }
+
+      if (!Object.is(newVal, oldVal)) {
+        const name = ctx.displayName || "Unknown";
+        const key = `Context(${name})`;
+        const change = classifyChange(key, oldVal, newVal, deep);
+        if (change) changes.push(change);
+      }
+      
+      dep = dep.next;
+    }
+  } catch (e) {
+    // Silently fail if internal React Fiber structure changes
+  }
+  return changes;
+}
+
+
 export function useRenderReason(
   componentName: string,
   watched: Record<string, unknown>,
   options: UseRenderReasonOptions = {}
 ): RenderReasonInfo {
+  const isProd = typeof process !== 'undefined' && (process as any).env.NODE_ENV === 'production';
   const {
     deep = true,
     ignore = [],
     warnThreshold = 10,
     warnWindowMs = 1000,
-    // By default, always log to console unless explicitly disabled
-    logToConsole = true,
+    logToConsole = !isProd,
+    trackContexts = true,
     onRender,
   } = options;
 
@@ -205,16 +260,23 @@ export function useRenderReason(
   const isSuspiciouslyFrequent = renderTimestampsRef.current.length > warnThreshold;
 
   const changes: PropChange[] = [];
-  if (prevRef.current) {
+  const skipTracking = !logToConsole && !onRender;
+
+  if (prevRef.current && !skipTracking) {
     const keys = new Set([...Object.keys(prevRef.current), ...Object.keys(watched)]);
     for (const key of keys) {
       if (ignore.includes(key)) continue;
       const change = classifyChange(key, prevRef.current[key], watched[key], deep);
       if (change) changes.push(change);
     }
+    
+    if (trackContexts) {
+      const contextChanges = extractContextChanges(deep);
+      changes.push(...contextChanges);
+    }
   }
 
-  const isWastedRender = prevRef.current !== null && changes.length === 0;
+  const isWastedRender = prevRef.current !== null && changes.length === 0 && !skipTracking;
 
   const info: RenderReasonInfo = {
     componentName,

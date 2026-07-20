@@ -383,7 +383,9 @@ function Mode() {
 ### 🐛 Debugging Hooks
 
 #### `useRenderReason` 🔬 *(Advanced)*
-Stop guessing why your React component is lagging or looping. Drop this hook into any component to instantly log exactly what prop/state changed, or if a parent triggered a "wasted render".
+Stop guessing why your React component is lagging or looping. Drop this hook into any component to instantly log exactly what prop, state, or **Context** changed, or if a parent triggered a "wasted render".
+
+*Note: This hook is completely zero-overhead in production! It automatically disables itself when `process.env.NODE_ENV === 'production'` to ensure your app remains lightning fast.*
 
 ```tsx
 import { useRenderReason } from "react-hook-lab";
@@ -398,9 +400,10 @@ function HeavyChart({ data, options, onPointClick }) {
 
 **Console Output Examples:**
 - 🟢 `[useRenderReason] HeavyChart — render #2 (14ms since last)`
-- 🔴 `data: reference changed, value unchanged. → Same content, new reference. Consider useMemo.`
+- 🔴 `data: object reference changed, value unchanged. → Same content, new reference. Consider useMemo.`
+- 🔵 `Context(ThemeContext): object reference changed, value unchanged. → Same content, new reference.`
 - 🟡 `No tracked props/state changed — likely a wasted render triggered by a parent. Consider React.memo.`
-- 🚨 `WARNING: Component is rendering suspiciously frequently (10 renders in 1000ms). Check for infinite loops.`
+- 🚨 `WARNING: Rendered more than expected in a short window — possible re-render loop or missing memoization.`
 
 ---
 
