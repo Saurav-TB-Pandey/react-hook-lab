@@ -13,6 +13,7 @@ import {
   useLocalStorage,
   useOnlineStatus,
   usePrevious,
+  useRenderReason,
   useResizeObserver,
   useSessionStorage,
   useThrottle,
@@ -54,6 +55,16 @@ export function ReactHookLabExamples() {
   const elementSize = useElementSize(measuredRef);
   const intersection = useIntersectionObserver(panelRef, {
     threshold: 0.5,
+  });
+
+  useRenderReason("ReactHookLabExamples", {
+    query,
+    debouncedQuery,
+    throttledQuery,
+    theme,
+    boolean: boolean.value,
+    counter: counter.count,
+    toggle: toggle.value,
   });
 
   useClickOutside(panelRef, () => {
