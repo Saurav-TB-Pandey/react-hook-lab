@@ -1,11 +1,7 @@
 import { useCallback, useEffect, useRef, useSyncExternalStore } from "react";
 import { sharedEngine } from "./shared/engine/SharedEngine";
 import { snapshotManager } from "./shared/engine/SnapshotManager";
-import type {
-  SharedStateAction,
-  SharedStateInitialValue,
-  SharedStateSetter,
-} from "./shared/types";
+import type { SharedStateAction, SharedStateInitialValue, SharedStateSetter } from "./shared/types";
 
 type InitialValueRef<T> = {
   key: string;
@@ -13,7 +9,18 @@ type InitialValueRef<T> = {
 };
 
 /**
- * Shares React state across browser tabs using BroadcastChannel.
+ * Global state manager that syncs seamlessly across components AND browser tabs.
+ * Uses `BroadcastChannel` under the hood. Perfect for things like global themes or user settings.
+ *
+ * @param key - The unique identifier for this piece of shared state.
+ * @param initialValue - The default value.
+ * @returns State and updater function, identical to `useState`.
+ *
+ * @example
+ * ```tsx
+ * // Component A (Maybe in a completely different browser tab!)
+ * const [theme, setTheme] = useSharedState("global-theme", "light");
+ * ```
  */
 export function useSharedState<T>(
   key: string,

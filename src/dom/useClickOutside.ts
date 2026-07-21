@@ -8,6 +8,20 @@ export interface UseClickOutsideOptions {
   events?: EventType[];
 }
 
+/**
+ * Detects clicks outside of a specified element.
+ * Perfect for closing dropdowns, modals, and tooltips when a user clicks away.
+ *
+ * @param ref - The React ref attached to the element you want to detect clicks outside of.
+ * @param handler - The callback function to fire when an outside click is detected.
+ *
+ * @example
+ * ```tsx
+ * const ref = useRef(null);
+ * useClickOutside(ref, () => setIsOpen(false));
+ * return <div ref={ref}>Dropdown Content</div>;
+ * ```
+ */
 export function useClickOutside<T extends HTMLElement>(
   ref: RefObject<T> | RefObject<T>[],
   handler: (event: Event) => void,

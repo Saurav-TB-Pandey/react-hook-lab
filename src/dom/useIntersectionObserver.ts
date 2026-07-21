@@ -9,6 +9,22 @@ export interface UseIntersectionObserverReturn {
   entry?: IntersectionObserverEntry;
 }
 
+/**
+ * Detects whether a DOM element is currently visible in the viewport.
+ * Ideal for lazy loading images, infinite scrolling, or triggering animations on scroll.
+ *
+ * @param ref - The React ref attached to the element to observe.
+ * @param options - Standard IntersectionObserverInit options (threshold, rootMargin, etc.).
+ * @returns The latest `IntersectionObserverEntry` or `null`.
+ *
+ * @example
+ * ```tsx
+ * const ref = useRef(null);
+ * const entry = useIntersectionObserver(ref, { threshold: 0.1 });
+ * const isVisible = !!entry?.isIntersecting;
+ * return <img ref={ref} src={isVisible ? src : placeholder} />;
+ * ```
+ */
 export function useIntersectionObserver<T extends HTMLElement>(
   ref: RefObject<T>,
   options: UseIntersectionObserverOptions = {}

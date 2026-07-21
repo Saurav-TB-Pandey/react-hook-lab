@@ -15,6 +15,23 @@ export interface UseAsyncReturn<T> {
   reset: () => void;
 }
 
+/**
+ * Manages complex asynchronous data fetching with a robust state object.
+ * Automatically handles race conditions and prevents stale responses if the component unmounts or dependencies change.
+ *
+ * @param asyncFunction - The asynchronous function returning a Promise.
+ * @param dependencies - Array of dependencies that trigger a re-execution when changed.
+ * @param options - Configuration options (`immediate` execution, `initialData`).
+ * @returns Object containing data, error, loading state, and functions to retry, reset, or manually execute.
+ *
+ * @example
+ * ```tsx
+ * const { execute, status, value, error } = useAsync(
+ *   () => fetch(`/api/users/${userId}`).then(res => res.json()),
+ *   [userId]
+ * );
+ * ```
+ */
 export function useAsync<T>(
   asyncFunction: () => Promise<T>,
   dependencies: DependencyList = [],

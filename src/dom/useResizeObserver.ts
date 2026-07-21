@@ -16,6 +16,21 @@ export interface UseResizeObserverReturn {
   entry?: ResizeObserverEntry;
 }
 
+/**
+ * Reacts to changes in a DOM element's dimensions using the native ResizeObserver API.
+ * Similar to `useElementSize`, but returns the full `ResizeObserverEntry` for advanced use cases.
+ *
+ * @param ref - The React ref attached to the element.
+ * @param options - Native ResizeObserver options.
+ * @returns The latest `ResizeObserverEntry` or `null`.
+ *
+ * @example
+ * ```tsx
+ * const ref = useRef(null);
+ * const entry = useResizeObserver(ref);
+ * return <div ref={ref}>Width: {entry?.contentRect.width}</div>;
+ * ```
+ */
 export function useResizeObserver<T extends HTMLElement>(
   ref: RefObject<T>,
   options: UseResizeObserverOptions = {}

@@ -3,11 +3,7 @@ export { EventBus } from "./engine/EventBus";
 export { SharedEngine, sharedEngine } from "./engine/SharedEngine";
 export { SharedStore } from "./engine/SharedStore";
 export { SnapshotManager, snapshotManager } from "./engine/SnapshotManager";
-export {
-  CHANNEL_NAME,
-  MESSAGE_TYPES,
-  PROTOCOL_VERSION,
-} from "./protocol/constants";
+export { CHANNEL_NAME, MESSAGE_TYPES, PROTOCOL_VERSION } from "./protocol/constants";
 export type {
   DeleteMessage,
   MessageType,

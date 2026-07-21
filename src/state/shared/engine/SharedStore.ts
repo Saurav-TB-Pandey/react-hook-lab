@@ -108,21 +108,14 @@ export class SharedStore {
 }
 
 function resolveInitialValue<T>(initialValue: SharedStateInitialValue<T>): T {
-  return typeof initialValue === "function"
-    ? (initialValue as () => T)()
-    : initialValue;
+  return typeof initialValue === "function" ? (initialValue as () => T)() : initialValue;
 }
 
 function resolveAction<T>(action: SharedStateAction<T>, previous: T): T {
-  return typeof action === "function"
-    ? (action as (previousValue: T) => T)(previous)
-    : action;
+  return typeof action === "function" ? (action as (previousValue: T) => T)(previous) : action;
 }
 
-function shouldAcceptIncoming(
-  incoming: SharedEntryMeta,
-  local: SharedEntryMeta
-): boolean {
+function shouldAcceptIncoming(incoming: SharedEntryMeta, local: SharedEntryMeta): boolean {
   if (incoming.version > local.version) return true;
   if (incoming.version < local.version) return false;
 

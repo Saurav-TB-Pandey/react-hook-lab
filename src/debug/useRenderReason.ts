@@ -1,43 +1,6 @@
 import * as React from "react";
 import { useEffect, useRef } from "react";
 
-/**
- * useRenderReason
- *
- * Diagnoses why a component just re-rendered. Pass in whatever props/state
- * you want tracked, and it classifies every change:
- *
- *  - primitive changed              → the value genuinely changed
- *  - reference changed, value SAME  → new object/array/function identity,
- *                                      but the content is identical — usually
- *                                      fixable with useMemo/useCallback
- *  - reference changed, value diff  → a real change to an object/array
- *  - function reference changed     → almost always an inline arrow function
- *
- * It also flags three things most re-render debugging misses entirely:
- *  - "wasted" renders — nothing tracked changed, so the parent likely
- *    re-rendered unnecessarily and dragged this component with it
- *  - Context changes — automatically peeks into the React Fiber to detect
- *    and classify any changes in consumed Contexts (no setup required)
- *  - "suspiciously frequent" renders — more renders than `warnThreshold`
- *    within `warnWindowMs`, a strong signal of a re-render loop
- *
- * This hook is completely zero-overhead in production! 
- * When `process.env.NODE_ENV === 'production'`, it automatically skips 
- * all tracking logic unless explicitly overridden, ensuring your app stays fast.
- *
- * @example
- * function ProductCard({ id, name, price, onAdd }: Props) {
- *   useRenderReason("ProductCard", { id, name, price, onAdd });
- *   ...
- * }
- *
- * @example With custom handling (e.g. feeding a dev overlay instead of console)
- * useRenderReason("ProductCard", { id, price }, {
- *   logToConsole: false,
- *   onRender: (info) => renderLog.push(info),
- * });
- */
 
 export type ChangeType =
   | "primitive-changed"
@@ -182,25 +145,27 @@ function extractContextChanges(deep: boolean): PropChange[] {
   const changes: PropChange[] = [];
   try {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const owner = (React as any).__SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED?.ReactCurrentOwner?.current;
+    const owner = (React as any).__SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED
+      ?.ReactCurrentOwner?.current;
     if (!owner || !owner.alternate || !owner.alternate.dependencies) return changes;
 
     let dep = owner.alternate.dependencies.firstContext;
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const dispatcher = (React as any).__SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED?.ReactCurrentDispatcher?.current;
+    const dispatcher = (React as any).__SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED
+      ?.ReactCurrentDispatcher?.current;
 
     while (dep) {
       const ctx = dep.context;
       const oldVal = dep.memoizedValue;
-      
+
       let newVal = oldVal;
-      if (dispatcher && typeof dispatcher.readContext === 'function') {
+      if (dispatcher && typeof dispatcher.readContext === "function") {
         newVal = dispatcher.readContext(ctx);
       } else {
         const val1 = ctx._currentValue;
         const val2 = ctx._currentValue2;
         const defVal = ctx._defaultValue;
-        
+
         if (!Object.is(val1, oldVal) && !Object.is(val1, defVal)) {
           newVal = val1;
         } else if (!Object.is(val2, oldVal) && !Object.is(val2, defVal)) {
@@ -218,7 +183,7 @@ function extractContextChanges(deep: boolean): PropChange[] {
         const change = classifyChange(key, oldVal, newVal, deep);
         if (change) changes.push(change);
       }
-      
+
       dep = dep.next;
     }
   } catch {
@@ -227,13 +192,49 @@ function extractContextChanges(deep: boolean): PropChange[] {
   return changes;
 }
 
-
+/**
+ * useRenderReason
+ *
+ * Diagnoses why a component just re-rendered. Pass in whatever props/state
+ * you want tracked, and it classifies every change:
+ *
+ *  - primitive changed              → the value genuinely changed
+ *  - reference changed, value SAME  → new object/array/function identity,
+ *                                      but the content is identical — usually
+ *                                      fixable with useMemo/useCallback
+ *  - reference changed, value diff  → a real change to an object/array
+ *  - function reference changed     → almost always an inline arrow function
+ *
+ * It also flags three things most re-render debugging misses entirely:
+ *  - "wasted" renders — nothing tracked changed, so the parent likely
+ *    re-rendered unnecessarily and dragged this component with it
+ *  - Context changes — automatically peeks into the React Fiber to detect
+ *    and classify any changes in consumed Contexts (no setup required)
+ *  - "suspiciously frequent" renders — more renders than `warnThreshold`
+ *    within `warnWindowMs`, a strong signal of a re-render loop
+ *
+ * This hook is completely zero-overhead in production!
+ * When `process.env.NODE_ENV === 'production'`, it automatically skips
+ * all tracking logic unless explicitly overridden, ensuring your app stays fast.
+ *
+ * @example
+ * function ProductCard({ id, name, price, onAdd }: Props) {
+ *   useRenderReason("ProductCard", { id, name, price, onAdd });
+ *   ...
+ * }
+ *
+ * @example With custom handling (e.g. feeding a dev overlay instead of console)
+ * useRenderReason("ProductCard", { id, price }, {
+ *   logToConsole: false,
+ *   onRender: (info) => renderLog.push(info),
+ * });
+ */
 export function useRenderReason(
   componentName: string,
   watched: Record<string, unknown>,
   options: UseRenderReasonOptions = {}
 ): RenderReasonInfo {
-  const isProd = typeof process !== 'undefined' && process.env.NODE_ENV === 'production';
+  const isProd = typeof process !== "undefined" && process.env.NODE_ENV === "production";
   const {
     deep = true,
     ignore = [],
@@ -252,7 +253,7 @@ export function useRenderReason(
   // eslint-disable-next-line react-hooks/purity
   renderCountRef.current += 1;
   // eslint-disable-next-line react-hooks/purity
-  const now = typeof performance !== 'undefined' ? performance.now() : Date.now();
+  const now = typeof performance !== "undefined" ? performance.now() : Date.now();
   const msSinceLastRender =
     lastRenderTimeRef.current !== null ? now - lastRenderTimeRef.current : null;
 
@@ -271,7 +272,7 @@ export function useRenderReason(
       const change = classifyChange(key, prevRef.current[key], watched[key], deep);
       if (change) changes.push(change);
     }
-    
+
     if (trackContexts) {
       const contextChanges = extractContextChanges(deep);
       changes.push(...contextChanges);

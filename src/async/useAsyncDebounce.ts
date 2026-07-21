@@ -6,6 +6,22 @@ export interface UseAsyncDebounceReturn<T> {
   error: unknown;
 }
 
+/**
+ * Debounces an asynchronous callback, useful for preventing spam API calls
+ * when a user types in a search box. It manages loading state and only
+ * resolves the final promise after the debounce delay.
+ *
+ * @param asyncFunction - The asynchronous function to debounce.
+ * @param delay - The debounce delay in milliseconds (default: 300).
+ * @returns Object containing the result, loading state, error, and the debounced execution function.
+ *
+ * @example
+ * ```tsx
+ * const fetchAutocomplete = useAsyncDebounce(async (query) => {
+ *   return await api.get(`/search?q=${query}`);
+ * }, 300);
+ * ```
+ */
 export function useAsyncDebounce<T>(
   callback: () => T | Promise<T>,
   delay = 300

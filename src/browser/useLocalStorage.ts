@@ -1,5 +1,18 @@
 import { useEffect, useState } from "react";
 
+/**
+ * Synchronizes state with `localStorage` so it persists across browser reloads.
+ * Automatically parses JSON and updates state when storage events fire from other tabs.
+ *
+ * @param key - The localStorage key.
+ * @param initialValue - The fallback initial value if the key does not exist.
+ * @returns A stateful value and a function to update it, matching `useState`.
+ *
+ * @example
+ * ```tsx
+ * const [theme, setTheme] = useLocalStorage("theme", "light");
+ * ```
+ */
 export function useLocalStorage<T>(key: string, initialValue: T) {
   const readValue = (): T => {
     if (typeof window === "undefined") return initialValue;

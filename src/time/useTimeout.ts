@@ -7,6 +7,21 @@ export interface UseTimeoutReturn {
   isActive: () => boolean;
 }
 
+/**
+ * A declarative `setTimeout` hook that safely handles cleanup.
+ *
+ * @param callback - The function to execute.
+ * @param delay - The delay in milliseconds.
+ * @returns Object containing methods to stop, start, restart, and check the active status of the timeout.
+ *
+ * @example
+ * ```tsx
+ * const [show, setShow] = useState(true);
+ * useTimeout(() => setShow(false), 5000);
+ * if (!show) return null;
+ * return <div>This will disappear in 5 seconds!</div>;
+ * ```
+ */
 export function useTimeout(callback: () => void, delay: number): UseTimeoutReturn {
   const timeoutRef = useRef<ReturnType<typeof setTimeout>>();
   const callbackRef = useRef(callback);

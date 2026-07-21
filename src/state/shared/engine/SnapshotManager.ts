@@ -1,9 +1,5 @@
 import { sharedEngine } from "./SharedEngine";
-import type {
-  SharedListener,
-  SharedStateInitialValue,
-  Unsubscribe,
-} from "../types";
+import type { SharedListener, SharedStateInitialValue, Unsubscribe } from "../types";
 
 /**
  * External-store snapshot adapter for shared state keys.

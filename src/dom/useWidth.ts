@@ -1,5 +1,17 @@
 import { useEffect, useState } from "react";
 
+/**
+ * Tracks the global inner window width dynamically.
+ * Automatically handles window resize events and debounces/throttles are not applied by default.
+ *
+ * @returns The current `window.innerWidth` in pixels.
+ *
+ * @example
+ * ```tsx
+ * const width = useWidth();
+ * return <div>{width < 768 ? "Mobile" : "Desktop"}</div>;
+ * ```
+ */
 export function useWidth(): number {
   const getWindowWidth = () => (typeof window === "undefined" ? 0 : window.innerWidth);
 

@@ -5,6 +5,19 @@ export interface ClipboardState {
   error: Error | null;
 }
 
+/**
+ * Reads and writes text to the user's clipboard, managing a temporary "copied" state.
+ * Great for "Copy to Clipboard" buttons.
+ *
+ * @param timeout - The duration in milliseconds before the `copied` state resets to false (default: 2000).
+ * @returns Object containing the copy function, current copied state, and any errors.
+ *
+ * @example
+ * ```tsx
+ * const { copy, copied } = useClipboard(2000);
+ * return <button onClick={() => copy("text")}>{copied ? "Copied!" : "Copy"}</button>;
+ * ```
+ */
 export const useClipboard = (timeout = 2000) => {
   const [{ copied, error }, setState] = useState<ClipboardState>({
     copied: false,

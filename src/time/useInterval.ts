@@ -7,6 +7,20 @@ export interface UseIntervalReturn {
   isRunning: () => boolean;
 }
 
+/**
+ * A declarative `setInterval` hook that safely handles cleanup and React's closure staleness issues.
+ *
+ * @param callback - The function to execute.
+ * @param delay - The delay in milliseconds.
+ * @returns Object containing methods to stop, start, restart, and check the running status of the interval.
+ *
+ * @example
+ * ```tsx
+ * const [time, setTime] = useState(0);
+ * const interval = useInterval(() => setTime(t => t + 1), 1000);
+ * return <button onClick={interval.stop}>Stop Interval</button>;
+ * ```
+ */
 export function useInterval(callback: () => void, delay: number): UseIntervalReturn {
   const intervalRef = useRef<ReturnType<typeof setInterval>>();
   const callbackRef = useRef(callback);

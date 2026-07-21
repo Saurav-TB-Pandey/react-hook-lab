@@ -42,10 +42,7 @@ export interface DeleteMessage extends BaseMessage {
 }
 
 export type SharedMessage<T = unknown> =
-  | RequestMessage
-  | SnapshotMessage<T>
-  | UpdateMessage<T>
-  | DeleteMessage;
+  RequestMessage | SnapshotMessage<T> | UpdateMessage<T> | DeleteMessage;
 
 /**
  * Creates a REQUEST message.
@@ -128,9 +125,7 @@ export function parseMessage(value: unknown): SharedMessage | null {
   }
 
   if (value.type === MESSAGE_TYPES.DELETE) {
-    return isEntryMeta(value.meta)
-      ? createDeleteMessage(key, tabId, value.meta)
-      : null;
+    return isEntryMeta(value.meta) ? createDeleteMessage(key, tabId, value.meta) : null;
   }
 
   if (value.type === MESSAGE_TYPES.SNAPSHOT || value.type === MESSAGE_TYPES.UPDATE) {

@@ -5,6 +5,22 @@ export interface UseDebounceOptions<T> {
   leading?: boolean;
 }
 
+/**
+ * Debounces a fast-changing state value. The returned value will only reflect
+ * the latest value after the specified delay has passed without further updates.
+ *
+ * @param value - The state value to debounce.
+ * @param delay - The delay in milliseconds (default: 300).
+ * @param options - Additional options (e.g., auto-trim strings).
+ * @returns The debounced value.
+ *
+ * @example
+ * ```tsx
+ * const [term, setTerm] = useState("");
+ * const debouncedTerm = useDebounce(term, 500);
+ * // debouncedTerm only updates 500ms after the user stops typing
+ * ```
+ */
 export function useDebounce<T>(value: T, delay = 300, options: UseDebounceOptions<T> = {}): T {
   const { initialValue = value, leading = false } = options;
 
