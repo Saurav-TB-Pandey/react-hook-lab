@@ -65,7 +65,7 @@ async function main() {
       console.log('Skipping Blogger: Missing GOOGLE_ACCESS_TOKEN or BLOGGER_BLOG_ID');
     }
 
-    // -> Dev.to (Pass Blogger URL as canonical_url)
+    // -> Dev.to (Standalone article, but link to Blogger at the bottom)
     const devtoResult = await publishToDevTo(process.env.DEVTO_API_KEY, articleData, bloggerUrl);
     const devtoUrl = devtoResult ? devtoResult.url : null;
 

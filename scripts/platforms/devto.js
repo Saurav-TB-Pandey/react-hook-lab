@@ -1,7 +1,7 @@
 /**
  * Publishes an article to Dev.to.
  */
-async function publishToDevTo(apiKey, articleData, canonicalUrl = null) {
+async function publishToDevTo(apiKey, articleData, bloggerUrl = null) {
   if (!apiKey) {
     console.log('Skipping Dev.to publication: DEVTO_API_KEY is not set.');
     return;
@@ -9,6 +9,13 @@ async function publishToDevTo(apiKey, articleData, canonicalUrl = null) {
 
   console.log('Publishing to Dev.to...');
   const devtoUrl = 'https://dev.to/api/articles';
+  
+  // Append the Blogger URL to the bottom of the article markdown if it exists
+  let finalMarkdown = articleData.body_markdown;
+  if (bloggerUrl) {
+    finalMarkdown += `\n\n---\n*Originally published on my blog. You can [read the alternative breakdown here](${bloggerUrl}).*`;
+  }
+
   const devtoRes = await fetch(devtoUrl, {
     method: 'POST',
     headers: {
@@ -18,9 +25,8 @@ async function publishToDevTo(apiKey, articleData, canonicalUrl = null) {
     body: JSON.stringify({
       article: {
         title: articleData.devto_title,
-        body_markdown: articleData.body_markdown,
+        body_markdown: finalMarkdown,
         published: true, // Set to true for live articles
-        canonical_url: canonicalUrl || undefined,
         tags: (articleData.tags || ['reacthooklab', 'react', 'webdev', 'opensource'])
                 .map(t => t.replace(/[^a-zA-Z0-9]/g, '').toLowerCase())
                 .filter(t => t.length > 0)

@@ -95,7 +95,7 @@ async function publishToLinkedIn(articleData, articleUrl) {
           actor: authorUrn,
           object: data.id,
           message: {
-            text: `📖 Full breakdown on my blog: ${articleUrl}\n\n📦 Latest version on NPM: https://www.npmjs.com/package/react-hook-lab`
+            text: `📖 Full breakdown on my blog: ${articleUrl}\n\n📦 Latest version on NPM: https://www.npmjs.com/package/react-hook-lab\n\n💻 GitHub Repository: https://github.com/Saurav-TB-Pandey/react-hook-lab`
           }
         })
       });
