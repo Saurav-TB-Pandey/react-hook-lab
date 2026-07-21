@@ -67,6 +67,8 @@ pnpm add react-hook-lab
 |------|-------------|
 | `useClipboard` | Read and write text to the user's clipboard with a temporary `copied` state. |
 | `useOnlineStatus` | Track the browser's online/offline network status dynamically. |
+| `useDownload` | Download JSON objects, Blobs, strings, or fetch remote URLs programmatically. |
+| `useNotifications` | Request OS notification permissions and dispatch native alerts. |
 | `useClickOutside` | Detect clicks outside a specified element (great for dropdowns/modals). |
 | `useElementSize` | Track the width and height of an HTML element. |
 | `useIntersectionObserver`| Detect visibility of an element on screen (for lazy loading). |
@@ -204,6 +206,54 @@ import { useOnlineStatus } from "react-hook-lab";
 function Status() {
   const isOnline = useOnlineStatus();
   return <div>{isOnline ? "✅ Online" : "❌ Offline (Check your connection)"}</div>;
+}
+```
+
+#### `useDownload`
+Download JSON objects, raw strings, Blobs, or fetch remote URLs with a clean asynchronous API.
+```tsx
+import { useDownload } from "react-hook-lab";
+
+function ExportData() {
+  const { download, status, error } = useDownload();
+
+  const handleExport = () => {
+    // Easily download an object as a .json file
+    download({ user: "Admin", data: [1, 2, 3] }, "export.json");
+    
+    // Or fetch a remote file automatically
+    // download("https://picsum.photos/200", "image.jpg");
+  };
+
+  return (
+    <div>
+      <button onClick={handleExport} disabled={status === "downloading"}>
+        {status === "downloading" ? "Downloading..." : "Export"}
+      </button>
+      {error && <p style={{ color: "red" }}>{error}</p>}
+    </div>
+  );
+}
+```
+
+#### `useNotifications`
+Request OS notification permissions and dispatch native system alerts effortlessly.
+```tsx
+import { useNotifications } from "react-hook-lab";
+
+function Alerts() {
+  // Pass { autoRequest: false } to wait for a user gesture before prompting
+  const { permission, requestPermission, sendNotification } = useNotifications();
+
+  const notify = () => {
+    if (permission !== "granted") {
+      requestPermission();
+    } else {
+      sendNotification("Download Complete", { body: "Your export.json is ready." });
+    }
+  };
+
+  return <button onClick={notify}>Enable Alerts</button>;
 }
 ```
 
@@ -430,3 +480,8 @@ We welcome contributions! Please follow these steps:
 
 ---
 Built with ❤️ by [Saurav-TB-Pandey](https://github.com/Saurav-TB-Pandey).
+
+### Connect with me
+- [Blog](https://sauravtbpandey.blogspot.com/)
+- [LinkedIn](https://www.linkedin.com/in/pandeysaurav/)
+- [Dev.to](https://dev.to/saurav_tb_pandey)

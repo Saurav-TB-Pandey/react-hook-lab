@@ -6,7 +6,14 @@ export * from "./time";
 export * from "./debug";
 
 import { useAsync, useAsyncDebounce, useDebounce, useThrottle } from "./async";
-import { useClipboard, useLocalStorage, useOnlineStatus, useSessionStorage } from "./browser";
+import {
+  useClipboard,
+  useDownload,
+  useLocalStorage,
+  useNotifications,
+  useOnlineStatus,
+  useSessionStorage,
+} from "./browser";
 import {
   useClickOutside,
   useElementSize,
@@ -24,7 +31,9 @@ export default {
   useDebounce,
   useThrottle,
   useClipboard,
+  useDownload,
   useLocalStorage,
+  useNotifications,
   useOnlineStatus,
   useSessionStorage,
   useClickOutside,

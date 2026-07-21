@@ -1,7 +1,6 @@
 import * as React from "react";
 import { useEffect, useRef } from "react";
 
-
 export type ChangeType =
   | "primitive-changed"
   | "reference-changed-value-changed"

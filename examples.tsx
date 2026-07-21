@@ -20,6 +20,8 @@ import {
   useTimeout,
   useToggle,
   useWidth,
+  useDownload,
+  useNotifications,
 } from "react-hook-lab";
 
 export function ReactHookLabExamples() {
@@ -44,6 +46,8 @@ export function ReactHookLabExamples() {
   const clipboard = useClipboard();
   const [theme, setTheme] = useLocalStorage("theme", "light");
   const [draft, setDraft] = useSessionStorage("draft", "");
+  const { download, status: downloadStatus } = useDownload();
+  const { requestPermission, sendNotification } = useNotifications({ autoRequest: false });
 
   const boolean = useBoolean(false);
   const counter = useCounter(0, { min: 0, max: 10, step: 2 });
@@ -103,6 +107,10 @@ export function ReactHookLabExamples() {
       <button onClick={asyncState.retry}>Retry async</button>
       <button onClick={timeout.restart}>Restart timeout</button>
       <button onClick={interval.stop}>Stop interval</button>
+      <button onClick={() => download({ demo: true }, "demo.json")}>Test Download</button>
+      <button onClick={() => { requestPermission().then(() => sendNotification("Test Notif")); }}>
+        Test Notification
+      </button>
 
       <div ref={measuredRef}>
         <p>Debounced: {debouncedQuery}</p>
