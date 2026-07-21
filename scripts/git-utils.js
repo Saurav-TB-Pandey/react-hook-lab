@@ -12,8 +12,13 @@ function getChangesSummary() {
   if (!eventPath || !fs.existsSync(eventPath)) {
     console.log('GITHUB_EVENT_PATH is not set (running locally). Falling back to the last commit for testing.');
     try {
-      const lastCommitId = execSync('git log -1 --format="%H"', { encoding: 'utf8' }).trim();
-      const lastCommitMsg = execSync('git log -1 --format="%s"', { encoding: 'utf8' }).trim();
+      // Get the last commit that actually touched the src/ directory
+      const lastCommitId = execSync('git log -1 --format="%H" -- src/', { encoding: 'utf8' }).trim();
+      const lastCommitMsg = execSync('git log -1 --format="%s" -- src/', { encoding: 'utf8' }).trim();
+      
+      if (!lastCommitId) {
+         throw new Error("No commits found that touched the src/ directory.");
+      }
       commits = [{ id: lastCommitId, message: lastCommitMsg }];
     } catch (err) {
       console.error('Failed to retrieve local git commit:', err.message);

@@ -64,8 +64,10 @@ async function generateArticle(geminiApiKey, prompt) {
     const parsedData = JSON.parse(cleanJsonStr);
     
     // Validate the shape of the data
-    if (!parsedData.title || typeof parsedData.title !== 'string') throw new Error('Missing or invalid "title"');
+    if (!parsedData.devto_title || typeof parsedData.devto_title !== 'string') throw new Error('Missing or invalid "devto_title"');
+    if (!parsedData.blogger_title || typeof parsedData.blogger_title !== 'string') throw new Error('Missing or invalid "blogger_title"');
     if (!parsedData.body_markdown || typeof parsedData.body_markdown !== 'string') throw new Error('Missing or invalid "body_markdown"');
+    if (!parsedData.body_html || typeof parsedData.body_html !== 'string') throw new Error('Missing or invalid "body_html"');
     if (!parsedData.linkedin_post || typeof parsedData.linkedin_post !== 'string') throw new Error('Missing or invalid "linkedin_post"');
     
     // Validate tags

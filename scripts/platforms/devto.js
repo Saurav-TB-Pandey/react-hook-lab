@@ -17,7 +17,7 @@ async function publishToDevTo(apiKey, articleData, canonicalUrl = null) {
     },
     body: JSON.stringify({
       article: {
-        title: articleData.title,
+        title: articleData.devto_title,
         body_markdown: articleData.body_markdown,
         published: true, // Set to true for live articles
         canonical_url: canonicalUrl || undefined,

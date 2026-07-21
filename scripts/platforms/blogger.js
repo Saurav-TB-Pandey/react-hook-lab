@@ -17,7 +17,7 @@ async function publishToBlogger(accessToken, blogId, articleData) {
 
     const postData = JSON.stringify({
       kind: 'blogger#post',
-      title: articleData.title,
+      title: articleData.blogger_title,
       content: articleData.body_html,
       labels: articleData.tags || []
     });

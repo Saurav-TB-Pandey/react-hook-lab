@@ -50,7 +50,7 @@ async function main() {
   try {
     // 3. Generate article using Gemini
     const articleData = await generateArticle(geminiApiKey, prompt);
-    console.log(`Generated Article Title: ${articleData.title}`);
+    console.log(`Generated Article Title: ${articleData.devto_title}`);
 
     // 3. Publish to platforms
 
