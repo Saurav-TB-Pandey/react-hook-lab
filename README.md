@@ -86,6 +86,7 @@ pnpm add react-hook-lab
 | `useSharedState` | Share state seamlessly across components *and* browser tabs in real-time. |
 | `useLocalStorage` | Persist and sync state in `localStorage`. |
 | `useSessionStorage` | Persist and sync state in `sessionStorage`. |
+| `useDeepClone` | Securely deep-clone objects while returning stable references across re-renders to fix broken memoization. |
 | `useBoolean` | Manage a boolean state with specific methods (`on`, `off`, `toggle`). |
 | `useCounter` | Manage a numeric counter with built-in min/max bounds. |
 | `usePrevious` | Store the previous value of a state or prop after a render. |
@@ -455,6 +456,28 @@ import { useSessionStorage } from "react-hook-lab";
 function FormCache() {
   const [name, setName] = useSessionStorage("draft-name", "");
   return <input value={name} onChange={(e) => setName(e.target.value)} />;
+}
+```
+
+#### `useDeepClone`
+As we all know, there wasn't a simple built-in way to clone data deeply in JavaScript without performance issues or missing features. This hook helps developers to clone data at the root level efficiently.
+
+It works for **every data type available**: both primitives (strings, numbers, booleans) and non-primitives (deeply nested objects, arrays, Maps, Sets, Dates, and TypedArrays). It even perfectly handles complex Circular References!
+
+Crucially for React, it guarantees a **stable memory reference** across renders if the input hasn't changed, completely fixing broken memoization.
+
+```tsx
+import { useDeepClone } from "react-hook-lab";
+
+function HeavyComponent({ complexConfig }) {
+  // If the parent passes a brand new object literal, useDeepClone intercepts it.
+  // It deeply clones it, but if the content is identical to last render, 
+  // it returns the exact same cached reference!
+  const safeConfig = useDeepClone(complexConfig);
+
+  useEffect(() => {
+    // This effect is now perfectly stable and won't infinite loop
+  }, [safeConfig]);
 }
 ```
 

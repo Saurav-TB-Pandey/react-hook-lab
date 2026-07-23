@@ -3,3 +3,4 @@ export * from "./useCounter";
 export * from "./useToggle";
 export * from "./usePrevious";
 export * from "./useSharedState";
+export * from "./useDeepClone";

@@ -25,7 +25,15 @@ import {
   useWidth,
   useIdle,
 } from "./dom";
-import { useBoolean, useCounter, usePrevious, useSharedState, useToggle } from "./state";
+import {
+  useBoolean,
+  useCounter,
+  usePrevious,
+  useSharedState,
+  useToggle,
+  useDeepClone,
+  deepClone,
+} from "./state";
 import { useInterval, useTimeout, useTimezone } from "./time";
 import { useRenderReason } from "./debug";
 
@@ -50,6 +58,8 @@ export default {
   usePrevious,
   useToggle,
   useSharedState,
+  useDeepClone,
+  deepClone,
   useInterval,
   useTimeout,
   useRenderReason,
