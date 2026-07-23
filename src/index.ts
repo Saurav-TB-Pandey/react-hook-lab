@@ -13,6 +13,9 @@ import {
   useNotifications,
   useOnlineStatus,
   useSessionStorage,
+  useCamera,
+  useMicrophone,
+  useLocation,
 } from "./browser";
 import {
   useClickOutside,
@@ -20,9 +23,18 @@ import {
   useIntersectionObserver,
   useResizeObserver,
   useWidth,
+  useIdle,
 } from "./dom";
-import { useBoolean, useCounter, usePrevious, useSharedState, useToggle } from "./state";
-import { useInterval, useTimeout } from "./time";
+import {
+  useBoolean,
+  useCounter,
+  usePrevious,
+  useSharedState,
+  useToggle,
+  useDeepClone,
+  deepClone,
+} from "./state";
+import { useInterval, useTimeout, useTimezone } from "./time";
 import { useRenderReason } from "./debug";
 
 export default {
@@ -46,7 +58,14 @@ export default {
   usePrevious,
   useToggle,
   useSharedState,
+  useDeepClone,
+  deepClone,
   useInterval,
   useTimeout,
   useRenderReason,
+  useCamera,
+  useMicrophone,
+  useLocation,
+  useIdle,
+  useTimezone,
 };

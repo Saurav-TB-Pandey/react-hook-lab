@@ -4,3 +4,6 @@ export * from "./useSessionStorage";
 export * from "./useOnlineStatus";
 export * from "./useDownload";
 export * from "./useNotifications";
+export * from "./useCamera";
+export * from "./useMicrophone";
+export * from "./useLocation";

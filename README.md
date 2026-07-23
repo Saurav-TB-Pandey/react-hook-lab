@@ -61,6 +61,7 @@ pnpm add react-hook-lab
 | `useThrottle` | Limit the rate at which a state can update. |
 | `useInterval` | Declarative `setInterval` that handles cleanup and closure staleness. |
 | `useTimeout` | Declarative `setTimeout` that handles cleanup. |
+| `useTimezone` | Safely access the user's local timezone (SSR compatible). |
 
 ### Browser & DOM
 | Hook | Description |
@@ -69,6 +70,10 @@ pnpm add react-hook-lab
 | `useOnlineStatus` | Track the browser's online/offline network status dynamically. |
 | `useDownload` | Download JSON objects, Blobs, strings, or fetch remote URLs programmatically. |
 | `useNotifications` | Request OS notification permissions and dispatch native alerts. |
+| `useCamera` | Request camera access and record video/audio natively. |
+| `useMicrophone` | Request microphone access and monitor real-time volume levels. |
+| `useLocation` | Access the browser's Geolocation API securely. |
+| `useIdle` | Track user inactivity across the browser tab efficiently. |
 | `useClickOutside` | Detect clicks outside a specified element (great for dropdowns/modals). |
 | `useElementSize` | Track the width and height of an HTML element. |
 | `useIntersectionObserver`| Detect visibility of an element on screen (for lazy loading). |
@@ -81,6 +86,7 @@ pnpm add react-hook-lab
 | `useSharedState` | Share state seamlessly across components *and* browser tabs in real-time. |
 | `useLocalStorage` | Persist and sync state in `localStorage`. |
 | `useSessionStorage` | Persist and sync state in `sessionStorage`. |
+| `useDeepClone` | Securely deep-clone objects while returning stable references across re-renders to fix broken memoization. |
 | `useBoolean` | Manage a boolean state with specific methods (`on`, `off`, `toggle`). |
 | `useCounter` | Manage a numeric counter with built-in min/max bounds. |
 | `usePrevious` | Store the previous value of a state or prop after a render. |
@@ -183,6 +189,17 @@ function Notification() {
 }
 ```
 
+#### `useTimezone`
+Safely access the user's local timezone. Guarantees safe SSR hydration by returning `null` on the server and resolving in the client.
+```tsx
+import { useTimezone } from "react-hook-lab";
+
+function Welcome() {
+  const timezone = useTimezone();
+  return <div>Your timezone is: {timezone || 'Loading...'}</div>;
+}
+```
+
 ---
 
 ### 🌐 Browser & DOM Hooks
@@ -254,6 +271,66 @@ function Alerts() {
   };
 
   return <button onClick={notify}>Enable Alerts</button>;
+}
+```
+
+#### `useCamera`
+Request camera permissions and easily record video or take snapshots.
+```tsx
+import { useCamera } from "react-hook-lab";
+
+function Webcam() {
+  const { videoRef, requestCamera, status, stop } = useCamera();
+  
+  return (
+    <div>
+      <button onClick={requestCamera}>Start Camera</button>
+      <video ref={videoRef} autoPlay playsInline muted />
+    </div>
+  );
+}
+```
+
+#### `useMicrophone`
+Request microphone permissions, monitor audio levels in real-time, and record audio.
+```tsx
+import { useMicrophone } from "react-hook-lab";
+
+function AudioMonitor() {
+  const { requestMicrophone, audioLevel, status } = useMicrophone();
+  
+  return (
+    <div>
+      <button onClick={requestMicrophone}>Start Mic</button>
+      <div>Volume: {audioLevel}%</div>
+    </div>
+  );
+}
+```
+
+#### `useLocation`
+Securely access the user's latitude and longitude via the Geolocation API.
+```tsx
+import { useLocation } from "react-hook-lab";
+
+function Map() {
+  const { location, retry, status } = useLocation();
+  
+  if (status === "idle") return <button onClick={retry}>Get Location</button>;
+  if (status === "loading") return <div>Locating...</div>;
+  
+  return <div>Lat: {location?.lat}, Lng: {location?.lng}</div>;
+}
+```
+
+#### `useIdle`
+Detect when a user has stopped interacting with your page.
+```tsx
+import { useIdle } from "react-hook-lab";
+
+function InactivityWarning() {
+  const isIdle = useIdle(60000); // 1 minute
+  return isIdle ? <div>Are you still there?</div> : null;
 }
 ```
 
@@ -379,6 +456,28 @@ import { useSessionStorage } from "react-hook-lab";
 function FormCache() {
   const [name, setName] = useSessionStorage("draft-name", "");
   return <input value={name} onChange={(e) => setName(e.target.value)} />;
+}
+```
+
+#### `useDeepClone`
+As we all know, there wasn't a simple built-in way to clone data deeply in JavaScript without performance issues or missing features. This hook helps developers to clone data at the root level efficiently.
+
+It works for **every data type available**: both primitives (strings, numbers, booleans) and non-primitives (deeply nested objects, arrays, Maps, Sets, Dates, and TypedArrays). It even perfectly handles complex Circular References!
+
+Crucially for React, it guarantees a **stable memory reference** across renders if the input hasn't changed, completely fixing broken memoization.
+
+```tsx
+import { useDeepClone } from "react-hook-lab";
+
+function HeavyComponent({ complexConfig }) {
+  // If the parent passes a brand new object literal, useDeepClone intercepts it.
+  // It deeply clones it, but if the content is identical to last render, 
+  // it returns the exact same cached reference!
+  const safeConfig = useDeepClone(complexConfig);
+
+  useEffect(() => {
+    // This effect is now perfectly stable and won't infinite loop
+  }, [safeConfig]);
 }
 ```
 
