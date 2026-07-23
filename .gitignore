@@ -98,5 +98,6 @@ Thumbs.db
 
 # Ignore generated compiled files from TypeScript
 dist/
-scripts/auth/
+scripts/auth/get-google-token.js
+scripts/auth/get-linkedin-token.js
 playground/
