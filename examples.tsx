@@ -22,6 +22,11 @@ import {
   useWidth,
   useDownload,
   useNotifications,
+  useCamera,
+  useMicrophone,
+  useLocation,
+  useIdle,
+  useTimezone,
 } from "react-hook-lab";
 
 export function ReactHookLabExamples() {
@@ -48,6 +53,12 @@ export function ReactHookLabExamples() {
   const [draft, setDraft] = useSessionStorage("draft", "");
   const { download, status: downloadStatus } = useDownload();
   const { requestPermission, sendNotification } = useNotifications({ autoRequest: false });
+
+  const camera = useCamera();
+  const microphone = useMicrophone();
+  const location = useLocation();
+  const isIdle = useIdle();
+  const timezone = useTimezone();
 
   const boolean = useBoolean(false);
   const counter = useCounter(0, { min: 0, max: 10, step: 2 });
@@ -111,6 +122,9 @@ export function ReactHookLabExamples() {
       <button onClick={() => { requestPermission().then(() => sendNotification("Test Notif")); }}>
         Test Notification
       </button>
+      <button onClick={camera.requestCamera}>Request Camera</button>
+      <button onClick={microphone.requestMicrophone}>Request Mic</button>
+      <button onClick={location.retry}>Request Location</button>
 
       <div ref={measuredRef}>
         <p>Debounced: {debouncedQuery}</p>
@@ -137,6 +151,11 @@ export function ReactHookLabExamples() {
         </p>
         <p>Timeout active: {timeout.isActive() ? "yes" : "no"}</p>
         <p>Interval running: {interval.isRunning() ? "yes" : "no"}</p>
+        <p>Camera Status: {camera.status}</p>
+        <p>Mic Status: {microphone.status}</p>
+        <p>Location Status: {location.status}</p>
+        <p>Idle: {isIdle ? "yes" : "no"}</p>
+        <p>Timezone: {timezone || "loading..."}</p>
       </div>
     </section>
   );
