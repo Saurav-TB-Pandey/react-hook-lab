@@ -41,7 +41,7 @@ async function publishToBlogger(accessToken, blogId, articleData) {
         data += chunk;
       });
 
-      res.on('end', () => {
+      res.on('end', async () => {
         try {
           // If response is not JSON, throw an error with the preview
           if (!res.headers['content-type']?.includes('application/json')) {
@@ -54,6 +54,30 @@ async function publishToBlogger(accessToken, blogId, articleData) {
             console.log(`✅ Successfully published to Blogger!`);
             console.log(`🔗 URL: ${response.url}`);
             resolve(response);
+          } else if (res.statusCode === 401) {
+            console.log('⚠️ Blogger API returned 401 Unauthorized. Access token might be expired.');
+            
+            const refreshToken = process.env.GOOGLE_REFRESH_TOKEN;
+            const clientId = process.env.GOOGLE_CLIENT_ID;
+            const clientSecret = process.env.GOOGLE_CLIENT_SECRET;
+            
+            if (refreshToken && clientId && clientSecret) {
+               try {
+                 const { refreshGoogleToken } = require('../auth/refresh-google-token');
+                 const newAccessToken = await refreshGoogleToken(clientId, clientSecret, refreshToken);
+                 
+                 // Update the environment with the new token so other scripts might use it
+                 process.env.GOOGLE_ACCESS_TOKEN = newAccessToken;
+                 
+                 console.log('🔄 Retrying publish to Blogger with new access token...');
+                 const retryResult = await publishToBlogger(newAccessToken, blogId, articleData);
+                 resolve(retryResult);
+               } catch (refreshErr) {
+                 reject(new Error(`Failed to refresh token and retry: ${refreshErr.message}`));
+               }
+            } else {
+               reject(new Error(`Blogger API Error: 401 Unauthorized. Missing refresh token or client credentials in env to auto-refresh.`));
+            }
           } else {
             reject(new Error(`Blogger API Error: ${response.error?.message || JSON.stringify(response)}`));
           }
