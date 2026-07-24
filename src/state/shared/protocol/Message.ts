@@ -46,6 +46,7 @@ export type SharedMessage<T = unknown> =
 
 /**
  * Creates a REQUEST message.
+ * @internal
  */
 export function createRequestMessage(key: string, tabId: string): RequestMessage {
   return {
@@ -58,6 +59,7 @@ export function createRequestMessage(key: string, tabId: string): RequestMessage
 
 /**
  * Creates a SNAPSHOT message.
+ * @internal
  */
 export function createSnapshotMessage<T>(
   key: string,
@@ -75,6 +77,7 @@ export function createSnapshotMessage<T>(
 
 /**
  * Creates an UPDATE message.
+ * @internal
  */
 export function createUpdateMessage<T>(
   key: string,
@@ -92,6 +95,7 @@ export function createUpdateMessage<T>(
 
 /**
  * Creates a DELETE message.
+ * @internal
  */
 export function createDeleteMessage(
   key: string,
@@ -109,6 +113,7 @@ export function createDeleteMessage(
 
 /**
  * Parses and validates a BroadcastChannel payload.
+ * @internal
  */
 export function parseMessage(value: unknown): SharedMessage | null {
   if (!isRecord(value)) return null;

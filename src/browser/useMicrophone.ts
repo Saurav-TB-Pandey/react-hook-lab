@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useCallback, useEffect, useRef, useState } from "react";
 
 const DEFAULT_CONSTRAINTS: MediaStreamConstraints = { audio: true };

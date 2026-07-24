@@ -3,8 +3,8 @@ const assert = require('node:assert/strict');
 const React = require('react');
 const TestRenderer = require('react-test-renderer');
 const { act } = TestRenderer;
-const { useDeepClone, deepClone } = require('..');
-
+const { useDeepClone } = require('..');
+const { deepClone } = require('../dist/utils');
 test('deepClone deep clones plain objects completely', () => {
   const original = { a: 1, b: { c: 2 } };
   const cloned = deepClone(original);

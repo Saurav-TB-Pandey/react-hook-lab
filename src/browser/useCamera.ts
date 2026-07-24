@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useCallback, useEffect, useRef, useState, RefObject } from "react";
 
 const DEFAULT_CONSTRAINTS: MediaStreamConstraints = { video: true };
@@ -271,7 +272,9 @@ export function useCamera(constraints: MediaStreamConstraints = DEFAULT_CONSTRAI
       recordingAudioStreamRef.current = null;
       recordingRequestRef.current = false;
       streamRef.current?.getTracks().forEach((track) => track.stop());
+      // eslint-disable-next-line react-hooks/exhaustive-deps
       if (imageUrlRef.current) URL.revokeObjectURL(imageUrlRef.current);
+      // eslint-disable-next-line react-hooks/exhaustive-deps
       if (recordedVideoUrlRef.current) URL.revokeObjectURL(recordedVideoUrlRef.current);
     };
   }, []);

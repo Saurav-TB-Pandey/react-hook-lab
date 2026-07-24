@@ -3,6 +3,7 @@ import type { SharedListener, SharedStateInitialValue, Unsubscribe } from "../ty
 
 /**
  * External-store snapshot adapter for shared state keys.
+ * @internal
  */
 export class SnapshotManager {
   /**
@@ -22,5 +23,6 @@ export class SnapshotManager {
 
 /**
  * Singleton snapshot manager for hooks.
+ * @internal
  */
 export const snapshotManager = new SnapshotManager();

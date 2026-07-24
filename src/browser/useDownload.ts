@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useCallback, useState } from "react";
 
 function triggerBlobDownload(blob: Blob, filename: string) {

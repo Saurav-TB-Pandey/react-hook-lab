@@ -19,6 +19,7 @@ import { createTabId } from "../utils/uuid";
 
 /**
  * Coordinates shared state storage, subscriptions, and cross-tab transport.
+ * @internal
  */
 export class SharedEngine {
   private readonly tabId = createTabId();
@@ -133,5 +134,6 @@ export class SharedEngine {
 
 /**
  * Singleton shared engine for this module instance.
+ * @internal
  */
 export const sharedEngine = new SharedEngine();

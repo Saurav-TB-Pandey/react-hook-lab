@@ -9,8 +9,9 @@
     "jsx": "react-jsx",
     "moduleResolution": "node",
     "skipLibCheck": true,
+    "stripInternal": true,
     "lib": ["ES2019", "DOM"],
     "outDir": "./dist"
   },
-  "include": ["index.ts", "src/**/*.d.ts"]
+  "include": ["index.ts", "utils.ts", "src/**/*.d.ts"]
 }

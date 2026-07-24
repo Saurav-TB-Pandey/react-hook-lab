@@ -3,6 +3,7 @@ import { parseMessage, type SharedMessage } from "../protocol/Message";
 
 /**
  * BroadcastChannel transport wrapper.
+ * @internal
  */
 export class Channel {
   private readonly channel: BroadcastChannel | null;
