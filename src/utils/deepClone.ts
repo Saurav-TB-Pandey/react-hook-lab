@@ -10,7 +10,7 @@
  * 3. Prototype Pollution protection (skips `__proto__` and `constructor`).
  * 4. Prototype Chain Preservation (uses `Object.create(Object.getPrototypeOf(value))`).
  * 5. Native fast paths for Date, Map, Set, RegExp, TypedArrays.
- * 
+ *
  * Note: Guaranteed to return a completely new reference for all objects.
  *
  * @param value The value to clone
@@ -19,7 +19,7 @@
  */
 export function deepClone<T>(value: T, seen = new WeakMap<any, any>()): T {
   // 1. Primitives — nothing to clone, return as-is
-  if (value === null || typeof value !== 'object') {
+  if (value === null || typeof value !== "object") {
     return value;
   }
 
@@ -70,7 +70,7 @@ export function deepClone<T>(value: T, seen = new WeakMap<any, any>()): T {
   }
 
   // Ensure we don't accidentally deep clone DOM Elements (huge memory spike)
-  if (typeof window !== 'undefined' && value instanceof Element) {
+  if (typeof window !== "undefined" && value instanceof Element) {
     return value; // Skip cloning DOM elements
   }
 
@@ -84,10 +84,10 @@ export function deepClone<T>(value: T, seen = new WeakMap<any, any>()): T {
   const keys = Reflect.ownKeys(value as object);
   for (const key of keys) {
     // Prototype Pollution protection
-    if (key === '__proto__' || key === 'constructor') {
+    if (key === "__proto__" || key === "constructor") {
       continue;
     }
-    
+
     const descriptor = Object.getOwnPropertyDescriptor(value, key);
     if (descriptor && descriptor.enumerable) {
       (clone as any)[key] = deepClone((value as any)[key], seen);

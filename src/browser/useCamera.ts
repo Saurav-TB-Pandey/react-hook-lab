@@ -28,11 +28,13 @@ export interface UseCameraReturn {
 /**
  * A React hook for accessing and recording from the user's camera and microphone.
  * Supports taking picture snapshots and recording video with audio.
- * 
+ *
  * @param {MediaStreamConstraints} constraints - The media constraints to apply when requesting the camera (e.g., `{ video: true }`).
  * @returns {UseCameraReturn} An object containing stream references, state flags, recorded blobs, and control functions.
  */
-export function useCamera(constraints: MediaStreamConstraints = DEFAULT_CONSTRAINTS): UseCameraReturn {
+export function useCamera(
+  constraints: MediaStreamConstraints = DEFAULT_CONSTRAINTS
+): UseCameraReturn {
   const [stream, setStream] = useState<MediaStream | null>(null);
   const [status, setStatus] = useState<CameraStatus>("idle");
   const [error, setError] = useState<string | null>(null);
@@ -52,17 +54,20 @@ export function useCamera(constraints: MediaStreamConstraints = DEFAULT_CONSTRAI
   const imageUrlRef = useRef<string | null>(null);
   const recordedVideoUrlRef = useRef<string | null>(null);
 
-  const replaceObjectUrl = useCallback((
-    urlRef: React.MutableRefObject<string | null>, 
-    blob: Blob | null, 
-    setUrl: React.Dispatch<React.SetStateAction<string | null>>
-  ) => {
-    if (urlRef.current) URL.revokeObjectURL(urlRef.current);
+  const replaceObjectUrl = useCallback(
+    (
+      urlRef: React.MutableRefObject<string | null>,
+      blob: Blob | null,
+      setUrl: React.Dispatch<React.SetStateAction<string | null>>
+    ) => {
+      if (urlRef.current) URL.revokeObjectURL(urlRef.current);
 
-    const nextUrl = blob ? URL.createObjectURL(blob) : null;
-    urlRef.current = nextUrl;
-    setUrl(nextUrl);
-  }, []);
+      const nextUrl = blob ? URL.createObjectURL(blob) : null;
+      urlRef.current = nextUrl;
+      setUrl(nextUrl);
+    },
+    []
+  );
 
   const requestCamera = useCallback(async () => {
     if (typeof navigator === "undefined" || !navigator.mediaDevices?.getUserMedia) {
@@ -87,7 +92,7 @@ export function useCamera(constraints: MediaStreamConstraints = DEFAULT_CONSTRAI
       setError(
         denied
           ? "Camera access is blocked. Enable Camera in this site's browser permissions and try again."
-          : err?.message || "Unable to access the camera",
+          : err?.message || "Unable to access the camera"
       );
     }
   }, [constraints]);
@@ -128,11 +133,11 @@ export function useCamera(constraints: MediaStreamConstraints = DEFAULT_CONSTRAI
             resolve(blob);
           },
           type,
-          quality,
+          quality
         );
       });
     },
-    [replaceObjectUrl],
+    [replaceObjectUrl]
   );
 
   const startRecording = useCallback(async () => {
@@ -170,7 +175,7 @@ export function useCamera(constraints: MediaStreamConstraints = DEFAULT_CONSTRAI
       setError(
         denied
           ? "Microphone permission is required to record video with sound. Enable Microphone in this site's browser permissions and try again."
-          : err?.message || "Unable to access the microphone for recording",
+          : err?.message || "Unable to access the microphone for recording"
       );
       recordingRequestRef.current = false;
       setIsPreparingRecording(false);
@@ -178,9 +183,7 @@ export function useCamera(constraints: MediaStreamConstraints = DEFAULT_CONSTRAI
     }
 
     const preferredType = "video/webm;codecs=vp9";
-    const mimeType = MediaRecorder.isTypeSupported(preferredType)
-      ? preferredType
-      : "video/webm";
+    const mimeType = MediaRecorder.isTypeSupported(preferredType) ? preferredType : "video/webm";
 
     try {
       recordedChunksRef.current = [];

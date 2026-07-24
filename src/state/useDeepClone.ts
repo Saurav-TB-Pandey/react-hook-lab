@@ -1,5 +1,5 @@
-import { useRef, useMemo } from 'react';
-import { deepClone } from '../utils/deepClone';
+import { useRef, useMemo } from "react";
+import { deepClone } from "../utils/deepClone";
 
 /**
  * Deep-clones `value`, but skips the clone entirely and returns the

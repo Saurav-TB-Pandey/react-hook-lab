@@ -18,7 +18,7 @@ export interface UseLocationReturn {
 /**
  * A React hook that accesses the browser's Geolocation API.
  * Automatically tracks permission changes and safely handles missing hardware.
- * 
+ *
  * @returns {UseLocationReturn} An object containing the current location, status, error message, and a retry function.
  */
 export function useLocation(): UseLocationReturn {
@@ -49,7 +49,7 @@ export function useLocation(): UseLocationReturn {
         if (err.code === err.PERMISSION_DENIED) {
           setStatus("denied");
           setError(
-            "Location access is blocked. Enable Location in this site's browser permissions, then click Retry location.",
+            "Location access is blocked. Enable Location in this site's browser permissions, then click Retry location."
           );
           return;
         }
@@ -57,7 +57,7 @@ export function useLocation(): UseLocationReturn {
         setStatus("error");
         setError(err.message || "Unable to retrieve your location");
       },
-      { enableHighAccuracy: true, timeout: 10000 },
+      { enableHighAccuracy: true, timeout: 10000 }
     );
   }, []);
 
@@ -73,7 +73,7 @@ export function useLocation(): UseLocationReturn {
       } else if (permissionStatus.state === "denied") {
         setStatus("denied");
         setError(
-          "Location access is blocked. Enable Location in this site's browser permissions, then click Retry location.",
+          "Location access is blocked. Enable Location in this site's browser permissions, then click Retry location."
         );
       }
     };
@@ -91,7 +91,7 @@ export function useLocation(): UseLocationReturn {
           } else {
             setStatus("denied");
             setError(
-              "Location access is blocked. Enable Location in this site's browser permissions, then click Retry location.",
+              "Location access is blocked. Enable Location in this site's browser permissions, then click Retry location."
             );
           }
 
