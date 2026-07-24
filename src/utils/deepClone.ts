@@ -66,7 +66,6 @@ export function deepClone<T>(value: T, seen = new WeakMap<any, any>()): T {
 
   if (ArrayBuffer.isView(value)) {
     // TypedArrays (Uint8Array, Float32Array, etc.) — slice() is a fast native copy
-    // @ts-expect-error - slice exists on TypedArrays but TS complains on generic ArrayBufferView
     return (value as any).slice();
   }
 

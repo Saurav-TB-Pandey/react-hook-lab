@@ -97,6 +97,11 @@ pnpm add react-hook-lab
 |------|-------------|
 | `useRenderReason` | Deeply diagnose why a component re-rendered (wasted renders, loops, etc). |
 
+### 🛠️ Utilities
+| Utility | Description |
+|------|-------------|
+| `deepClone` | Securely deep-clone objects, arrays, Maps, Sets, Dates. Handles circular references perfectly. |
+
 ---
 
 ## 📚 API Documentation
@@ -109,15 +114,15 @@ Manage complex asynchronous data fetching with a clean state object.
 import { useAsync } from "react-hook-lab";
 
 function UserProfile({ userId }) {
-  const { execute, status, value, error } = useAsync(
+  const { execute, data, loading, error } = useAsync(
     () => fetch(`/api/users/${userId}`).then((res) => res.json()),
     [userId]
   );
 
-  if (status === "idle") return <button onClick={execute}>Fetch User</button>;
-  if (status === "pending") return <div>Loading spinner...</div>;
-  if (status === "error") return <div>Error: {error.message}</div>;
-  return <div>Welcome, {value?.name}</div>;
+  if (!data && !loading && !error) return <button onClick={execute}>Fetch User</button>;
+  if (loading) return <div>Loading spinner...</div>;
+  if (error) return <div>Error: {error.message}</div>;
+  return <div>Welcome, {data?.name}</div>;
 }
 ```
 
@@ -127,9 +132,12 @@ Debounce an asynchronous callback. Useful for preventing spam API calls when a u
 import { useAsyncDebounce } from "react-hook-lab";
 
 function Search() {
-  const fetchAutocomplete = useAsyncDebounce(async (query) => {
-    return await api.get(`/search?q=${query}`);
-  }, 300); // Only fires 300ms after the last keystroke
+  const { result, loading } = useAsyncDebounce(
+    useCallback(async () => {
+      return await api.get(`/search?q=${query}`);
+    }, [query]), 
+    300 // Only fires 300ms after the last keystroke
+  );
 }
 ```
 
@@ -317,7 +325,7 @@ function Map() {
   const { location, retry, status } = useLocation();
   
   if (status === "idle") return <button onClick={retry}>Get Location</button>;
-  if (status === "loading") return <div>Locating...</div>;
+  if (status === "prompting") return <div>Locating...</div>;
   
   return <div>Lat: {location?.lat}, Lng: {location?.lng}</div>;
 }
@@ -487,7 +495,7 @@ Easily manage boolean state with dedicated `on`, `off`, and `toggle` methods.
 import { useBoolean } from "react-hook-lab";
 
 function Modal() {
-  const { value: isOpen, on: open, off: close, toggle } = useBoolean(false);
+  const { value: isOpen, setTrue: open, setFalse: close, toggle } = useBoolean(false);
   return <button onClick={toggle}>Toggle Modal</button>;
 }
 ```
@@ -498,7 +506,7 @@ Manage numeric state with built-in min and max bounds.
 import { useCounter } from "react-hook-lab";
 
 function Cart() {
-  const [count, { increment, decrement, reset, set }] = useCounter(1, { min: 1, max: 10 });
+  const { count, increment, decrement, reset, set } = useCounter(1, { min: 1, max: 10 });
   return <button onClick={increment}>Add: {count}</button>;
 }
 ```
@@ -522,7 +530,7 @@ Toggle between two generic values of any type.
 import { useToggle } from "react-hook-lab";
 
 function Mode() {
-  const [mode, toggleMode] = useToggle("light", "dark");
+  const { value: mode, toggle: toggleMode } = useToggle("light", "dark");
   return <button onClick={toggleMode}>Current: {mode}</button>;
 }
 ```
@@ -553,6 +561,36 @@ function HeavyChart({ data, options, onPointClick }) {
 - 🔵 `Context(ThemeContext): object reference changed, value unchanged. → Same content, new reference.`
 - 🟡 `No tracked props/state changed — likely a wasted render triggered by a parent. Consider React.memo.`
 - 🚨 `WARNING: Rendered more than expected in a short window — possible re-render loop or missing memoization.`
+
+---
+
+### 🛠️ Utilities
+
+#### `deepClone`
+A highly-optimized, secure deep cloning utility that works for all data types (including nested objects, arrays, Maps, Sets, Dates, and TypedArrays) while flawlessly handling circular references. 
+
+It is completely decoupled from React and can be used in standard JavaScript/Node.js environments, making it perfect for your backend or pure logic files.
+
+*Note: Utilities are imported from the `/utils` path to keep the main bundle extremely lightweight.*
+
+```typescript
+import { deepClone } from "react-hook-lab/utils";
+
+const original = {
+  user: { name: "Alice" },
+  date: new Date(),
+  config: new Map([["theme", "dark"]])
+};
+
+// Even handles complex circular references!
+original.self = original; 
+
+const cloned = deepClone(original);
+
+console.log(cloned !== original); // true
+console.log(cloned.user !== original.user); // true
+console.log(cloned.self === cloned); // true (reference structure preserved)
+```
 
 ---
 

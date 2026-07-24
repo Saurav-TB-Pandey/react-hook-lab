@@ -42,7 +42,7 @@ export function ReactHookLabExamples() {
   );
 
   const asyncDebounceState = useAsyncDebounce(
-    async () => `Result for ${debouncedQuery}`,
+    React.useCallback(async () => `Result for ${debouncedQuery}`, [debouncedQuery]),
     400
   );
 

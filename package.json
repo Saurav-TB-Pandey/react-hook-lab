@@ -28,7 +28,7 @@
     "auth:google": "npx kill-port 3000 && node scripts/auth/get-google-token.js",
     "auth:linkedin": "npx kill-port 3000 && node scripts/auth/get-linkedin-token.js",
     "publish:article": "node scripts/publish-article.js",
-    "update-secret": "node scripts/auth/update-github-secret.js"
+    "update:secret": "node scripts/auth/update-github-secret.js"
   },
   "keywords": [
     "react-hook-lab",
