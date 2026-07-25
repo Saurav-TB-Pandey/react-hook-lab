@@ -7,6 +7,7 @@ import type {
 
 /**
  * In-memory store for all shared state entries.
+ * @internal
  */
 export class SharedStore {
   private readonly entries = new Map<string, SharedEntry<unknown>>();

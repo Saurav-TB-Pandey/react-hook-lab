@@ -1,9 +1,11 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useCallback, useEffect, useRef, useState } from "react";
 
 const DEFAULT_CONSTRAINTS: MediaStreamConstraints = { audio: true };
 const AUDIO_THROTTLE_MS = 100;
 
-export type MicrophoneStatus = "idle" | "unsupported" | "prompting" | "granted" | "denied" | "error";
+export type MicrophoneStatus =
+  "idle" | "unsupported" | "prompting" | "granted" | "denied" | "error";
 
 export interface UseMicrophoneReturn {
   stream: MediaStream | null;
@@ -23,11 +25,13 @@ export interface UseMicrophoneReturn {
 /**
  * A React hook for accessing, monitoring, and recording from the user's microphone.
  * Provides real-time audio volume levels (throttled to 10fps for performance) and audio recording functionality.
- * 
+ *
  * @param {MediaStreamConstraints} constraints - The media constraints to apply when requesting the microphone (e.g., `{ audio: true }`).
  * @returns {UseMicrophoneReturn} An object containing the audio stream, volume level, recording blobs, and control functions.
  */
-export function useMicrophone(constraints: MediaStreamConstraints = DEFAULT_CONSTRAINTS): UseMicrophoneReturn {
+export function useMicrophone(
+  constraints: MediaStreamConstraints = DEFAULT_CONSTRAINTS
+): UseMicrophoneReturn {
   const [stream, setStream] = useState<MediaStream | null>(null);
   const [status, setStatus] = useState<MicrophoneStatus>("idle");
   const [error, setError] = useState<string | null>(null);
@@ -80,7 +84,7 @@ export function useMicrophone(constraints: MediaStreamConstraints = DEFAULT_CONS
 
       const tick = () => {
         analyser.getByteFrequencyData(dataArray);
-        
+
         const now = performance.now();
         // Throttle React state updates to avoid rendering 60 times a second
         if (now - lastAudioUpdateRef.current >= AUDIO_THROTTLE_MS) {
@@ -94,7 +98,7 @@ export function useMicrophone(constraints: MediaStreamConstraints = DEFAULT_CONS
 
       tick();
     },
-    [stopMonitoring],
+    [stopMonitoring]
   );
 
   const requestMicrophone = useCallback(async () => {
@@ -121,7 +125,7 @@ export function useMicrophone(constraints: MediaStreamConstraints = DEFAULT_CONS
       setError(
         denied
           ? "Microphone access is blocked. Enable Microphone in this site's browser permissions and try again."
-          : err?.message || "Unable to access the microphone",
+          : err?.message || "Unable to access the microphone"
       );
     }
   }, [constraints, monitorAudioLevel]);
@@ -139,17 +143,15 @@ export function useMicrophone(constraints: MediaStreamConstraints = DEFAULT_CONS
 
     if (recorderRef.current) return false;
 
-    const supportedType = [
-      "audio/webm;codecs=opus",
-      "audio/webm",
-      "audio/mp4",
-    ].find((type) => MediaRecorder.isTypeSupported(type));
+    const supportedType = ["audio/webm;codecs=opus", "audio/webm", "audio/mp4"].find((type) =>
+      MediaRecorder.isTypeSupported(type)
+    );
 
     try {
       recordedChunksRef.current = [];
       const recorder = new MediaRecorder(
         streamRef.current,
-        supportedType ? { mimeType: supportedType } : undefined,
+        supportedType ? { mimeType: supportedType } : undefined
       );
       recorderRef.current = recorder;
 

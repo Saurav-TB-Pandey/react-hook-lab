@@ -1,6 +1,6 @@
 {
   "name": "react-hook-lab",
-  "version": "1.4.0",
+  "version": "1.5.0",
   "description": "A lightweight collection of reusable React hooks for async operations, browser APIs, DOM observers, state management, timers, and utilities. Built with TypeScript.",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -10,6 +10,11 @@
       "types": "./dist/index.d.ts",
       "require": "./dist/index.js",
       "default": "./dist/index.js"
+    },
+    "./utils": {
+      "types": "./dist/utils.d.ts",
+      "require": "./dist/utils.js",
+      "default": "./dist/utils.js"
     }
   },
   "scripts": {
@@ -18,12 +23,13 @@
     "test": "node --test tests/*.test.js",
     "lint": "eslint \"src/**/*.{ts,tsx}\"",
     "format": "prettier --write \"src/**/*.{ts,tsx}\"",
-    "prepublishOnly": "npm run typecheck && npm run build && npm test",
+    "prepublishOnly": "npm run validate",
+    "validate": "npm run format && npm run lint && npm run typecheck && npm test && npm run build",
     "pack:dry-run": "npm pack --dry-run",
     "auth:google": "npx kill-port 3000 && node scripts/auth/get-google-token.js",
     "auth:linkedin": "npx kill-port 3000 && node scripts/auth/get-linkedin-token.js",
     "publish:article": "node scripts/publish-article.js",
-    "update-secret": "node scripts/auth/update-github-secret.js"
+    "update:secret": "node scripts/auth/update-github-secret.js"
   },
   "keywords": [
     "react-hook-lab",
@@ -66,6 +72,10 @@
     "download",
     "useNotifications",
     "notifications",
+    "clone",
+    "deepClone",
+    "useDeepClone",
+    "performance",
     "camera",
     "microphone",
     "location",

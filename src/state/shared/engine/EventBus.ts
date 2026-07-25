@@ -2,6 +2,7 @@ import type { SharedListener, Unsubscribe } from "../types";
 
 /**
  * Keyed event bus for external store subscriptions.
+ * @internal
  */
 export class EventBus {
   private readonly listeners = new Map<string, Set<SharedListener>>();

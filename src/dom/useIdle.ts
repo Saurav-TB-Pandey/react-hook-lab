@@ -14,12 +14,15 @@ const THROTTLE_MS = 500;
 /**
  * A React hook that detects user inactivity across the browser window.
  * Event listeners are automatically throttled for maximum performance.
- * 
+ *
  * @param {number} timeout - The duration in milliseconds of inactivity required before the user is considered idle (default: 60000ms).
  * @param {(keyof WindowEventMap)[]} events - An array of DOM events to listen to for activity (e.g., `["mousemove", "keydown"]`).
  * @returns {boolean} `true` if the user is currently idle, `false` otherwise.
  */
-export function useIdle(timeout = 60000, events: (keyof WindowEventMap)[] = DEFAULT_EVENTS): boolean {
+export function useIdle(
+  timeout = 60000,
+  events: (keyof WindowEventMap)[] = DEFAULT_EVENTS
+): boolean {
   const [isIdle, setIsIdle] = useState(false);
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const lastActiveRef = useRef<number>(0);
@@ -27,10 +30,10 @@ export function useIdle(timeout = 60000, events: (keyof WindowEventMap)[] = DEFA
 
   const resetTimer = useCallback(() => {
     const now = performance.now();
-    
+
     // Throttle the resets so we aren't clearing/setting timeouts on every pixel of mouse movement
     if (now - lastActiveRef.current < THROTTLE_MS) {
-       return;
+      return;
     }
     lastActiveRef.current = now;
 
@@ -51,11 +54,11 @@ export function useIdle(timeout = 60000, events: (keyof WindowEventMap)[] = DEFA
 
   useEffect(() => {
     if (typeof window === "undefined") return;
-    
+
     resetTimer();
 
     events.forEach((event) =>
-      window.addEventListener(event, resetTimer as EventListener, { passive: true }),
+      window.addEventListener(event, resetTimer as EventListener, { passive: true })
     );
 
     return () => {
