@@ -1,6 +1,6 @@
 import * as React from "react";
 import { useEffect, useRef } from "react";
-
+import { deepEqual } from "../utils/deepEqual";
 export type ChangeType =
   | "primitive-changed"
   | "reference-changed-value-changed"
@@ -41,51 +41,6 @@ export interface UseRenderReasonOptions {
   onRender?: (info: RenderReasonInfo) => void;
   /** Automatically detect and track changes in consumed Contexts. Default: true. */
   trackContexts?: boolean;
-}
-
-const MAX_DEPTH = 5;
-
-function deepEqual(a: unknown, b: unknown, depth = 0, seen = new WeakSet<object>()): boolean {
-  if (Object.is(a, b)) return true;
-  if (typeof a !== typeof b) return false;
-  if (a === null || b === null) return false;
-  if (typeof a !== "object") return false; // functions/symbols already handled by Object.is
-  if (depth >= MAX_DEPTH) return false;
-
-  const objA = a as object;
-  const objB = b as object;
-
-  // Circular reference guard — bail out treating it as "equal enough"
-  // rather than infinitely recursing or crashing.
-  if (seen.has(objA)) return true;
-  seen.add(objA);
-
-  if (Array.isArray(objA) !== Array.isArray(objB)) return false;
-
-  if (Array.isArray(objA)) {
-    const arrB = objB as unknown[];
-    if (objA.length !== arrB.length) return false;
-    return objA.every((v, i) => deepEqual(v, arrB[i], depth + 1, seen));
-  }
-
-  if (objA instanceof Date && objB instanceof Date) {
-    return objA.getTime() === objB.getTime();
-  }
-
-  const keysA = Object.keys(objA);
-  const keysB = Object.keys(objB);
-  if (keysA.length !== keysB.length) return false;
-
-  return keysA.every(
-    (k) =>
-      Object.prototype.hasOwnProperty.call(objB, k) &&
-      deepEqual(
-        (objA as Record<string, unknown>)[k],
-        (objB as Record<string, unknown>)[k],
-        depth + 1,
-        seen
-      )
-  );
 }
 
 function classifyChange(key: string, from: unknown, to: unknown, deep: boolean): PropChange | null {

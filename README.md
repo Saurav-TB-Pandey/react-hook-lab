@@ -87,6 +87,7 @@ pnpm add react-hook-lab
 | `useLocalStorage` | Persist and sync state in `localStorage`. |
 | `useSessionStorage` | Persist and sync state in `sessionStorage`. |
 | `useDeepClone` | Securely deep-clone objects while returning stable references across re-renders to fix broken memoization. |
+| `useDeepMemo` | Like `useMemo`, but compares dependencies by deep value equality instead of reference. |
 | `useBoolean` | Manage a boolean state with specific methods (`on`, `off`, `toggle`). |
 | `useCounter` | Manage a numeric counter with built-in min/max bounds. |
 | `usePrevious` | Store the previous value of a state or prop after a render. |
@@ -101,6 +102,7 @@ pnpm add react-hook-lab
 | Utility | Description |
 |------|-------------|
 | `deepClone` | Securely deep-clone objects, arrays, Maps, Sets, Dates. Handles circular references perfectly. |
+| `deepEqual` | Robustly compare objects, arrays, Maps, Sets, Dates for value equality. Safe against circular references. |
 
 ---
 
@@ -288,7 +290,7 @@ Request camera permissions and easily record video or take snapshots.
 import { useCamera } from "react-hook-lab";
 
 function Webcam() {
-  const { videoRef, requestCamera, status, stop } = useCamera();
+  const { videoRef, requestCamera, status, stopCamera } = useCamera();
   
   return (
     <div>
@@ -489,6 +491,25 @@ function HeavyComponent({ complexConfig }) {
 }
 ```
 
+#### `useDeepMemo`
+Like React's `useMemo`, but it compares the dependencies array using deep value equality instead of strict reference equality (`===`).
+
+This is incredibly useful when a dependency is an object or array literal that is recreated on every render but contains the exact same data.
+
+```tsx
+import { useDeepMemo } from "react-hook-lab";
+
+function DataProcessor({ filterOptions }) {
+  // Even if filterOptions is a new object reference every render,
+  // processedData will ONLY be recomputed if the actual contents change!
+  const processedData = useDeepMemo(() => {
+    return expensiveProcessing(filterOptions);
+  }, [filterOptions]);
+
+  return <div>{processedData.length} results</div>;
+}
+```
+
 #### `useBoolean`
 Easily manage boolean state with dedicated `on`, `off`, and `toggle` methods.
 ```tsx
@@ -590,6 +611,23 @@ const cloned = deepClone(original);
 console.log(cloned !== original); // true
 console.log(cloned.user !== original.user); // true
 console.log(cloned.self === cloned); // true (reference structure preserved)
+```
+
+#### `deepEqual`
+A highly-optimized, secure deep equality utility that compares primitives, nested objects, arrays, Maps, Sets, Dates, and TypedArrays by value instead of strict reference equality. It handles circular references safely without crashing.
+
+```typescript
+import { deepEqual } from "react-hook-lab/utils";
+
+const obj1 = { name: "Alice", nested: { a: 1 } };
+const obj2 = { name: "Alice", nested: { a: 1 } };
+
+console.log(obj1 === obj2); // false
+console.log(deepEqual(obj1, obj2)); // true
+
+const map1 = new Map([["key", "value"]]);
+const map2 = new Map([["key", "value"]]);
+console.log(deepEqual(map1, map2)); // true
 ```
 
 ---

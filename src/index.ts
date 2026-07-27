@@ -32,6 +32,7 @@ import {
   useSharedState,
   useToggle,
   useDeepClone,
+  useDeepMemo,
 } from "./state";
 import { useInterval, useTimeout, useTimezone } from "./time";
 import { useRenderReason } from "./debug";
@@ -58,6 +59,7 @@ export default {
   useToggle,
   useSharedState,
   useDeepClone,
+  useDeepMemo,
   useInterval,
   useTimeout,
   useRenderReason,
