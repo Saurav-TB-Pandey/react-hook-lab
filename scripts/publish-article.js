@@ -5,6 +5,7 @@ const { generateArticle } = require('./gemini-utils');
 const { publishToDevTo } = require('./platforms/devto');
 const { publishToLinkedIn } = require('./platforms/linkedin');
 const { publishToBlogger } = require('./platforms/blogger');
+const { publishToGitHub } = require('./platforms/github');
 const { fetchPastAnalytics } = require('./analytics');
 
 const { getArticlePrompt } = require('./prompts');
@@ -71,6 +72,13 @@ async function main() {
 
     // -> LinkedIn
     await publishToLinkedIn(articleData, bloggerUrl);
+
+    // -> GitHub Release
+    if (articleData.github_release_markdown) {
+      // Handle the fact that GitHub Actions sets it as GH_TOKEN, local .env is often GH_PAT
+      const ghToken = process.env.GH_TOKEN || process.env.GH_PAT;
+      await publishToGitHub(ghToken, articleData.github_release_markdown);
+    }
   } catch (error) {
     console.error('\nAn error occurred during the publishing process:');
     console.error(error.message || error);
