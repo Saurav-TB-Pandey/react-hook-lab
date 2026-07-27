@@ -1,5 +1,6 @@
 /**
  * Creates a random id for the current browser tab.
+ * @internal
  */
 export function createTabId(): string {
   const cryptoApi = globalThis.crypto;

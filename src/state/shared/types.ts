@@ -15,6 +15,7 @@ export type SharedStateSetter<T> = (value: SharedStateAction<T>) => void;
 
 /**
  * A value stored for a shared state key.
+ * @internal
  */
 export interface SharedEntry<T> {
   value: T;
@@ -25,6 +26,7 @@ export interface SharedEntry<T> {
 
 /**
  * Metadata required for deterministic conflict resolution.
+ * @internal
  */
 export interface SharedEntryMeta {
   version: number;
@@ -34,10 +36,12 @@ export interface SharedEntryMeta {
 
 /**
  * Listener used by the external store event bus.
+ * @internal
  */
 export type SharedListener = () => void;
 
 /**
  * Cleanup callback returned by subscriptions.
+ * @internal
  */
 export type Unsubscribe = () => void;

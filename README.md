@@ -61,6 +61,7 @@ pnpm add react-hook-lab
 | `useThrottle` | Limit the rate at which a state can update. |
 | `useInterval` | Declarative `setInterval` that handles cleanup and closure staleness. |
 | `useTimeout` | Declarative `setTimeout` that handles cleanup. |
+| `useTimezone` | Safely access the user's local timezone (SSR compatible). |
 
 ### Browser & DOM
 | Hook | Description |
@@ -69,6 +70,10 @@ pnpm add react-hook-lab
 | `useOnlineStatus` | Track the browser's online/offline network status dynamically. |
 | `useDownload` | Download JSON objects, Blobs, strings, or fetch remote URLs programmatically. |
 | `useNotifications` | Request OS notification permissions and dispatch native alerts. |
+| `useCamera` | Request camera access and record video/audio natively. |
+| `useMicrophone` | Request microphone access and monitor real-time volume levels. |
+| `useLocation` | Access the browser's Geolocation API securely. |
+| `useIdle` | Track user inactivity across the browser tab efficiently. |
 | `useClickOutside` | Detect clicks outside a specified element (great for dropdowns/modals). |
 | `useElementSize` | Track the width and height of an HTML element. |
 | `useIntersectionObserver`| Detect visibility of an element on screen (for lazy loading). |
@@ -81,6 +86,7 @@ pnpm add react-hook-lab
 | `useSharedState` | Share state seamlessly across components *and* browser tabs in real-time. |
 | `useLocalStorage` | Persist and sync state in `localStorage`. |
 | `useSessionStorage` | Persist and sync state in `sessionStorage`. |
+| `useDeepClone` | Securely deep-clone objects while returning stable references across re-renders to fix broken memoization. |
 | `useBoolean` | Manage a boolean state with specific methods (`on`, `off`, `toggle`). |
 | `useCounter` | Manage a numeric counter with built-in min/max bounds. |
 | `usePrevious` | Store the previous value of a state or prop after a render. |
@@ -90,6 +96,11 @@ pnpm add react-hook-lab
 | Hook | Description |
 |------|-------------|
 | `useRenderReason` | Deeply diagnose why a component re-rendered (wasted renders, loops, etc). |
+
+### 🛠️ Utilities
+| Utility | Description |
+|------|-------------|
+| `deepClone` | Securely deep-clone objects, arrays, Maps, Sets, Dates. Handles circular references perfectly. |
 
 ---
 
@@ -103,15 +114,15 @@ Manage complex asynchronous data fetching with a clean state object.
 import { useAsync } from "react-hook-lab";
 
 function UserProfile({ userId }) {
-  const { execute, status, value, error } = useAsync(
+  const { execute, data, loading, error } = useAsync(
     () => fetch(`/api/users/${userId}`).then((res) => res.json()),
     [userId]
   );
 
-  if (status === "idle") return <button onClick={execute}>Fetch User</button>;
-  if (status === "pending") return <div>Loading spinner...</div>;
-  if (status === "error") return <div>Error: {error.message}</div>;
-  return <div>Welcome, {value?.name}</div>;
+  if (!data && !loading && !error) return <button onClick={execute}>Fetch User</button>;
+  if (loading) return <div>Loading spinner...</div>;
+  if (error) return <div>Error: {error.message}</div>;
+  return <div>Welcome, {data?.name}</div>;
 }
 ```
 
@@ -121,9 +132,12 @@ Debounce an asynchronous callback. Useful for preventing spam API calls when a u
 import { useAsyncDebounce } from "react-hook-lab";
 
 function Search() {
-  const fetchAutocomplete = useAsyncDebounce(async (query) => {
-    return await api.get(`/search?q=${query}`);
-  }, 300); // Only fires 300ms after the last keystroke
+  const { result, loading } = useAsyncDebounce(
+    useCallback(async () => {
+      return await api.get(`/search?q=${query}`);
+    }, [query]), 
+    300 // Only fires 300ms after the last keystroke
+  );
 }
 ```
 
@@ -180,6 +194,17 @@ function Notification() {
   
   if (!show) return null;
   return <div>This will disappear in 5 seconds!</div>;
+}
+```
+
+#### `useTimezone`
+Safely access the user's local timezone. Guarantees safe SSR hydration by returning `null` on the server and resolving in the client.
+```tsx
+import { useTimezone } from "react-hook-lab";
+
+function Welcome() {
+  const timezone = useTimezone();
+  return <div>Your timezone is: {timezone || 'Loading...'}</div>;
 }
 ```
 
@@ -254,6 +279,66 @@ function Alerts() {
   };
 
   return <button onClick={notify}>Enable Alerts</button>;
+}
+```
+
+#### `useCamera`
+Request camera permissions and easily record video or take snapshots.
+```tsx
+import { useCamera } from "react-hook-lab";
+
+function Webcam() {
+  const { videoRef, requestCamera, status, stop } = useCamera();
+  
+  return (
+    <div>
+      <button onClick={requestCamera}>Start Camera</button>
+      <video ref={videoRef} autoPlay playsInline muted />
+    </div>
+  );
+}
+```
+
+#### `useMicrophone`
+Request microphone permissions, monitor audio levels in real-time, and record audio.
+```tsx
+import { useMicrophone } from "react-hook-lab";
+
+function AudioMonitor() {
+  const { requestMicrophone, audioLevel, status } = useMicrophone();
+  
+  return (
+    <div>
+      <button onClick={requestMicrophone}>Start Mic</button>
+      <div>Volume: {audioLevel}%</div>
+    </div>
+  );
+}
+```
+
+#### `useLocation`
+Securely access the user's latitude and longitude via the Geolocation API.
+```tsx
+import { useLocation } from "react-hook-lab";
+
+function Map() {
+  const { location, retry, status } = useLocation();
+  
+  if (status === "idle") return <button onClick={retry}>Get Location</button>;
+  if (status === "prompting") return <div>Locating...</div>;
+  
+  return <div>Lat: {location?.lat}, Lng: {location?.lng}</div>;
+}
+```
+
+#### `useIdle`
+Detect when a user has stopped interacting with your page.
+```tsx
+import { useIdle } from "react-hook-lab";
+
+function InactivityWarning() {
+  const isIdle = useIdle(60000); // 1 minute
+  return isIdle ? <div>Are you still there?</div> : null;
 }
 ```
 
@@ -382,13 +467,35 @@ function FormCache() {
 }
 ```
 
+#### `useDeepClone`
+As we all know, there wasn't a simple built-in way to clone data deeply in JavaScript without performance issues or missing features. This hook helps developers to clone data at the root level efficiently.
+
+It works for **every data type available**: both primitives (strings, numbers, booleans) and non-primitives (deeply nested objects, arrays, Maps, Sets, Dates, and TypedArrays). It even perfectly handles complex Circular References!
+
+Crucially for React, it guarantees a **stable memory reference** across renders if the input hasn't changed, completely fixing broken memoization.
+
+```tsx
+import { useDeepClone } from "react-hook-lab";
+
+function HeavyComponent({ complexConfig }) {
+  // If the parent passes a brand new object literal, useDeepClone intercepts it.
+  // It deeply clones it, but if the content is identical to last render, 
+  // it returns the exact same cached reference!
+  const safeConfig = useDeepClone(complexConfig);
+
+  useEffect(() => {
+    // This effect is now perfectly stable and won't infinite loop
+  }, [safeConfig]);
+}
+```
+
 #### `useBoolean`
 Easily manage boolean state with dedicated `on`, `off`, and `toggle` methods.
 ```tsx
 import { useBoolean } from "react-hook-lab";
 
 function Modal() {
-  const { value: isOpen, on: open, off: close, toggle } = useBoolean(false);
+  const { value: isOpen, setTrue: open, setFalse: close, toggle } = useBoolean(false);
   return <button onClick={toggle}>Toggle Modal</button>;
 }
 ```
@@ -399,7 +506,7 @@ Manage numeric state with built-in min and max bounds.
 import { useCounter } from "react-hook-lab";
 
 function Cart() {
-  const [count, { increment, decrement, reset, set }] = useCounter(1, { min: 1, max: 10 });
+  const { count, increment, decrement, reset, set } = useCounter(1, { min: 1, max: 10 });
   return <button onClick={increment}>Add: {count}</button>;
 }
 ```
@@ -423,7 +530,7 @@ Toggle between two generic values of any type.
 import { useToggle } from "react-hook-lab";
 
 function Mode() {
-  const [mode, toggleMode] = useToggle("light", "dark");
+  const { value: mode, toggle: toggleMode } = useToggle("light", "dark");
   return <button onClick={toggleMode}>Current: {mode}</button>;
 }
 ```
@@ -454,6 +561,36 @@ function HeavyChart({ data, options, onPointClick }) {
 - 🔵 `Context(ThemeContext): object reference changed, value unchanged. → Same content, new reference.`
 - 🟡 `No tracked props/state changed — likely a wasted render triggered by a parent. Consider React.memo.`
 - 🚨 `WARNING: Rendered more than expected in a short window — possible re-render loop or missing memoization.`
+
+---
+
+### 🛠️ Utilities
+
+#### `deepClone`
+A highly-optimized, secure deep cloning utility that works for all data types (including nested objects, arrays, Maps, Sets, Dates, and TypedArrays) while flawlessly handling circular references. 
+
+It is completely decoupled from React and can be used in standard JavaScript/Node.js environments, making it perfect for your backend or pure logic files.
+
+*Note: Utilities are imported from the `/utils` path to keep the main bundle extremely lightweight.*
+
+```typescript
+import { deepClone } from "react-hook-lab/utils";
+
+const original = {
+  user: { name: "Alice" },
+  date: new Date(),
+  config: new Map([["theme", "dark"]])
+};
+
+// Even handles complex circular references!
+original.self = original; 
+
+const cloned = deepClone(original);
+
+console.log(cloned !== original); // true
+console.log(cloned.user !== original.user); // true
+console.log(cloned.self === cloned); // true (reference structure preserved)
+```
 
 ---
 
