@@ -6,11 +6,11 @@ import { Dispatch, SetStateAction, useCallback, useState } from "react";
  *
  * @param defaultValue - The primary value.
  * @param reverseValue - The secondary value to toggle to.
- * @returns Array tuple containing the current value and a toggle function.
+ * @returns Object containing the current value, setValue, and a toggle function.
  *
  * @example
  * ```tsx
- * const [mode, toggleMode] = useToggle("light", "dark");
+ * const { value: mode, toggle: toggleMode } = useToggle("light", "dark");
  * return <button onClick={toggleMode}>Current: {mode}</button>;
  * ```
  */

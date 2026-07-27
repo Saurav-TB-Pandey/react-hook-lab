@@ -24,9 +24,10 @@ import {
   useNotifications,
   useCamera,
   useMicrophone,
-  useLocation,
   useIdle,
   useTimezone,
+  useDeepClone,
+  useDeepMemo,
 } from "react-hook-lab";
 
 export function ReactHookLabExamples() {
@@ -60,9 +61,15 @@ export function ReactHookLabExamples() {
   const isIdle = useIdle();
   const timezone = useTimezone();
 
+  // Test object for deep cloning / deep memoization
+  const testObj = { a: 1, nested: { b: 2 } };
+  const clonedObj = useDeepClone(testObj);
+  const memoizedValue = useDeepMemo(() => testObj.a + testObj.nested.b, [testObj]);
+
   const boolean = useBoolean(false);
   const counter = useCounter(0, { min: 0, max: 10, step: 2 });
   const toggle = useToggle("grid", "list");
+  const [shared, setShared] = useSharedState("demo-shared-key", "Shared Value");
 
   const panelRef = useRef<HTMLDivElement>(null);
   const measuredRef = useRef<HTMLDivElement>(null);
@@ -156,6 +163,9 @@ export function ReactHookLabExamples() {
         <p>Location Status: {location.status}</p>
         <p>Idle: {isIdle ? "yes" : "no"}</p>
         <p>Timezone: {timezone || "loading..."}</p>
+        <p>DeepClone Stable: {clonedObj ? "yes" : "no"}</p>
+        <p>DeepMemo Value: {memoizedValue}</p>
+        <p>Shared State: {shared}</p>
       </div>
     </section>
   );

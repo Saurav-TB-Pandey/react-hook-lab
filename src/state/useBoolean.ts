@@ -9,7 +9,7 @@ export interface UseBooleanReturn {
 }
 
 /**
- * Easily manage a boolean state with dedicated `on`, `off`, and `toggle` methods.
+ * Easily manage a boolean state with dedicated `setTrue`, `setFalse`, and `toggle` methods.
  * Prevents needing to write `() => setX(true)` all over your components.
  *
  * @param initialValue - The initial boolean state (default: false).
