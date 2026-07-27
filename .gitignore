@@ -100,4 +100,5 @@ Thumbs.db
 dist/
 scripts/auth/get-google-token.js
 scripts/auth/get-linkedin-token.js
+scripts/delete-branch.js
 playground/
