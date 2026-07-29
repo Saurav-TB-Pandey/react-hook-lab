@@ -66,6 +66,7 @@ pnpm add react-hook-lab
 ### Browser & DOM
 | Hook | Description |
 |------|-------------|
+| `useURL` | Access and deeply parse the current browser URL dynamically without a router. |
 | `useClipboard` | Read and write text to the user's clipboard with a temporary `copied` state. |
 | `useOnlineStatus` | Track the browser's online/offline network status dynamically. |
 | `useDownload` | Download JSON objects, Blobs, strings, or fetch remote URLs programmatically. |
@@ -213,6 +214,30 @@ function Welcome() {
 ---
 
 ### 🌐 Browser & DOM Hooks
+
+#### `useURL`
+A highly optimized hook that provides complete, deeply-parsed information about the current browser URL. It automatically reacts to programmatic navigation (`pushState`), back/forward buttons, and hash changes without needing an external routing library. Fully SSR safe.
+```tsx
+import { useURL } from "react-hook-lab";
+
+function Breadcrumbs() {
+  const { pathname, breadcrumbs, query, changed } = useURL();
+
+  return (
+    <div>
+      <p>Current Path: {pathname}</p>
+      <nav>
+        {breadcrumbs.map((crumb) => (
+          <a key={crumb.path} href={crumb.path}>
+            {crumb.name}
+          </a>
+        ))}
+      </nav>
+      {changed && <p>URL just changed! Query page: {query.page}</p>}
+    </div>
+  );
+}
+```
 
 #### `useClipboard`
 Read and write text to the user's clipboard with a temporary `copied` state.

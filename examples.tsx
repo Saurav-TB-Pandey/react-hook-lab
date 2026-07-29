@@ -28,6 +28,7 @@ import {
   useTimezone,
   useDeepClone,
   useDeepMemo,
+  useURL,
 } from "react-hook-lab";
 
 export function ReactHookLabExamples() {
@@ -60,6 +61,7 @@ export function ReactHookLabExamples() {
   const location = useLocation();
   const isIdle = useIdle();
   const timezone = useTimezone();
+  const url = useURL();
 
   // Test object for deep cloning / deep memoization
   const testObj = { a: 1, nested: { b: 2 } };
@@ -166,6 +168,7 @@ export function ReactHookLabExamples() {
         <p>DeepClone Stable: {clonedObj ? "yes" : "no"}</p>
         <p>DeepMemo Value: {memoizedValue}</p>
         <p>Shared State: {shared}</p>
+        <p>URL Path: {url.pathname}</p>
       </div>
     </section>
   );
