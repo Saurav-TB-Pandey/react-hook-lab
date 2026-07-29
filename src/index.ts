@@ -16,6 +16,7 @@ import {
   useCamera,
   useMicrophone,
   useLocation,
+  useURL,
 } from "./browser";
 import {
   useClickOutside,
@@ -68,4 +69,5 @@ export default {
   useLocation,
   useIdle,
   useTimezone,
+  useURL,
 };
