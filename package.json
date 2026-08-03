@@ -101,6 +101,7 @@
     "url": "https://github.com/Saurav-TB-Pandey/react-hook-lab/issues"
   },
   "homepage": "https://github.com/Saurav-TB-Pandey/react-hook-lab#readme",
+  "documentation": "https://github.com/Saurav-TB-Pandey/react-hook-lab/wiki",
   "engines": {
     "node": ">=16"
   },

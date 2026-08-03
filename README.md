@@ -10,6 +10,8 @@ A robust, strictly-typed, and lightweight collection of reusable React hooks.
 
 `react-hook-lab` is designed to solve the most common challenges in React development without bloating your bundle. Whether you need to sync state across browser tabs, deeply diagnose why your components are re-rendering, debounce async API calls, or observe DOM intersections—this library has you covered.
 
+📚 **[Read the Full API Documentation & Wiki](https://github.com/Saurav-TB-Pandey/react-hook-lab/wiki)**
+
 ### 🌟 Key Features
 - **Zero Dependencies:** (Except for React itself).
 - **Fully Typed:** Written entirely in TypeScript with precise generic types.
