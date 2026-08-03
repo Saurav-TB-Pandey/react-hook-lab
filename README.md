@@ -66,6 +66,7 @@ pnpm add react-hook-lab
 ### Browser & DOM
 | Hook | Description |
 |------|-------------|
+| `useFullscreen` | Robust, cross-browser hook to make elements fullscreen programmatically. |
 | `useURL` | Access and deeply parse the current browser URL dynamically without a router. |
 | `useClipboard` | Read and write text to the user's clipboard with a temporary `copied` state. |
 | `useOnlineStatus` | Track the browser's online/offline network status dynamically. |
@@ -214,6 +215,26 @@ function Welcome() {
 ---
 
 ### 🌐 Browser & DOM Hooks
+
+#### `useFullscreen`
+Make any specific DOM element or the entire document fullscreen programmatically across all modern browsers. Guaranteed SSR safe.
+```tsx
+import { useFullscreen } from "react-hook-lab";
+
+function VideoPlayer() {
+  const { ref, isFullscreen, toggle, error } = useFullscreen<HTMLVideoElement>();
+
+  return (
+    <div>
+      {error && <p style={{ color: "red" }}>{error.message}</p>}
+      <video ref={ref} src="movie.mp4" controls />
+      <button onClick={toggle}>
+        {isFullscreen ? "Exit Fullscreen" : "Enter Fullscreen"}
+      </button>
+    </div>
+  );
+}
+```
 
 #### `useURL`
 A highly optimized hook that provides complete, deeply-parsed information about the current browser URL. It automatically reacts to programmatic navigation (`pushState`), back/forward buttons, and hash changes without needing an external routing library. Fully SSR safe.

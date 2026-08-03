@@ -1,4 +1,4 @@
-import { RefObject } from "react";
+import type { RefObject } from "react";
 import { useResizeObserver } from "./useResizeObserver";
 
 export interface ElementSize {

@@ -8,3 +8,4 @@ export * from "./useNotifications";
 export * from "./useCamera";
 export * from "./useMicrophone";
 export * from "./useLocation";
+export * from "./useFullscreen";

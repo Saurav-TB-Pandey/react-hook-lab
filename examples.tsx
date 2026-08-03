@@ -29,6 +29,9 @@ import {
   useDeepClone,
   useDeepMemo,
   useURL,
+  useFullscreen,
+  useLocation,
+  useSharedState,
 } from "react-hook-lab";
 
 export function ReactHookLabExamples() {
@@ -62,6 +65,7 @@ export function ReactHookLabExamples() {
   const isIdle = useIdle();
   const timezone = useTimezone();
   const url = useURL();
+  const fullscreen = useFullscreen();
 
   // Test object for deep cloning / deep memoization
   const testObj = { a: 1, nested: { b: 2 } };
@@ -169,6 +173,10 @@ export function ReactHookLabExamples() {
         <p>DeepMemo Value: {memoizedValue}</p>
         <p>Shared State: {shared}</p>
         <p>URL Path: {url.pathname}</p>
+        <div ref={fullscreen.ref} style={{ background: fullscreen.isFullscreen ? '#222' : 'transparent', padding: '10px' }}>
+          <p>Fullscreen State: {fullscreen.isFullscreen ? "Fullscreen ON" : "Fullscreen OFF"}</p>
+          <button onClick={fullscreen.toggle}>Toggle Fullscreen</button>
+        </div>
       </div>
     </section>
   );

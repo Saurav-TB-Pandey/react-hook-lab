@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useCallback, useEffect, useRef, useState, RefObject } from "react";
+import { useCallback, useEffect, useRef, useState, type RefObject } from "react";
 
 const DEFAULT_CONSTRAINTS: MediaStreamConstraints = { video: true };
 

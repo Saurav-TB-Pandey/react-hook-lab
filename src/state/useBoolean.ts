@@ -1,4 +1,4 @@
-import { Dispatch, SetStateAction, useCallback, useState } from "react";
+import { useCallback, useState, type Dispatch, type SetStateAction } from "react";
 
 export interface UseBooleanReturn {
   value: boolean;
