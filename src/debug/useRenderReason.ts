@@ -188,6 +188,8 @@ export function useRenderReason(
   watched: Record<string, unknown>,
   options: UseRenderReasonOptions = {}
 ): RenderReasonInfo {
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore - 'process' might not be defined if @types/node is missing in user environments
   const isProd = typeof process !== "undefined" && process.env.NODE_ENV === "production";
   const {
     deep = true,

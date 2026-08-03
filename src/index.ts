@@ -17,6 +17,7 @@ import {
   useMicrophone,
   useLocation,
   useURL,
+  useFullscreen,
 } from "./browser";
 import {
   useClickOutside,
@@ -70,4 +71,5 @@ export default {
   useIdle,
   useTimezone,
   useURL,
+  useFullscreen,
 };

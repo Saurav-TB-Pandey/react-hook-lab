@@ -1,4 +1,4 @@
-import { DependencyList, useCallback, useEffect, useRef, useState } from "react";
+import { useState, useEffect, useCallback, type DependencyList, useRef } from "react";
 
 export interface UseAsyncOptions<T> {
   immediate?: boolean;

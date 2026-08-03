@@ -1,4 +1,4 @@
-import { useRef, DependencyList } from "react";
+import { useRef, type DependencyList } from "react";
 import { deepEqual } from "../utils/deepEqual";
 
 /**
