@@ -30,7 +30,8 @@
     "auth:linkedin": "npx kill-port 3000 && node scripts/auth/get-linkedin-token.js",
     "publish:article": "node scripts/publish-article.js",
     "update:secret": "node scripts/auth/update-github-secret.js",
-    "delete:branch": "node scripts/delete-branch.js"
+    "delete:branch": "node scripts/delete-branch.js",
+    "check-milestone": "node scripts/check-milestone.js"
   },
   "keywords": [
     "react",

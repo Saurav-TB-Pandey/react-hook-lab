@@ -1,8 +1,8 @@
-name: NPM Milestone Checker
+name: NPM Milestone Status
 
 on:
   schedule:
-    - cron: '30 3 */3 * *'
+    - cron: "30 3 */4 * *"
   workflow_dispatch:
 
 jobs:
@@ -21,7 +21,7 @@ jobs:
         run: npm install
 
       - name: Check Milestone and Publish
-        run: node scripts/check-milestone.js
+        run: npm run check-milestone
         env:
           GH_TOKEN: ${{ secrets.GH_PAT }}
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
