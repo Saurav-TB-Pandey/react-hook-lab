@@ -20,6 +20,21 @@ function getArticlePrompt(changesSummary, analyticsSummary = '') {
   return customPrompt;
 }
 
+function getMilestonePrompt(milestone) {
+  if (!process.env.SECRET_MILESTONE_PROMPT) {
+    throw new Error('SECRET_MILESTONE_PROMPT environment variable is missing. Please configure it in your .env or GitHub Secrets.');
+  }
+
+  let customPrompt = process.env.SECRET_MILESTONE_PROMPT;
+  customPrompt = customPrompt.replace(/\{\{milestone\}\}/g, milestone.toLocaleString());
+
+  // Unescape literal \n strings back into real newlines if they were escaped in a .env single line
+  customPrompt = customPrompt.replace(/\\n/g, '\n');
+
+  return customPrompt;
+}
+
 module.exports = {
-  getArticlePrompt
+  getArticlePrompt,
+  getMilestonePrompt
 };
