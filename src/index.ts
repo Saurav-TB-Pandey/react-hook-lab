@@ -18,6 +18,8 @@ import {
   useLocation,
   useURL,
   useFullscreen,
+  createIndexedDB,
+  useIndexedDB,
 } from "./browser";
 import {
   useClickOutside,
@@ -72,4 +74,6 @@ export default {
   useTimezone,
   useURL,
   useFullscreen,
+  useIndexedDB,
+  createIndexedDB,
 };
