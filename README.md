@@ -88,6 +88,7 @@ pnpm add react-hook-lab
 | Hook | Description |
 |------|-------------|
 | `useSharedState` | Share state seamlessly across components *and* browser tabs in real-time. |
+| `useIndexedDB` | Powerful, async state management backed by IndexedDB with cross-tab syncing. |
 | `useLocalStorage` | Persist and sync state in `localStorage`. |
 | `useSessionStorage` | Persist and sync state in `sessionStorage`. |
 | `useDeepClone` | Securely deep-clone objects while returning stable references across re-renders to fix broken memoization. |
@@ -487,6 +488,39 @@ function ThemeToggle() {
 function App() {
   const [theme] = useSharedState("global-theme", "light");
   return <div className={`app ${theme}`}>...</div>;
+}
+```
+
+#### `useIndexedDB` 🚀
+A powerful, asynchronous state management hook backed by the browser's IndexedDB. It stores any data type (including Dates, Blobs, and Sets) without serialization, and securely syncs state across all browser tabs in real-time.
+
+**Initialization:** (Call once globally)
+```tsx
+import { createIndexedDB } from "react-hook-lab";
+
+createIndexedDB({
+  dbName: "my-app-storage",
+  version: 1,
+  stores: ["settings", "cache"]
+});
+```
+
+**Usage in components:**
+```tsx
+import { useIndexedDB } from "react-hook-lab";
+
+function ThemeToggle() {
+  const [theme, setTheme, { status, remove }] = useIndexedDB("settings", "theme", "light");
+  
+  if (status === "loading") return <div>Loading...</div>;
+
+  return (
+    <div>
+      <p>Current theme: {theme}</p>
+      <button onClick={() => setTheme("dark")}>Set Dark</button>
+      <button onClick={() => remove()}>Reset</button>
+    </div>
+  );
 }
 ```
 

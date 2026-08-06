@@ -32,7 +32,15 @@ import {
   useFullscreen,
   useLocation,
   useSharedState,
+  useIndexedDB,
+  createIndexedDB,
 } from "react-hook-lab";
+
+createIndexedDB({
+  dbName: "examples-db",
+  version: 1,
+  stores: ["demo"]
+});
 
 export function ReactHookLabExamples() {
   const [query, setQuery] = useState("  search  ");
@@ -76,6 +84,7 @@ export function ReactHookLabExamples() {
   const counter = useCounter(0, { min: 0, max: 10, step: 2 });
   const toggle = useToggle("grid", "list");
   const [shared, setShared] = useSharedState("demo-shared-key", "Shared Value");
+  const [dbVal, setDbVal, { status: dbStatus }] = useIndexedDB("demo", "example-key", "Initial DB Value");
 
   const panelRef = useRef<HTMLDivElement>(null);
   const measuredRef = useRef<HTMLDivElement>(null);
@@ -172,6 +181,7 @@ export function ReactHookLabExamples() {
         <p>DeepClone Stable: {clonedObj ? "yes" : "no"}</p>
         <p>DeepMemo Value: {memoizedValue}</p>
         <p>Shared State: {shared}</p>
+        <p>IndexedDB [{dbStatus}]: {dbVal}</p>
         <p>URL Path: {url.pathname}</p>
         <div ref={fullscreen.ref} style={{ background: fullscreen.isFullscreen ? '#222' : 'transparent', padding: '10px' }}>
           <p>Fullscreen State: {fullscreen.isFullscreen ? "Fullscreen ON" : "Fullscreen OFF"}</p>
