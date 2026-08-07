@@ -14,6 +14,8 @@ type InitialValueRef<T> = {
  *
  * @param key - The unique identifier for this piece of shared state.
  * @param initialValue - The default value.
+ * @param options - Optional configuration.
+ * @param options.enabled - If false, pauses the hook from subscribing and broadcasting.
  * @returns State and updater function, identical to `useState`.
  *
  * @example
@@ -24,8 +26,11 @@ type InitialValueRef<T> = {
  */
 export function useSharedState<T>(
   key: string,
-  initialValue: SharedStateInitialValue<T>
+  initialValue: SharedStateInitialValue<T>,
+  options?: { enabled?: boolean }
 ): [T, SharedStateSetter<T>] {
+  const enabled = options?.enabled ?? true;
+
   const initialValueRef = useRef<InitialValueRef<T>>({ key, initialValue });
 
   if (initialValueRef.current.key !== key) {
@@ -33,26 +38,35 @@ export function useSharedState<T>(
   }
 
   useEffect(() => {
+    if (!enabled) return;
     sharedEngine.initializeKey(key, initialValueRef.current.initialValue);
-  }, [key]);
+  }, [key, enabled]);
 
   const subscribe = useCallback(
-    (listener: () => void) => snapshotManager.subscribe(key, listener),
-    [key]
+    (listener: () => void) => {
+      if (!enabled) return () => {};
+      return snapshotManager.subscribe(key, listener);
+    },
+    [key, enabled]
   );
 
-  const getSnapshot = useCallback(
-    () => snapshotManager.getSnapshot(key, initialValueRef.current.initialValue),
-    [key]
-  );
+  const getSnapshot = useCallback(() => {
+    if (!enabled) {
+      return typeof initialValueRef.current.initialValue === "function"
+        ? (initialValueRef.current.initialValue as () => T)()
+        : initialValueRef.current.initialValue;
+    }
+    return snapshotManager.getSnapshot(key, initialValueRef.current.initialValue);
+  }, [key, enabled]);
 
   const state = useSyncExternalStore(subscribe, getSnapshot, getSnapshot);
 
   const setState = useCallback(
     (action: SharedStateAction<T>) => {
+      if (!enabled) return;
       sharedEngine.setState(key, action, initialValueRef.current.initialValue);
     },
-    [key]
+    [key, enabled]
   );
 
   return [state, setState];

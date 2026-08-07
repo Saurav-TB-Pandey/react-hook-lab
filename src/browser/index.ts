@@ -3,7 +3,13 @@ export * from "./useLocalStorage";
 export * from "./useOnlineStatus";
 export * from "./useSessionStorage";
 export * from "./useURL";
-export * from "./useIndexedDB";
+export {
+  useIndexedDB,
+  createIndexedDB,
+  type IndexedDBConfig,
+  type IndexedDBMeta,
+  type IndexedDBStatus,
+} from "./useIndexedDB";
 export * from "./useDownload";
 export * from "./useNotifications";
 export * from "./useCamera";

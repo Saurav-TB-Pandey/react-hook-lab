@@ -70,7 +70,7 @@ export function deepClone<T>(value: T, seen = new WeakMap<any, any>()): T {
   }
 
   // Ensure we don't accidentally deep clone DOM Elements (huge memory spike)
-  if (typeof window !== "undefined" && value instanceof Element) {
+  if (typeof window !== "undefined" && typeof Element !== "undefined" && value instanceof Element) {
     return value; // Skip cloning DOM elements
   }
 

@@ -2,6 +2,7 @@ export * from "./async";
 export * from "./browser";
 export * from "./dom";
 export * from "./state";
+export * from "./data";
 export * from "./time";
 export * from "./debug";
 
