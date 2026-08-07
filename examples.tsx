@@ -35,6 +35,7 @@ import {
   useIndexedDB,
   createIndexedDB,
   useResource,
+  useFileSystem,
 } from "react-hook-lab";
 
 createIndexedDB({
@@ -94,6 +95,8 @@ export function ReactHookLabExamples() {
       return "Fetched Resource Data!";
     }
   });
+
+  const fileSystem = useFileSystem({ accept: { 'text/plain': ['.txt'] } });
 
   const panelRef = useRef<HTMLDivElement>(null);
   const measuredRef = useRef<HTMLDivElement>(null);
@@ -156,6 +159,9 @@ export function ReactHookLabExamples() {
       <button onClick={camera.requestCamera}>Request Camera</button>
       <button onClick={microphone.requestMicrophone}>Request Mic</button>
       <button onClick={location.retry}>Request Location</button>
+      
+      <button onClick={() => fileSystem.open()}>Open FS File</button>
+      <button onClick={() => fileSystem.save('Example save content from examples.tsx')}>Save FS File</button>
 
       <div ref={measuredRef}>
         <p>Debounced: {debouncedQuery}</p>
@@ -193,6 +199,8 @@ export function ReactHookLabExamples() {
         <p>IndexedDB [{dbStatus}]: {dbVal}</p>
         <p>Resource: {resource.loading ? "Loading..." : resource.data}</p>
         <p>URL Path: {url.pathname}</p>
+        <p>FileSystem File: {fileSystem.file?.name || "None"}</p>
+        <p>FileSystem Content: {fileSystem.content ? fileSystem.content.slice(0, 20) + "..." : "None"}</p>
         <div ref={fullscreen.ref} style={{ background: fullscreen.isFullscreen ? '#222' : 'transparent', padding: '10px' }}>
           <p>Fullscreen State: {fullscreen.isFullscreen ? "Fullscreen ON" : "Fullscreen OFF"}</p>
           <button onClick={fullscreen.toggle}>Toggle Fullscreen</button>

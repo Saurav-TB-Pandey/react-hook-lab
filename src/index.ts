@@ -21,6 +21,7 @@ import {
   useFullscreen,
   createIndexedDB,
   useIndexedDB,
+  useFileSystem,
 } from "./browser";
 import {
   useClickOutside,
@@ -77,4 +78,5 @@ export default {
   useFullscreen,
   useIndexedDB,
   createIndexedDB,
+  useFileSystem,
 };

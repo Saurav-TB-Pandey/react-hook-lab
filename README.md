@@ -68,6 +68,7 @@ pnpm add react-hook-lab
 ### Browser & DOM
 | Hook | Description |
 |------|-------------|
+| `useFileSystem` | 🚀 Powerful local-first hook using the File System Access API to read/overwrite native files continuously. |
 | `useFullscreen` | Robust, cross-browser hook to make elements fullscreen programmatically. |
 | `useURL` | Access and deeply parse the current browser URL dynamically without a router. |
 | `useClipboard` | Read and write text to the user's clipboard with a temporary `copied` state. |
@@ -219,6 +220,37 @@ function Welcome() {
 ---
 
 ### 🌐 Browser & DOM Hooks
+
+#### `useFileSystem` 🚀 *(New)*
+Uses the modern File System Access API to allow users to grant permission to a specific file on their hard drive. The hook provides methods to continuously read from or write to that file without prompting them to re-download it every time. Perfect for local-first apps like markdown editors!
+```tsx
+import { useFileSystem } from "react-hook-lab";
+
+function LocalTextEditor() {
+  const { isSupported, file, open, save, saveAs } = useFileSystem({ 
+    accept: { 'text/plain': ['.txt'] } 
+  });
+
+  if (!isSupported) return <div>Browser not supported</div>;
+
+  return (
+    <div>
+      <button onClick={() => open()}>Open Local File</button>
+      
+      {/* If a file is open, save() overwrites it. If no file is open, save() delegates to saveAs()! */}
+      <button onClick={() => save("New text content!")}>
+        Save
+      </button>
+
+      <button onClick={() => saveAs("New text content!", { suggestedName: 'copy.txt' })}>
+        Save As...
+      </button>
+
+      <p>Currently editing: {file ? file.name : "Untitled"}</p>
+    </div>
+  );
+}
+```
 
 #### `useFullscreen`
 Make any specific DOM element or the entire document fullscreen programmatically across all modern browsers. Guaranteed SSR safe.

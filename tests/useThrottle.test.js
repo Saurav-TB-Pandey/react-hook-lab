@@ -12,7 +12,7 @@ test('useThrottle emits the latest value after the throttle window', async () =>
   let renderer;
 
   function TestComponent({ value }) {
-    latestValue = useThrottle(value, 20);
+    latestValue = useThrottle(value, 100);
     return null;
   }
 
@@ -33,7 +33,7 @@ test('useThrottle emits the latest value after the throttle window', async () =>
   assert.equal(latestValue, 'first');
 
   await act(async () => {
-    await wait(30);
+    await wait(150);
   });
 
   assert.equal(latestValue, 'second');

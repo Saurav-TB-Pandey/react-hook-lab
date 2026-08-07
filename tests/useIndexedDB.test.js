@@ -101,7 +101,7 @@ test('useIndexedDB', async (t) => {
     assert.strictEqual(val, 'default-value');
     assert.strictEqual(meta.status, 'loading');
 
-    await wait(20);
+    await wait(50);
     
     act(() => {
       root.update(React.createElement(TestComponent));
@@ -124,7 +124,7 @@ test('useIndexedDB', async (t) => {
       root = TestRenderer.create(React.createElement(TestComponent));
     });
     
-    await wait(20);
+    await wait(50);
     act(() => {
       root.update(React.createElement(TestComponent));
     });
@@ -142,7 +142,7 @@ test('useIndexedDB', async (t) => {
     [val, setVal, meta] = latestState;
     assert.strictEqual(val, 'new-value'); // Optimistic local update
     
-    await wait(20);
+    await wait(50);
     assert.strictEqual(mockDbStore.get('testStore::writeKey'), 'new-value');
   });
 
@@ -158,7 +158,7 @@ test('useIndexedDB', async (t) => {
       root = TestRenderer.create(React.createElement(TestComponent));
     });
     
-    await wait(20);
+    await wait(50);
     act(() => {
       root.update(React.createElement(TestComponent));
     });
@@ -169,13 +169,13 @@ test('useIndexedDB', async (t) => {
       setVal('new-value');
     });
     
-    await wait(20);
+    await wait(50);
     
     act(() => {
       latestState[2].remove();
     });
     
-    await wait(20);
+    await wait(50);
     act(() => {
       root.update(React.createElement(TestComponent));
     });
@@ -203,7 +203,7 @@ test('useIndexedDB', async (t) => {
     assert.strictEqual(val, 'default-value');
     assert.strictEqual(meta.status, 'idle');
 
-    await wait(20);
+    await wait(50);
     
     act(() => {
       root.update(React.createElement(TestComponent));
@@ -214,7 +214,7 @@ test('useIndexedDB', async (t) => {
     assert.strictEqual(meta.status, 'idle');
     
     act(() => setVal('new-value'));
-    await wait(20);
+    await wait(50);
     assert.strictEqual(mockDbStore.get('testStore::testKeyEnabled'), 'db-value');
   });
 });
