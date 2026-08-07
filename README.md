@@ -87,6 +87,7 @@ pnpm add react-hook-lab
 ### State Management
 | Hook | Description |
 |------|-------------|
+| `useResource` | 🚀 Ultimate data fetching hook with SWR caching, polling, and IndexedDB persistence. |
 | `useSharedState` | Share state seamlessly across components *and* browser tabs in real-time. |
 | `useIndexedDB` | Powerful, async state management backed by IndexedDB with cross-tab syncing. |
 | `useLocalStorage` | Persist and sync state in `localStorage`. |
@@ -471,6 +472,35 @@ function View() {
 ---
 
 ### 💾 State Management Hooks
+
+#### `useResource` 🚀 *(New)*
+The ultimate hook for data fetching, server-state management, and optimistic mutations. It combines SWR (Stale-While-Revalidate) caching strategies with our `useSharedState` and `useIndexedDB` primitives, giving you cross-tab synchronization and offline disk persistence automatically!
+
+```tsx
+import { useResource } from "react-hook-lab";
+
+function UserProfile({ userId }) {
+  const { data, loading, error, mutate } = useResource({
+    key: `user:${userId}`,
+    fetcher: (signal) => fetch(`/api/users/${userId}`, { signal }).then(res => res.json()),
+    cache: "indexeddb",       // Persist to disk for offline support
+    persist: { store: "users" },
+    staleTime: 5 * 60 * 1000, // Serve from cache without fetching for 5 minutes
+  });
+
+  if (loading && !data) return <div>Loading...</div>;
+  if (error) return <div>Error!</div>;
+  
+  return (
+    <div>
+      <h1>{data.name}</h1>
+      <button onClick={() => mutate(prev => ({ ...prev, name: "New Name" }))}>
+        Optimistic Update
+      </button>
+    </div>
+  );
+}
+```
 
 #### `useSharedState` 🚀 *(Advanced)*
 A powerful hook that replaces complex global state managers (like Redux or Zustand) for simple values, while *also* syncing the state across multiple browser tabs in real-time using `BroadcastChannel`.

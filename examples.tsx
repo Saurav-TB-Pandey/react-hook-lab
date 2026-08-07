@@ -34,6 +34,7 @@ import {
   useSharedState,
   useIndexedDB,
   createIndexedDB,
+  useResource,
 } from "react-hook-lab";
 
 createIndexedDB({
@@ -85,6 +86,14 @@ export function ReactHookLabExamples() {
   const toggle = useToggle("grid", "list");
   const [shared, setShared] = useSharedState("demo-shared-key", "Shared Value");
   const [dbVal, setDbVal, { status: dbStatus }] = useIndexedDB("demo", "example-key", "Initial DB Value");
+
+  const resource = useResource({
+    key: "example-resource",
+    fetcher: async () => {
+      await new Promise(r => setTimeout(r, 1000));
+      return "Fetched Resource Data!";
+    }
+  });
 
   const panelRef = useRef<HTMLDivElement>(null);
   const measuredRef = useRef<HTMLDivElement>(null);
@@ -182,6 +191,7 @@ export function ReactHookLabExamples() {
         <p>DeepMemo Value: {memoizedValue}</p>
         <p>Shared State: {shared}</p>
         <p>IndexedDB [{dbStatus}]: {dbVal}</p>
+        <p>Resource: {resource.loading ? "Loading..." : resource.data}</p>
         <p>URL Path: {url.pathname}</p>
         <div ref={fullscreen.ref} style={{ background: fullscreen.isFullscreen ? '#222' : 'transparent', padding: '10px' }}>
           <p>Fullscreen State: {fullscreen.isFullscreen ? "Fullscreen ON" : "Fullscreen OFF"}</p>

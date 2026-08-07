@@ -3,7 +3,8 @@ const assert = require('node:assert');
 const React = require('react');
 const TestRenderer = require('react-test-renderer');
 const { act } = TestRenderer;
-const { useIndexedDB, createIndexedDB, __resetIndexedDBForTests } = require('..');
+const { useIndexedDB, createIndexedDB } = require('..');
+const { __resetIndexedDBForTests } = require('../dist/src/browser/useIndexedDB');
 const { setGlobal, wait } = require('./setup.js');
 
 let mockDbStore = new Map();
@@ -182,5 +183,38 @@ test('useIndexedDB', async (t) => {
     const [finalVal, , finalMeta] = latestState;
     assert.strictEqual(finalVal, 'default-value');
     assert.strictEqual(mockDbStore.has('testStore::deleteKey'), false);
+  });
+
+  await t.test('respects the enabled flag', async () => {
+    mockDbStore.set('testStore::testKeyEnabled', 'db-value');
+    
+    let latestState;
+    function TestComponent() {
+      latestState = useIndexedDB('testStore', 'testKeyEnabled', 'default-value', { enabled: false });
+      return null;
+    }
+
+    let root;
+    act(() => {
+      root = TestRenderer.create(React.createElement(TestComponent));
+    });
+    
+    let [val, setVal, meta] = latestState;
+    assert.strictEqual(val, 'default-value');
+    assert.strictEqual(meta.status, 'idle');
+
+    await wait(20);
+    
+    act(() => {
+      root.update(React.createElement(TestComponent));
+    });
+
+    [val, setVal, meta] = latestState;
+    assert.strictEqual(val, 'default-value');
+    assert.strictEqual(meta.status, 'idle');
+    
+    act(() => setVal('new-value'));
+    await wait(20);
+    assert.strictEqual(mockDbStore.get('testStore::testKeyEnabled'), 'db-value');
   });
 });

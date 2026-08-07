@@ -268,13 +268,18 @@ interface InternalState<T> {
  * @param {string} storeName The name of the IndexedDB object store to use.
  * @param {IDBValidKey} key The key under which the value is stored.
  * @param {T | (() => T)} initialValue The initial value to use before the data is loaded from IndexedDB, or a function returning it.
+ * @param {Object} [options] Optional configuration.
+ * @param {boolean} [options.enabled=true] If false, pauses the hook from reading/writing to IndexedDB.
  * @returns {[T, (value: T | ((prev: T) => T)) => void, IndexedDBMeta]} A tuple containing the current value, a setter function, and a metadata object.
  */
 export function useIndexedDB<T>(
   storeName: string,
   key: IDBValidKey,
-  initialValue: T | (() => T)
+  initialValue: T | (() => T),
+  options?: { enabled?: boolean }
 ): [T, SetValue<T>, IndexedDBMeta] {
+  const enabled = options?.enabled ?? true;
+
   const resolveInitial = useCallback((): T => {
     return typeof initialValue === "function" ? (initialValue as () => T)() : initialValue;
   }, [initialValue]);
@@ -295,6 +300,8 @@ export function useIndexedDB<T>(
 
   // Initial load from IndexedDB.
   useEffect(() => {
+    if (!enabled) return;
+
     try {
       assertStoreExists(storeName);
     } catch (err) {
@@ -328,10 +335,12 @@ export function useIndexedDB<T>(
       cancelled = true;
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [storeName, ck]);
+  }, [storeName, ck, enabled]);
 
   // Same-tab + cross-tab sync: react to updates from other hook instances.
   useEffect(() => {
+    if (!enabled) return;
+
     return subscribeLocal<T | typeof REMOVED>(ck, (incoming) => {
       if (incoming === REMOVED) {
         setState({ status: "ready", value: resolveInitial(), error: null });
@@ -339,10 +348,12 @@ export function useIndexedDB<T>(
         setState({ status: "ready", value: incoming as T, error: null });
       }
     });
-  }, [ck, resolveInitial]);
+  }, [ck, resolveInitial, enabled]);
 
   const setValue = useCallback<SetValue<T>>(
     (updater) => {
+      if (!enabled) return;
+
       const nextValue =
         typeof updater === "function" ? (updater as (prev: T) => T)(valueRef.current) : updater;
 
@@ -363,10 +374,12 @@ export function useIndexedDB<T>(
         });
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [storeName, ck]
+    [storeName, ck, enabled]
   );
 
   const remove = useCallback(async () => {
+    if (!enabled) return;
+
     const db = await getDatabase();
     await deleteRecord(db, storeName, key);
     const fallback = resolveInitial();
@@ -375,12 +388,16 @@ export function useIndexedDB<T>(
     publishLocal(ck, REMOVED);
     broadcast({ type: "remove", storeName, key, tabId: TAB_ID });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [storeName, ck, resolveInitial]);
+  }, [storeName, ck, resolveInitial, enabled]);
+
+  const effectiveStatus = enabled ? state.status : "idle";
+  const effectiveError = enabled ? state.error : null;
+  const effectiveValue = enabled ? state.value : resolveInitial();
 
   const meta = useMemo<IndexedDBMeta>(
-    () => ({ status: state.status, error: state.error, remove }),
-    [state.status, state.error, remove]
+    () => ({ status: effectiveStatus, error: effectiveError, remove }),
+    [effectiveStatus, effectiveError, remove]
   );
 
-  return [state.value, setValue, meta];
+  return [effectiveValue, setValue, meta];
 }
