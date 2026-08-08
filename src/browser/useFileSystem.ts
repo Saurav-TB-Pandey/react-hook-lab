@@ -84,14 +84,14 @@ export interface UseFileSystemReturn {
 /**
  * A hook that utilizes the modern File System Access API to interact with local files on the user's hard drive.
  * Provides the ability to open, read, and continually save changes to a file without prompting for re-download.
- * 
+ *
  * @param {UseFileSystemOptions} [defaultOptions] - Optional default configuration for file pickers (e.g., accepted MIME types).
  * @returns {UseFileSystemReturn} An object containing the file state, content, and methods to open/save files.
- * 
+ *
  * @example
  * ```tsx
  * const { open, save, content, status } = useFileSystem({ accept: { 'text/plain': ['.txt'] } });
- * 
+ *
  * return (
  *   <div>
  *     <button onClick={() => open()}>Open File</button>
@@ -163,7 +163,7 @@ export function useFileSystem(defaultOptions?: UseFileSystemOptions): UseFileSys
         setStatus("error");
       }
     },
-    [defaultOptions, isSupported, formatOptions]
+    [isSupported, formatOptions]
   );
 
   const saveAs = useCallback(
@@ -204,13 +204,13 @@ export function useFileSystem(defaultOptions?: UseFileSystemOptions): UseFileSys
         setStatus("error");
       }
     },
-    [defaultOptions, isSupported, formatOptions]
+    [isSupported, formatOptions]
   );
 
   const save = useCallback(
     async (newContent: string | Blob, options?: UseFileSystemSaveAsOptions) => {
       if (!handle) {
-        return saveAs(newContent, { suggestedName: 'untitled', ...options });
+        return saveAs(newContent, { suggestedName: "untitled", ...options });
       }
       try {
         setError(null);

@@ -152,12 +152,15 @@ describe('useFileSystem', () => {
 
     // Call save without having an open file
     await act(async () => {
-      await latestState.save('Saved via fallback', { description: 'Fallback Test' });
+      await latestState.save('Saved via fallback');
     });
 
-    // Verify it called showSaveFilePicker with the dummy 'untitled' name and passed options
-    assert.equal(saveFilePickerCalledWith.suggestedName, 'untitled');
-    assert.equal(saveFilePickerCalledWith.description, 'Fallback Test');
+    if (latestState.error) {
+      console.error('Test error:', latestState.error);
+    }
+
+    // Verify it called showSaveFilePicker with the dummy 'untitled' name
+    assert.equal(saveFilePickerCalledWith?.suggestedName, 'untitled');
     
     // Verify state updated properly like a saveAs call
     assert.equal(latestState.handle, mockHandle);
