@@ -86,7 +86,9 @@ async function generateArticle(geminiApiKeys, prompt) {
     if (!parsedData.blogger_title || typeof parsedData.blogger_title !== 'string') throw new Error('Missing or invalid "blogger_title"');
     if (!parsedData.body_markdown || typeof parsedData.body_markdown !== 'string') throw new Error('Missing or invalid "body_markdown"');
     if (!parsedData.body_html || typeof parsedData.body_html !== 'string') throw new Error('Missing or invalid "body_html"');
-    if (!parsedData.linkedin_post || typeof parsedData.linkedin_post !== 'string') throw new Error('Missing or invalid "linkedin_post"');
+    if (parsedData.linkedin_post && typeof parsedData.linkedin_post !== 'string') {
+      throw new Error('Invalid "linkedin_post" format');
+    }
     
     // Validate tags
     if (!Array.isArray(parsedData.tags)) throw new Error('Missing or invalid "tags" array');
@@ -97,7 +99,7 @@ async function generateArticle(geminiApiKeys, prompt) {
     
     // Ensure all tags are alphanumeric and lowercase
     parsedData.tags = parsedData.tags.map(tag => {
-      const sanitized = tag.replace(/[^a-zA-Z0-9]/g, '').toLowerCase();
+      const sanitized = tag.replace(/[^a-zA-Z0-9-]/g, '').toLowerCase(); // allow hyphens for "term-itself"
       if (!sanitized) throw new Error(`Tag "${tag}" became empty after sanitization.`);
       return sanitized;
     });

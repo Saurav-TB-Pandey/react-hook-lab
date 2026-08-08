@@ -31,7 +31,8 @@
     "publish:article": "node scripts/publish-article.js",
     "update:secret": "node scripts/auth/update-github-secret.js",
     "delete:branch": "node scripts/delete-branch.js",
-    "check-milestone": "node scripts/check-milestone.js"
+    "check-milestone": "node scripts/check-milestone.js",
+    "publish:daily-term": "node scripts/daily-tech-term.js"
   },
   "keywords": [
     "react",

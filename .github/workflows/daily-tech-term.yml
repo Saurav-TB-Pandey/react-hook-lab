@@ -1,0 +1,39 @@
+name: Daily Tech Term Publisher
+
+on:
+  schedule:
+    # 9:15 AM IST is 3:45 AM UTC
+    - cron: "45 3 * * *"
+  workflow_dispatch: # Allow manual triggers
+
+jobs:
+  publish-daily-term:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Generate and Publish Daily Tech Term
+        run: npm run publish:daily-term
+        env:
+          GH_TOKEN: ${{ secrets.GH_PAT }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          GEMINI_API_KEY_1: ${{ secrets.GEMINI_API_KEY_1 }}
+          GEMINI_API_KEY_2: ${{ secrets.GEMINI_API_KEY_2 }}
+          GEMINI_API_KEY_3: ${{ secrets.GEMINI_API_KEY_3 }}
+          SECRET_DAILY_TERM_PROMPT: ${{ secrets.SECRET_DAILY_TERM_PROMPT }}
+          USED_TECH_TERMS: ${{ secrets.USED_TECH_TERMS }}
+          DEVTO_API_KEY: ${{ secrets.DEVTO_API_KEY }}
+          BLOGGER_BLOG_ID: ${{ secrets.BLOGGER_BLOG_ID }}
+          GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
+          GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
+          GOOGLE_REFRESH_TOKEN: ${{ secrets.GOOGLE_REFRESH_TOKEN }}
+          GOOGLE_ACCESS_TOKEN: ${{ secrets.GOOGLE_ACCESS_TOKEN }}

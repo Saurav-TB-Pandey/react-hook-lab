@@ -35,8 +35,7 @@ function updateGithubSecret(secretName, overrideValue = null) {
       }
     }
   }
-
-  if (!secretValue) {
+  if (secretValue === null || secretValue === undefined) {
     throw new Error(`Secret '${secretName}' was not found in the .env file and no override was provided.`);
   }
 
