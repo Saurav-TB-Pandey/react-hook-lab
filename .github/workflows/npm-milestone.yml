@@ -25,6 +25,9 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GH_PAT }}
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          GEMINI_API_KEY_1: ${{ secrets.GEMINI_API_KEY_1 }}
+          GEMINI_API_KEY_2: ${{ secrets.GEMINI_API_KEY_2 }}
+          GEMINI_API_KEY_3: ${{ secrets.GEMINI_API_KEY_3 }}
           DEVTO_API_KEY: ${{ secrets.DEVTO_API_KEY }}
           LINKEDIN_ACCESS_TOKEN: ${{ secrets.LINKEDIN_ACCESS_TOKEN }}
           BLOGGER_BLOG_ID: ${{ secrets.BLOGGER_BLOG_ID }}

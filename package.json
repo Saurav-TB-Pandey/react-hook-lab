@@ -1,6 +1,6 @@
 {
   "name": "react-hook-lab",
-  "version": "1.10.0",
+  "version": "1.11.0",
   "description": "A lightweight collection of reusable React hooks for async operations, browser APIs, DOM observers, state management, timers, and utilities. Built with TypeScript.",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -31,7 +31,8 @@
     "publish:article": "node scripts/publish-article.js",
     "update:secret": "node scripts/auth/update-github-secret.js",
     "delete:branch": "node scripts/delete-branch.js",
-    "check-milestone": "node scripts/check-milestone.js"
+    "check-milestone": "node scripts/check-milestone.js",
+    "publish:daily-term": "node scripts/daily-tech-term.js"
   },
   "keywords": [
     "react",
@@ -73,6 +74,7 @@
     "useToggle",
     "useIndexedDB",
     "createIndexedDB",
+    "useFileSystem",
     "indexeddb",
     "broadcastchannel",
     "useDeepClone",

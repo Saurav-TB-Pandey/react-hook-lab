@@ -16,3 +16,11 @@ export * from "./useCamera";
 export * from "./useMicrophone";
 export * from "./useLocation";
 export * from "./useFullscreen";
+export {
+  useFileSystem,
+  type UseFileSystemOptions,
+  type UseFileSystemSaveAsOptions,
+  type FileSystemStatus,
+  type UseFileSystemReturn,
+  type FileSystemFileHandle,
+} from "./useFileSystem";

@@ -27,9 +27,15 @@ if (fs.existsSync(envPath)) {
 }
 
 async function main() {
-  const geminiApiKey = process.env.GEMINI_API_KEY;
-  if (!geminiApiKey || geminiApiKey.includes('your_gemini_api_key')) {
-    console.error('ERROR: Missing GEMINI_API_KEY environment variable.');
+  const geminiApiKeys = [
+    process.env.GEMINI_API_KEY,
+    process.env.GEMINI_API_KEY_1,
+    process.env.GEMINI_API_KEY_2,
+    process.env.GEMINI_API_KEY_3
+  ].filter(key => key && !key.includes('your_gemini_api_key'));
+
+  if (geminiApiKeys.length === 0) {
+    console.error('ERROR: No valid GEMINI_API_KEY environment variables found.');
     process.exit(1);
   }
 
@@ -50,7 +56,7 @@ async function main() {
 
   try {
     // 3. Generate article using Gemini
-    const articleData = await generateArticle(geminiApiKey, prompt);
+    const articleData = await generateArticle(geminiApiKeys, prompt);
     console.log(`Generated Article Title: ${articleData.devto_title}`);
 
     // 3. Publish to platforms

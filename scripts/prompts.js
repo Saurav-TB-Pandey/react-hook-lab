@@ -34,7 +34,22 @@ function getMilestonePrompt(milestone) {
   return customPrompt;
 }
 
+function getDailyTechTermPrompt(usedTerms) {
+  if (!process.env.SECRET_DAILY_TERM_PROMPT) {
+    throw new Error('SECRET_DAILY_TERM_PROMPT environment variable is missing. Please configure it in your .env or GitHub Secrets.');
+  }
+
+  let customPrompt = process.env.SECRET_DAILY_TERM_PROMPT;
+  customPrompt = customPrompt.replace(/\{\{PREVIOUSLY_USED_TERMS\}\}/g, usedTerms || 'No terms used yet.');
+
+  // Unescape literal \n strings back into real newlines if they were escaped in a .env single line
+  customPrompt = customPrompt.replace(/\\n/g, '\n');
+
+  return customPrompt;
+}
+
 module.exports = {
   getArticlePrompt,
-  getMilestonePrompt
+  getMilestonePrompt,
+  getDailyTechTermPrompt
 };
