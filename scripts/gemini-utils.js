@@ -1,9 +1,14 @@
 /**
  * Generates an article using Gemini API with multiple model fallbacks to handle high demand.
  */
-async function generateArticle(geminiApiKey, prompt) {
+async function generateArticle(geminiApiKeys, prompt) {
   console.log('Calling Gemini API (with fallbacks)...');
   
+  const keys = Array.isArray(geminiApiKeys) ? geminiApiKeys : [geminiApiKeys].filter(Boolean);
+  if (keys.length === 0) {
+    throw new Error("No Gemini API keys provided.");
+  }
+
   const fallbackModels = [
     'gemini-3.5-flash',
     'gemini-flash-latest',
@@ -18,38 +23,51 @@ async function generateArticle(geminiApiKey, prompt) {
   let rawText = null;
 
   for (const model of fallbackModels) {
-    const geminiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${geminiApiKey}`;
     console.log(`Trying model: ${model}...`);
     
-    try {
-      const geminiRes = await fetch(geminiUrl, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          contents: [{ parts: [{ text: prompt }] }],
-        }),
-      });
-
-      if (!geminiRes.ok) {
-        const err = await geminiRes.text();
-        console.warn(`  -> Failed with status ${geminiRes.status}: ${err}`);
-        continue;
-      }
-
-      const geminiData = await geminiRes.json();
-      rawText = geminiData.candidates?.[0]?.content?.parts?.[0]?.text;
+    for (let i = 0; i < keys.length; i++) {
+      const key = keys[i];
+      const geminiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${key}`;
+      console.log(`  -> Using API Key ${i + 1}/${keys.length}`);
       
-      if (rawText) {
-         console.log(`  -> Success! Generated using ${model}`);
-         break;
+      try {
+        const geminiRes = await fetch(geminiUrl, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            contents: [{ parts: [{ text: prompt }] }],
+          }),
+        });
+
+        if (!geminiRes.ok) {
+          const err = await geminiRes.text();
+          console.warn(`    -> Failed with status ${geminiRes.status}: ${err}`);
+          
+          // If the model is not found, trying other keys on the same model is pointless
+          if (geminiRes.status === 404) {
+            break; 
+          }
+          // Otherwise (429 rate limit, 403 auth/billing, 500 server error), try the next key
+          continue;
+        }
+
+        const geminiData = await geminiRes.json();
+        rawText = geminiData.candidates?.[0]?.content?.parts?.[0]?.text;
+        
+        if (rawText) {
+           console.log(`    -> Success! Generated using ${model} with Key ${i + 1}`);
+           break;
+        }
+      } catch (e) {
+        console.warn(`    -> Exception when trying Key ${i + 1}:`, e.message);
       }
-    } catch (e) {
-      console.warn(`  -> Exception when trying ${model}:`, e.message);
     }
+    
+    if (rawText) break; // Break out of model loop if we got text
   }
 
   if (!rawText) {
-     throw new Error('All attempted Gemini models failed to generate content.');
+     throw new Error('All attempted Gemini models and API keys failed to generate content.');
   }
 
   // Clean up potential markdown code block wrapping from the JSON response
