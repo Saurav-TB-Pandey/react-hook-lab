@@ -75,6 +75,8 @@
     "useIndexedDB",
     "createIndexedDB",
     "useFileSystem",
+    "usePip",
+    "picture-in-picture",
     "indexeddb",
     "broadcastchannel",
     "useDeepClone",
@@ -127,10 +129,12 @@
     "LICENSE"
   ],
   "peerDependencies": {
-    "react": "^16.8 || ^17 || ^18 || ^19"
+    "react": "^16.8 || ^17 || ^18 || ^19",
+    "react-dom": "^16.8 || ^17 || ^18 || ^19"
   },
   "devDependencies": {
     "@types/react": "^18.3.5",
+    "@types/react-dom": "^18.3.1",
     "@types/react-test-renderer": "^18.3.1",
     "@typescript-eslint/eslint-plugin": "^8.63.0",
     "@typescript-eslint/parser": "^8.63.0",
@@ -139,6 +143,7 @@
     "eslint-plugin-react-hooks": "^7.1.1",
     "prettier": "^3.9.5",
     "react": "^18.3.1",
+    "react-dom": "^18.3.1",
     "react-test-renderer": "^18.3.1",
     "typescript": "^5.6.3"
   }

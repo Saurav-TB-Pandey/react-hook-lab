@@ -22,6 +22,7 @@ import {
   createIndexedDB,
   useIndexedDB,
   useFileSystem,
+  usePip,
 } from "./browser";
 import {
   useClickOutside,
@@ -79,4 +80,5 @@ export default {
   useIndexedDB,
   createIndexedDB,
   useFileSystem,
+  usePip,
 };

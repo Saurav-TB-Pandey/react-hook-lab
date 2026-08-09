@@ -69,6 +69,7 @@ pnpm add react-hook-lab
 ### Browser & DOM
 | Hook | Description |
 |------|-------------|
+| `usePip` | 🚀 Portal React components into a separate Document Picture-in-Picture window seamlessly. |
 | `useFileSystem` | 🚀 Powerful local-first hook using the File System Access API to read/overwrite native files continuously. |
 | `useFullscreen` | Robust, cross-browser hook to make elements fullscreen programmatically. |
 | `useURL` | Access and deeply parse the current browser URL dynamically without a router. |
@@ -221,6 +222,34 @@ function Welcome() {
 ---
 
 ### 🌐 Browser & DOM Hooks
+
+#### `usePip` 🚀 *(New)*
+Portal React components into an always-on-top Document Picture-in-Picture window. It handles the API lifecycle, seamlessly copies your stylesheets so the PIP window looks identical to your main app, and cleans up cleanly on unmount.
+
+```tsx
+import { usePip } from "react-hook-lab";
+
+function VideoPIP() {
+  const { isSupported, isOpen, openPip, closePip, Pip } = usePip();
+
+  if (!isSupported) return <p>Picture-in-Picture not supported!</p>;
+
+  return (
+    <div>
+      <button onClick={() => isOpen ? closePip() : openPip()}>
+        {isOpen ? 'Close PIP' : 'Open PIP'}
+      </button>
+      
+      {/* Renders children into the PIP window while copying main app's styles */}
+      <Pip width={400} height={300}>
+        <div className="my-pip-content">
+          <h2>I am inside the PIP window! 🚀</h2>
+        </div>
+      </Pip>
+    </div>
+  );
+}
+```
 
 #### `useFileSystem` 🚀 *(New)*
 Uses the modern File System Access API to allow users to grant permission to a specific file on their hard drive. The hook provides methods to continuously read from or write to that file without prompting them to re-download it every time. Perfect for local-first apps like markdown editors!
