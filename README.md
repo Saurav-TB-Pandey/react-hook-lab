@@ -5,6 +5,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 [![TypeScript](https://img.shields.io/badge/TypeScript-Ready-blue.svg)](https://www.typescriptlang.org/)
 ![Visitor Count](https://visitor-badge.laobi.icu/badge?page_id=Saurav-TB-Pandey.react-hook-lab)
+[![Buy Me A Coffee](https://img.shields.io/badge/Buy_Me_A_Coffee-FFDD00?style=flat&logo=buy-me-a-coffee&logoColor=black)](https://www.buymeacoffee.com/saurav_tb_pandey)
 
 A robust, strictly-typed, and lightweight collection of reusable React hooks. 
 
