@@ -7,10 +7,12 @@ export * from "./time";
 export * from "./debug";
 
 import { useAsync, useAsyncDebounce, useDebounce, useThrottle } from "./async";
+import { useResource } from "./data";
 import {
   useClipboard,
   useDownload,
   useLocalStorage,
+  useCookie,
   useNotifications,
   useOnlineStatus,
   useSessionStorage,
@@ -52,6 +54,7 @@ export default {
   useClipboard,
   useDownload,
   useLocalStorage,
+  useCookie,
   useNotifications,
   useOnlineStatus,
   useSessionStorage,
@@ -81,4 +84,5 @@ export default {
   createIndexedDB,
   useFileSystem,
   usePip,
+  useResource,
 };

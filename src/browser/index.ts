@@ -1,5 +1,6 @@
 export * from "./useClipboard";
 export * from "./useLocalStorage";
+export * from "./useCookie";
 export * from "./useOnlineStatus";
 export * from "./useSessionStorage";
 export * from "./useURL";

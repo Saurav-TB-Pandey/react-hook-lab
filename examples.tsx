@@ -37,6 +37,7 @@ import {
   useResource,
   useFileSystem,
   usePip,
+  useCookie,
 } from "react-hook-lab";
 
 createIndexedDB({
@@ -67,6 +68,7 @@ export function ReactHookLabExamples() {
   const clipboard = useClipboard();
   const [theme, setTheme] = useLocalStorage("theme", "light");
   const [draft, setDraft] = useSessionStorage("draft", "");
+  const [cookieTheme, setCookieTheme] = useCookie("cookie_theme", { initialValue: "light" });
   const { download, status: downloadStatus } = useDownload();
   const { requestPermission, sendNotification } = useNotifications({ autoRequest: false });
 
@@ -148,13 +150,16 @@ export function ReactHookLabExamples() {
       <button onClick={() => setTheme(theme === "light" ? "dark" : "light")}>
         Toggle theme
       </button>
+      <button onClick={() => setCookieTheme(cookieTheme === "light" ? "dark" : "light")}>
+        Toggle Cookie theme
+      </button>
       <button onClick={boolean.toggle}>Toggle boolean</button>
       <button onClick={counter.increment}>Increment counter</button>
       <button onClick={toggle.toggle}>Toggle layout</button>
       <button onClick={asyncState.retry}>Retry async</button>
       <button onClick={timeout.restart}>Restart timeout</button>
       <button onClick={interval.stop}>Stop interval</button>
-      <button onClick={() => download({ demo: true }, "demo.json")}>Test Download</button>
+      <button onClick={() => download({ demo: true }, "demo.json")}>Test Download ({downloadStatus})</button>
       <button onClick={() => { requestPermission().then(() => sendNotification("Test Notif")); }}>
         Test Notification
       </button>
@@ -162,6 +167,8 @@ export function ReactHookLabExamples() {
       <button onClick={microphone.requestMicrophone}>Request Mic</button>
       <button onClick={location.retry}>Request Location</button>
       
+      <button onClick={() => setShared(shared + "!")}>Test Shared State</button>
+      <button onClick={() => setDbVal(dbVal + "!")}>Test IndexedDB</button>
       <button onClick={() => fileSystem.open()}>Open FS File</button>
       <button onClick={() => fileSystem.save('Example save content from examples.tsx')}>Save FS File</button>
       <button onClick={() => pip.isOpen ? pip.closePip() : pip.openPip()}>Toggle PIP</button>
@@ -181,6 +188,7 @@ export function ReactHookLabExamples() {
         <p>Window width: {width}</p>
         <p>Copied: {clipboard.copied ? "yes" : "no"}</p>
         <p>Theme: {theme}</p>
+        <p>Cookie Theme: {cookieTheme}</p>
         <p>Boolean: {boolean.value ? "true" : "false"}</p>
         <p>Counter: {counter.count}</p>
         <p>Layout: {toggle.value}</p>
