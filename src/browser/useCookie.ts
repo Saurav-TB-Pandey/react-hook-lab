@@ -12,8 +12,8 @@ export interface UseCookieOptions extends CookieOptions {
  * Standard configuration options for browser cookies.
  */
 export interface CookieOptions {
-  /** 
-   * Expiration time in days from now. 
+  /**
+   * Expiration time in days from now.
    * If `days`, `maxAgeSeconds`, and `expires` are all omitted, this automatically defaults to `7`.
    */
   days?: number;
@@ -184,7 +184,7 @@ function setCookieValue(key: string, value: string, options: CookieOptions = {})
  * Strictly string-based and completely hydration-safe.
  *
  * Note: `useCookie` does not automatically synchronize changes between multiple hook instances or browser tabs.
- * 
+ *
  * @param key - The name of the cookie (must conform to RFC 6265 token requirements).
  * @param options - Hook initialization options and default cookie configurations.
  * @param options.initialValue - The initial rendering value used during SSR and the first client render.
@@ -228,11 +228,11 @@ export function useCookie(
   const updateCookie = useCallback(
     (value: string, setOptions?: CookieOptions) => {
       const mergedOptions: CookieOptions = { ...optionsRef.current, ...setOptions };
-      
+
       // Default to 7 days if no expiration is specified
       if (
-        mergedOptions.days === undefined && 
-        mergedOptions.maxAgeSeconds === undefined && 
+        mergedOptions.days === undefined &&
+        mergedOptions.maxAgeSeconds === undefined &&
         mergedOptions.expires === undefined
       ) {
         mergedOptions.days = 7;

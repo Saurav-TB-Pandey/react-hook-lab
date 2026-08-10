@@ -91,6 +91,7 @@ type Subscription<T> = {
 
 let registryMaxEntries = 200;
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 function configureResourceRegistry(options: { maxEntries?: number }) {
   if (options.maxEntries !== undefined) registryMaxEntries = options.maxEntries;
 }
