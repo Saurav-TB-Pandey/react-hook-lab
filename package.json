@@ -1,7 +1,7 @@
 {
   "name": "react-hook-lab",
-  "version": "1.12.0",
-  "description": "A lightweight collection of reusable React hooks for async operations, browser APIs, DOM observers, state management, timers, and utilities. Built with TypeScript.",
+  "version": "1.13.0",
+  "description": "Lightweight, zero-compromise TypeScript React hooks. Offers an extensive toolkit for modern web apps, spanning advanced browser capabilities, robust caching, DOM intersection/resizing, strict timers, and SSR-ready state management.",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "sideEffects": false,
