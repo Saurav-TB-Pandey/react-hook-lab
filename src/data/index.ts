@@ -1,1 +1,8 @@
-export { useResource, type Resource, type ResourceConfig, type ResourceState } from "./useResource";
+export {
+  __resetResourceRegistryForTests,
+  useResource,
+  useResourceCompose,
+  ResourceConfig,
+  ResourceState,
+  Resource,
+} from "./useResource";

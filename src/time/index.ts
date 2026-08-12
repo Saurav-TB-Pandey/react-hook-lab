@@ -1,3 +1,3 @@
-export * from "./useTimeout";
-export * from "./useInterval";
-export * from "./useTimezone";
+export { useInterval, UseIntervalReturn } from "./useInterval";
+export { useTimeout, UseTimeoutReturn } from "./useTimeout";
+export { useTimezone } from "./useTimezone";

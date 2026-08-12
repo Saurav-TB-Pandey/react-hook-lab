@@ -1,1 +1,7 @@
-export * from "./useRenderReason";
+export {
+  useRenderReason,
+  PropChange,
+  RenderReasonInfo,
+  UseRenderReasonOptions,
+  ChangeType,
+} from "./useRenderReason";

@@ -1,6 +1,15 @@
-export * from "./useClickOutside";
-export * from "./useIntersectionObserver";
-export * from "./useResizeObserver";
-export * from "./useElementSize";
-export * from "./useWidth";
-export * from "./useIdle";
+export { useClickOutside, UseClickOutsideOptions } from "./useClickOutside";
+export { useElementSize, ElementSize } from "./useElementSize";
+export { useIdle } from "./useIdle";
+export {
+  useIntersectionObserver,
+  UseIntersectionObserverOptions,
+  UseIntersectionObserverReturn,
+} from "./useIntersectionObserver";
+export {
+  useResizeObserver,
+  Size,
+  UseResizeObserverOptions,
+  UseResizeObserverReturn,
+} from "./useResizeObserver";
+export { useWidth } from "./useWidth";
