@@ -36,6 +36,7 @@ import {
   createIndexedDB,
   useResource,
   useFileSystem,
+  usePip,
 } from "react-hook-lab";
 
 createIndexedDB({
@@ -97,6 +98,7 @@ export function ReactHookLabExamples() {
   });
 
   const fileSystem = useFileSystem({ accept: { 'text/plain': ['.txt'] } });
+  const pip = usePip();
 
   const panelRef = useRef<HTMLDivElement>(null);
   const measuredRef = useRef<HTMLDivElement>(null);
@@ -162,6 +164,7 @@ export function ReactHookLabExamples() {
       
       <button onClick={() => fileSystem.open()}>Open FS File</button>
       <button onClick={() => fileSystem.save('Example save content from examples.tsx')}>Save FS File</button>
+      <button onClick={() => pip.isOpen ? pip.closePip() : pip.openPip()}>Toggle PIP</button>
 
       <div ref={measuredRef}>
         <p>Debounced: {debouncedQuery}</p>
@@ -201,6 +204,17 @@ export function ReactHookLabExamples() {
         <p>URL Path: {url.pathname}</p>
         <p>FileSystem File: {fileSystem.file?.name || "None"}</p>
         <p>FileSystem Content: {fileSystem.content ? fileSystem.content.slice(0, 20) + "..." : "None"}</p>
+        <p>PIP Status: Supported={pip.isSupported ? "yes" : "no"}, Open={pip.isOpen ? "yes" : "no"}</p>
+        
+        <pip.Pip width={300} height={200}>
+          <div style={{ padding: '10px', background: '#222', color: '#fff' }}>
+            <h4>PIP Window Active</h4>
+            <p>Shared State: {shared}</p>
+            <p>Theme: {theme}</p>
+            <button onClick={pip.closePip}>Close from inside</button>
+          </div>
+        </pip.Pip>
+
         <div ref={fullscreen.ref} style={{ background: fullscreen.isFullscreen ? '#222' : 'transparent', padding: '10px' }}>
           <p>Fullscreen State: {fullscreen.isFullscreen ? "Fullscreen ON" : "Fullscreen OFF"}</p>
           <button onClick={fullscreen.toggle}>Toggle Fullscreen</button>

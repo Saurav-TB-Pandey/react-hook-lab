@@ -24,3 +24,4 @@ export {
   type UseFileSystemReturn,
   type FileSystemFileHandle,
 } from "./useFileSystem";
+export * from "./usePip";

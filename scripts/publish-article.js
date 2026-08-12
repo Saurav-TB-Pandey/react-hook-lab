@@ -13,14 +13,42 @@ const { getArticlePrompt } = require('./prompts');
 // Simple .env parser to avoid needing to install dotenv for testing locally
 const envPath = path.join(__dirname, '..', '.env');
 if (fs.existsSync(envPath)) {
-  const envConfig = fs.readFileSync(envPath, 'utf8').split('\n');
-  for (const line of envConfig) {
-    if (line.trim() && !line.startsWith('#')) {
-      const parts = line.split('=');
-      const key = parts[0].trim();
-      const val = parts.slice(1).join('=').trim().replace(/^["']|["']$/g, '');
-      if (key && !process.env[key]) {
-        process.env[key] = val;
+  const envContent = fs.readFileSync(envPath, 'utf8');
+  let currentKey = null;
+  let currentValue = '';
+  let inQuotes = false;
+
+  const lines = envContent.split('\n');
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i];
+    if (!inQuotes) {
+      if (line.trim() === '' || line.startsWith('#')) continue;
+      const eqIndex = line.indexOf('=');
+      if (eqIndex === -1) continue;
+      currentKey = line.substring(0, eqIndex).trim();
+      let rawVal = line.substring(eqIndex + 1).trim();
+      
+      if (rawVal.startsWith('"')) {
+        inQuotes = true;
+        currentValue = rawVal.substring(1);
+        if (currentValue.endsWith('"') && !currentValue.endsWith('\\"')) {
+            inQuotes = false;
+            currentValue = currentValue.substring(0, currentValue.length - 1);
+            if (!process.env[currentKey]) process.env[currentKey] = currentValue;
+        } else {
+            currentValue += '\n';
+        }
+      } else {
+        if (!process.env[currentKey]) process.env[currentKey] = rawVal;
+      }
+    } else {
+      currentValue += line;
+      if (currentValue.endsWith('"') && !currentValue.endsWith('\\"')) {
+        inQuotes = false;
+        currentValue = currentValue.substring(0, currentValue.length - 1);
+        if (!process.env[currentKey]) process.env[currentKey] = currentValue;
+      } else {
+        currentValue += '\n';
       }
     }
   }

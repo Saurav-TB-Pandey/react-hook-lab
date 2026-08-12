@@ -22,18 +22,47 @@ function updateGithubSecret(secretName, overrideValue = null) {
     }
 
     const envContent = fs.readFileSync(envPath, 'utf8');
+    let currentKey = null;
+    let currentValue = '';
+    let inQuotes = false;
+    const parsedEnv = {};
 
-    for (const line of envContent.split(/\r?\n/)) {
-      if (line.trim().startsWith(secretName + '=')) {
-        secretValue = line.substring(line.indexOf('=') + 1).trim();
-        // Remove surrounding quotes if they exist
-        if ((secretValue.startsWith('"') && secretValue.endsWith('"')) ||
-          (secretValue.startsWith("'") && secretValue.endsWith("'"))) {
-          secretValue = secretValue.slice(1, -1);
+    const lines = envContent.split(/\r?\n/);
+    for (let i = 0; i < lines.length; i++) {
+      const line = lines[i];
+      if (!inQuotes) {
+        if (line.trim() === '' || line.startsWith('#')) continue;
+        const eqIndex = line.indexOf('=');
+        if (eqIndex === -1) continue;
+        currentKey = line.substring(0, eqIndex).trim();
+        let rawVal = line.substring(eqIndex + 1).trim();
+        
+        if (rawVal.startsWith('"')) {
+          inQuotes = true;
+          currentValue = rawVal.substring(1);
+          if (currentValue.endsWith('"') && !currentValue.endsWith('\\"')) {
+              inQuotes = false;
+              currentValue = currentValue.substring(0, currentValue.length - 1);
+              parsedEnv[currentKey] = currentValue;
+          } else {
+              currentValue += '\n';
+          }
+        } else {
+          parsedEnv[currentKey] = rawVal;
         }
-        break;
+      } else {
+        currentValue += line;
+        if (currentValue.endsWith('"') && !currentValue.endsWith('\\"')) {
+          inQuotes = false;
+          currentValue = currentValue.substring(0, currentValue.length - 1);
+          parsedEnv[currentKey] = currentValue;
+        } else {
+          currentValue += '\n';
+        }
       }
     }
+
+    secretValue = parsedEnv[secretName];
   }
   if (secretValue === null || secretValue === undefined) {
     throw new Error(`Secret '${secretName}' was not found in the .env file and no override was provided.`);
