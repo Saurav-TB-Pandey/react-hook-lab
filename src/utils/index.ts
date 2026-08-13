@@ -1,2 +1,2 @@
-export * from "./deepClone";
-export * from "./deepEqual";
+export { deepClone } from "./deepClone";
+export { deepEqual } from "./deepEqual";

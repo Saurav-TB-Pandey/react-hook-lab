@@ -93,6 +93,7 @@ pnpm add react-hook-lab
 | `useResource` | 🚀 Ultimate data fetching hook with SWR caching, polling, and IndexedDB persistence. |
 | `useSharedState` | Share state seamlessly across components *and* browser tabs in real-time. |
 | `useIndexedDB` | Powerful, async state management backed by IndexedDB with cross-tab syncing. |
+| `useCookie` | Synchronize state with document cookies, securely handling SSR and JSON parsing. |
 | `useLocalStorage` | Persist and sync state in `localStorage`. |
 | `useSessionStorage` | Persist and sync state in `sessionStorage`. |
 | `useDeepClone` | Securely deep-clone objects while returning stable references across re-renders to fix broken memoization. |
@@ -611,6 +612,38 @@ function ThemeToggle() {
       <p>Current theme: {theme}</p>
       <button onClick={() => setTheme("dark")}>Set Dark</button>
       <button onClick={() => remove()}>Reset</button>
+    </div>
+  );
+}
+```
+
+#### `useCookie` 🚀 *(New)*
+Synchronize state with browser cookies. Strictly string-based and completely hydration-safe for Server-Side Rendering (SSR). It cleanly separates initial renders from client reconciliation and supports all native cookie attributes.
+
+```tsx
+import { useCookie } from "react-hook-lab";
+
+function CookieBanner() {
+  // Pass an options object with your initial SSR/fallback value
+  const [consentStr, setCookie, deleteCookie] = useCookie("cookie_consent", { 
+    initialValue: "false" 
+  });
+  
+  if (consentStr === "true") return null;
+
+  return (
+    <div className="banner">
+      <p>We use cookies to improve your experience.</p>
+      <button 
+        onClick={() => setCookie("true", { 
+          days: 365, 
+          secure: true, 
+          sameSite: "strict" 
+        })}
+      >
+        Accept
+      </button>
+      <button onClick={() => deleteCookie()}>Revoke Consent</button>
     </div>
   );
 }

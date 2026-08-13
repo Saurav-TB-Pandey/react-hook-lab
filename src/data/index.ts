@@ -1,7 +1,8 @@
 export {
+  __resetResourceRegistryForTests,
   useResource,
-  configureResourceRegistry,
-  type Resource,
-  type ResourceConfig,
-  type ResourceState,
+  useResourceCompose,
+  ResourceConfig,
+  ResourceState,
+  Resource,
 } from "./useResource";
