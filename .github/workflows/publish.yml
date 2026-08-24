@@ -60,6 +60,7 @@ jobs:
           GEMINI_API_KEY_3: ${{ secrets.GEMINI_API_KEY_3 }}
           SECRET_AI_PROMPT: ${{ secrets.SECRET_AI_PROMPT }}
           DEVTO_API_KEY: ${{ secrets.DEVTO_API_KEY }}
+          CODERLEGION_API_KEY: ${{ secrets.CODERLEGION_API_KEY }}
           LINKEDIN_ACCESS_TOKEN: ${{ secrets.LINKEDIN_ACCESS_TOKEN }}
           BLOGGER_BLOG_ID: ${{ secrets.BLOGGER_BLOG_ID }}
           GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
