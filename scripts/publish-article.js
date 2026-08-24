@@ -3,6 +3,7 @@ const path = require('path');
 const { getChangesSummary } = require('./git-utils');
 const { generateArticle } = require('./gemini-utils');
 const { publishToDevTo } = require('./platforms/devto');
+const { publishToCoderLegion } = require('./platforms/coderlegion');
 const { publishToLinkedIn } = require('./platforms/linkedin');
 const { publishToBlogger } = require('./platforms/blogger');
 const { publishToGitHub } = require('./platforms/github');
@@ -103,6 +104,13 @@ async function main() {
     // -> Dev.to (Standalone article, but link to Blogger at the bottom)
     const devtoResult = await publishToDevTo(process.env.DEVTO_API_KEY, articleData, bloggerUrl);
     const devtoUrl = devtoResult ? devtoResult.url : null;
+
+    // -> CoderLegion
+    try {
+      await publishToCoderLegion(process.env.CODERLEGION_API_KEY, articleData, bloggerUrl);
+    } catch (e) {
+      console.error('Failed to publish to CoderLegion:', e.message);
+    }
 
     // -> LinkedIn
     await publishToLinkedIn(articleData, bloggerUrl);

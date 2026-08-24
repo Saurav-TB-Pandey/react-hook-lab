@@ -4,6 +4,7 @@ const { generateArticle } = require('./gemini-utils');
 const { getDailyTechTermPrompt } = require('./prompts');
 const { publishToBlogger } = require('./platforms/blogger');
 const { publishToDevTo } = require('./platforms/devto');
+const { publishToCoderLegion } = require('./platforms/coderlegion');
 const { updateGithubSecret } = require('./auth/update-github-secret');
 
 // Simple .env parser to avoid needing to install dotenv for testing locally
@@ -130,6 +131,18 @@ async function main() {
         console.log('Dev.to publish complete.');
       } catch (e) {
         console.error('Failed to publish to Dev.to:', e.message);
+      }
+    }
+
+    if (isDryRun) {
+      console.log('\n--- DRY RUN: Skipping CoderLegion Publish ---');
+    } else {
+      // Publish to CoderLegion
+      try {
+        await publishToCoderLegion(process.env.CODERLEGION_API_KEY, generatedData, bloggerUrl);
+        console.log('CoderLegion publish complete.');
+      } catch (e) {
+        console.error('Failed to publish to CoderLegion:', e.message);
       }
     }
 
