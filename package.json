@@ -27,13 +27,8 @@
     "check:version": "node scripts/check-version.js",
     "validate": "npm run check:version && npm run format && npm run lint && npm run typecheck && npm test && npm run build",
     "pack:dry-run": "npm pack --dry-run",
-    "auth:google": "npx kill-port 3000 && node scripts/auth/get-google-token.js",
-    "auth:linkedin": "npx kill-port 3000 && node scripts/auth/get-linkedin-token.js",
-    "publish:article": "node scripts/publish-article.js",
     "update:secret": "node scripts/auth/update-github-secret.js",
-    "delete:branch": "node scripts/delete-branch.js",
-    "check-milestone": "node scripts/check-milestone.js",
-    "publish:daily-term": "node scripts/daily-tech-term.js"
+    "delete:branch": "node scripts/delete-branch.js"
   },
   "keywords": [
     "react",
