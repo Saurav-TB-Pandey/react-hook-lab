@@ -2,6 +2,7 @@ const fs = require('fs');
 const path = require('path');
 const { generateArticle } = require('./gemini-utils');
 const { publishToDevTo } = require('./platforms/devto');
+const { publishToCoderLegion } = require('./platforms/coderlegion');
 const { publishToLinkedIn } = require('./platforms/linkedin');
 const { publishToBlogger } = require('./platforms/blogger');
 const { getMilestonePrompt } = require('./prompts');
@@ -108,6 +109,13 @@ async function main() {
 
       const devtoResult = await publishToDevTo(process.env.DEVTO_API_KEY, articleData, bloggerUrl);
       const devtoUrl = devtoResult ? devtoResult.url : null;
+
+      // -> CoderLegion
+      try {
+        await publishToCoderLegion(process.env.CODERLEGION_API_KEY, articleData, bloggerUrl);
+      } catch (e) {
+        console.error('Failed to publish to CoderLegion:', e.message);
+      }
 
       await publishToLinkedIn(articleData, bloggerUrl);
       

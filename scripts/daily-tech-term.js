@@ -5,6 +5,7 @@ const { getDailyTechTermPrompt } = require('./prompts');
 const { publishToBlogger } = require('./platforms/blogger');
 const { publishToDevTo } = require('./platforms/devto');
 const { publishToCoderLegion } = require('./platforms/coderlegion');
+const { publishToLinkedIn } = require('./platforms/linkedin');
 const { updateGithubSecret } = require('./auth/update-github-secret');
 
 // Simple .env parser to avoid needing to install dotenv for testing locally
@@ -24,16 +25,16 @@ if (fs.existsSync(envPath)) {
       if (eqIndex === -1) continue;
       currentKey = line.substring(0, eqIndex).trim();
       let rawVal = line.substring(eqIndex + 1).trim();
-      
+
       if (rawVal.startsWith('"')) {
         inQuotes = true;
         currentValue = rawVal.substring(1);
         if (currentValue.endsWith('"') && !currentValue.endsWith('\\"')) {
-            inQuotes = false;
-            currentValue = currentValue.substring(0, currentValue.length - 1);
-            if (!process.env[currentKey]) process.env[currentKey] = currentValue;
+          inQuotes = false;
+          currentValue = currentValue.substring(0, currentValue.length - 1);
+          if (!process.env[currentKey]) process.env[currentKey] = currentValue;
         } else {
-            currentValue += '\n';
+          currentValue += '\n';
         }
       } else {
         if (!process.env[currentKey]) process.env[currentKey] = rawVal;
@@ -143,6 +144,35 @@ async function main() {
         console.log('CoderLegion publish complete.');
       } catch (e) {
         console.error('Failed to publish to CoderLegion:', e.message);
+      }
+    }
+
+    // Publish to LinkedIn (uses dedicated AI-generated linkedin_post)
+    let linkedinPostText = generatedData.linkedin_post;
+    if (linkedinPostText && linkedinPostText.length > 3000) {
+      console.warn(`LinkedIn post text length (${linkedinPostText.length}) exceeds 3000 characters. Truncating to 2990 characters.`);
+      linkedinPostText = linkedinPostText.substring(0, 2990) + '...';
+    }
+
+    const linkedinData = {
+      ...generatedData,
+      linkedin_post: linkedinPostText
+    };
+
+    const dailyTermComment = bloggerUrl
+      ? `📖 Full breakdown on my blog: ${bloggerUrl}\n📦 Explore react-hook-lab: https://www.npmjs.com/package/react-hook-lab`
+      : `📦 Explore react-hook-lab: https://www.npmjs.com/package/react-hook-lab`;
+
+    if (isDryRun) {
+      console.log('\n--- DRY RUN: Skipping LinkedIn Publish ---');
+      console.log(`\n${linkedinPostText}\n`);
+      console.log(`Comment preview:\n${dailyTermComment}\n`);
+    } else {
+      try {
+        await publishToLinkedIn(linkedinData, bloggerUrl, dailyTermComment);
+        console.log('LinkedIn publish complete.');
+      } catch (e) {
+        console.error('Failed to publish to LinkedIn:', e.message);
       }
     }
 
