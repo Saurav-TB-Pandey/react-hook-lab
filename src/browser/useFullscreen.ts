@@ -65,7 +65,7 @@ export interface UseFullscreenReturn<T extends HTMLElement> {
 /**
  * A hook that provides a robust, cross-browser compatible way to make any DOM element fullscreen.
  *
- * It manages the native Browser Fullscreen API and tracks the active fullscreen state.
+ * It manages the native Browser Fullscreen API and tracks the active fullscreen state for the target element.
  *
  * @template T - The HTML element type the ref will be attached to.
  * @returns {UseFullscreenReturn<T>} Object containing the ref to attach, state variables, and control methods.
@@ -79,7 +79,8 @@ export function useFullscreen<T extends HTMLElement = HTMLDivElement>(): UseFull
     if (typeof document === "undefined") return;
 
     const handleChange = () => {
-      setIsFullscreen(!!getFullscreenElement());
+      const targetElement = ref.current || document.documentElement;
+      setIsFullscreen(Boolean(targetElement && getFullscreenElement() === targetElement));
     };
 
     // Synchronize initial state in case the element is already fullscreen on mount
@@ -122,8 +123,8 @@ export function useFullscreen<T extends HTMLElement = HTMLDivElement>(): UseFull
         throw new Error("Fullscreen API is not supported in this browser");
       }
       setError(null);
-    } catch (err) {
-      setError(err as Error);
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err : new Error(String(err)));
     }
   }, []);
 
@@ -147,14 +148,15 @@ export function useFullscreen<T extends HTMLElement = HTMLDivElement>(): UseFull
         await doc.msExitFullscreen();
       }
       setError(null);
-    } catch (err) {
-      setError(err as Error);
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err : new Error(String(err)));
     }
   }, []);
 
   const toggle = useCallback(async () => {
-    // Determine state directly from the DOM to maintain strict reference stability of this callback
-    if (getFullscreenElement()) {
+    const targetElement =
+      ref.current || (typeof document !== "undefined" ? document.documentElement : null);
+    if (targetElement && getFullscreenElement() === targetElement) {
       await exit();
     } else {
       await enter();
@@ -163,3 +165,5 @@ export function useFullscreen<T extends HTMLElement = HTMLDivElement>(): UseFull
 
   return { ref, isFullscreen, error, enter, exit, toggle };
 }
+
+export default useFullscreen;

@@ -16,23 +16,24 @@ export interface UseCounterReturn {
 
 /**
  * Manage numeric state with built-in min and max bounds and step increments.
+ * Safely clamps initial and reset values within min/max range.
  *
  * @param initialValue - The initial counter value (default: 0).
  * @param options - Configuration object with `min`, `max`, and `step`.
- * @returns Array tuple containing the current count and modifier methods.
+ * @returns Object containing the current count and modifier methods (`set`, `increment`, `decrement`, `reset`).
  *
  * @example
  * ```tsx
- * const [count, { increment, decrement }] = useCounter(1, { min: 1, max: 10 });
+ * const { count, increment, decrement, reset } = useCounter(1, { min: 1, max: 10 });
  * return <button onClick={increment}>Add: {count}</button>;
  * ```
  */
 export function useCounter(initialValue = 0, options: UseCounterOptions = {}): UseCounterReturn {
   const { min = Number.MIN_SAFE_INTEGER, max = Number.MAX_SAFE_INTEGER, step = 1 } = options;
 
-  const [count, setCount] = useState(initialValue);
-
   const clamp = useCallback((value: number) => Math.min(max, Math.max(min, value)), [min, max]);
+
+  const [count, setCount] = useState(() => clamp(initialValue));
 
   const set = useCallback(
     (value: number) => {
@@ -50,8 +51,8 @@ export function useCounter(initialValue = 0, options: UseCounterOptions = {}): U
   }, [step, clamp]);
 
   const reset = useCallback(() => {
-    setCount(initialValue);
-  }, [initialValue]);
+    setCount(clamp(initialValue));
+  }, [initialValue, clamp]);
 
   return {
     count,
@@ -61,3 +62,5 @@ export function useCounter(initialValue = 0, options: UseCounterOptions = {}): U
     reset,
   };
 }
+
+export default useCounter;

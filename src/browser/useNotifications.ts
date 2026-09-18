@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useCallback, useEffect, useRef, useState } from "react";
 
 export type NotificationPermissionStatus = NotificationPermission | "unsupported";
@@ -56,33 +55,46 @@ export function useNotifications(options: UseNotificationsOptions = {}): UseNoti
   const [error, setError] = useState<string | null>(null);
   const notificationsRef = useRef<Set<Notification>>(new Set());
   const hasAutoRequestedRef = useRef(false);
+  const isMountedRef = useRef(true);
 
   const isSupported = permission !== "unsupported";
 
   const recheckPermission = useCallback(() => {
     const currentPermission = getPermission();
-    setPermission(currentPermission);
+    if (isMountedRef.current) {
+      setPermission(currentPermission);
+    }
     return currentPermission;
   }, []);
 
   const requestPermission = useCallback(async (): Promise<NotificationPermissionStatus> => {
     if (typeof window === "undefined" || !("Notification" in window)) {
-      setPermission("unsupported");
-      setError("OS notifications are not supported by this browser");
+      if (isMountedRef.current) {
+        setPermission("unsupported");
+        setError("OS notifications are not supported by this browser");
+      }
       return "unsupported";
     }
 
     try {
       const result = await Notification.requestPermission();
-      setPermission(result);
-      setError(
-        result === "denied"
-          ? "Notification permission was denied. Enable it in the browser's site settings to try again."
-          : null
-      );
+      if (isMountedRef.current) {
+        setPermission(result);
+        setError(
+          result === "denied"
+            ? "Notification permission was denied. Enable it in the browser's site settings to try again."
+            : null
+        );
+      }
       return result;
-    } catch (requestError: any) {
-      setError(requestError?.message || "Unable to request notification permission");
+    } catch (requestError: unknown) {
+      if (isMountedRef.current) {
+        setError(
+          requestError instanceof Error
+            ? requestError.message
+            : "Unable to request notification permission"
+        );
+      }
       return Notification.permission;
     }
   }, []);
@@ -90,18 +102,24 @@ export function useNotifications(options: UseNotificationsOptions = {}): UseNoti
   const sendNotification = useCallback(
     (title: string, notificationOptions: NotificationOptions = {}): Notification | null => {
       if (typeof window === "undefined" || !("Notification" in window)) {
-        setError("OS notifications are not supported by this browser");
+        if (isMountedRef.current) {
+          setError("OS notifications are not supported by this browser");
+        }
         return null;
       }
 
       if (Notification.permission !== "granted") {
-        setPermission(Notification.permission);
-        setError("Grant notification permission before sending a notification");
+        if (isMountedRef.current) {
+          setPermission(Notification.permission);
+          setError("Grant notification permission before sending a notification");
+        }
         return null;
       }
 
       if (typeof title !== "string" || !title.trim()) {
-        setError("A notification title is required");
+        if (isMountedRef.current) {
+          setError("A notification title is required");
+        }
         return null;
       }
 
@@ -116,14 +134,26 @@ export function useNotifications(options: UseNotificationsOptions = {}): UseNoti
         );
         notification.addEventListener(
           "error",
-          () => setError("The browser could not display the notification"),
+          () => {
+            if (isMountedRef.current) {
+              setError("The browser could not display the notification");
+            }
+          },
           { once: true }
         );
 
-        setError(null);
+        if (isMountedRef.current) {
+          setError(null);
+        }
         return notification;
-      } catch (notificationError: any) {
-        setError(notificationError?.message || "Unable to send the notification");
+      } catch (notificationError: unknown) {
+        if (isMountedRef.current) {
+          setError(
+            notificationError instanceof Error
+              ? notificationError.message
+              : "Unable to send the notification"
+          );
+        }
         return null;
       }
     },
@@ -143,12 +173,14 @@ export function useNotifications(options: UseNotificationsOptions = {}): UseNoti
   }, [permission, requestPermission, autoRequest]);
 
   useEffect(() => {
+    isMountedRef.current = true;
     if (typeof window === "undefined") return undefined;
 
     window.addEventListener("focus", recheckPermission);
     document.addEventListener("visibilitychange", recheckPermission);
 
     return () => {
+      isMountedRef.current = false;
       window.removeEventListener("focus", recheckPermission);
       document.removeEventListener("visibilitychange", recheckPermission);
       closeAllNotifications();
@@ -165,3 +197,5 @@ export function useNotifications(options: UseNotificationsOptions = {}): UseNoti
     recheckPermission,
   };
 }
+
+export default useNotifications;

@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useCallback, useEffect, useRef, useState } from "react";
 
 const DEFAULT_CONSTRAINTS: MediaStreamConstraints = { audio: true };
@@ -47,6 +46,7 @@ export function useMicrophone(
   const recordedChunksRef = useRef<Blob[]>([]);
   const recordedAudioUrlRef = useRef<string | null>(null);
   const lastAudioUpdateRef = useRef<number>(0);
+  const isMountedRef = useRef(true);
 
   const stopMonitoring = useCallback(() => {
     if (animationFrameRef.current !== null) {
@@ -55,7 +55,7 @@ export function useMicrophone(
     }
 
     if (audioContextRef.current) {
-      void audioContextRef.current.close();
+      void audioContextRef.current.close().catch(() => {});
       audioContextRef.current = null;
     }
   }, []);
@@ -64,7 +64,9 @@ export function useMicrophone(
     (mediaStream: MediaStream) => {
       stopMonitoring();
 
-      const AudioContextClass = window.AudioContext || (window as any).webkitAudioContext;
+      const AudioContextClass =
+        window.AudioContext ||
+        (window as unknown as { webkitAudioContext?: typeof AudioContext }).webkitAudioContext;
 
       if (!AudioContextClass) {
         setAudioLevel(0);
@@ -114,18 +116,27 @@ export function useMicrophone(
     try {
       const mediaStream = await navigator.mediaDevices.getUserMedia(constraints);
 
+      if (!isMountedRef.current) {
+        mediaStream.getTracks().forEach((track) => track.stop());
+        return;
+      }
+
       streamRef.current?.getTracks().forEach((track) => track.stop());
       streamRef.current = mediaStream;
       setStream(mediaStream);
       setStatus("granted");
       monitorAudioLevel(mediaStream);
-    } catch (err: any) {
-      const denied = err?.name === "NotAllowedError";
+    } catch (err: unknown) {
+      if (!isMountedRef.current) return;
+      const isError = err instanceof Error;
+      const denied = isError && err.name === "NotAllowedError";
       setStatus(denied ? "denied" : "error");
       setError(
         denied
           ? "Microphone access is blocked. Enable Microphone in this site's browser permissions and try again."
-          : err?.message || "Unable to access the microphone"
+          : isError
+            ? err.message
+            : "Unable to access the microphone"
       );
     }
   }, [constraints, monitorAudioLevel]);
@@ -181,9 +192,9 @@ export function useMicrophone(
       setIsRecording(true);
       setError(null);
       return true;
-    } catch (err: any) {
+    } catch (err: unknown) {
       recorderRef.current = null;
-      setError(err?.message || "Unable to start audio recording");
+      setError(err instanceof Error ? err.message : "Unable to start audio recording");
       return false;
     }
   }, []);
@@ -218,7 +229,9 @@ export function useMicrophone(
   }, [stopMonitoring, stopRecording]);
 
   useEffect(() => {
+    isMountedRef.current = true;
     return () => {
+      isMountedRef.current = false;
       const recorder = recorderRef.current;
       if (recorder && recorder.state !== "inactive") {
         recorder.ondataavailable = null;

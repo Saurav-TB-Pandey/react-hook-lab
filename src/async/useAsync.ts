@@ -26,7 +26,7 @@ export interface UseAsyncReturn<T> {
  *
  * @example
  * ```tsx
- * const { execute, status, value, error } = useAsync(
+ * const { execute, loading, data, error } = useAsync(
  *   () => fetch(`/api/users/${userId}`).then(res => res.json()),
  *   [userId]
  * );
@@ -40,12 +40,10 @@ export function useAsync<T>(
   const { immediate = true, initialData } = options;
 
   const [data, setData] = useState<T | undefined>(initialData);
-
   const [loading, setLoading] = useState(immediate);
-
   const [error, setError] = useState<Error | null>(null);
 
-  // Prevent stale responses
+  // Prevent stale responses and unmounted updates
   const requestId = useRef(0);
 
   const execute = useCallback(async () => {
@@ -57,20 +55,19 @@ export function useAsync<T>(
     try {
       const result = await asyncFunction();
 
-      // Ignore stale response
+      // Ignore stale response or unmounted component
       if (id !== requestId.current) {
         return;
       }
 
       setData(result);
-
       return result;
-    } catch (err) {
+    } catch (err: unknown) {
       if (id !== requestId.current) {
         return;
       }
 
-      setError(err as Error);
+      setError(err instanceof Error ? err : new Error(String(err)));
     } finally {
       if (id === requestId.current) {
         setLoading(false);
@@ -90,6 +87,12 @@ export function useAsync<T>(
     if (immediate) {
       execute();
     }
+
+    const reqRef = requestId;
+    return () => {
+      // Invalidate in-flight requests on dependency change or unmount
+      reqRef.current++;
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, dependencies);
 
@@ -102,3 +105,5 @@ export function useAsync<T>(
     reset,
   };
 }
+
+export default useAsync;

@@ -1,45 +1,61 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState, type Dispatch, type SetStateAction } from "react";
 
 /**
  * Synchronizes state with `sessionStorage` so it persists across reloads but clears when the tab closes.
- * Automatically parses JSON.
+ * Automatically parses JSON, supports functional updates, and safely handles storage quota errors.
  *
  * @param key - The sessionStorage key.
  * @param initialValue - The fallback initial value if the key does not exist.
- * @returns A stateful value and a function to update it, matching `useState`.
+ * @returns A tuple matching `useState`: `[value, setStoredValue]`.
  *
  * @example
  * ```tsx
  * const [draft, setDraft] = useSessionStorage("draft", "");
+ * setDraft(prev => prev + " new draft text");
  * ```
  */
-export function useSessionStorage<T>(key: string, initialValue: T) {
-  const readValue = (): T => {
+export function useSessionStorage<T>(
+  key: string,
+  initialValue: T
+): readonly [T, Dispatch<SetStateAction<T>>] {
+  const readValue = useCallback((): T => {
     if (typeof window === "undefined") return initialValue;
 
     try {
       const item = sessionStorage.getItem(key);
 
-      return item ? JSON.parse(item) : initialValue;
+      return item !== null ? JSON.parse(item) : initialValue;
     } catch {
       return initialValue;
     }
-  };
+  }, [key, initialValue]);
 
   const [value, setValue] = useState<T>(readValue);
 
-  const setStoredValue = (newValue: T) => {
-    setValue(newValue);
+  const setStoredValue: Dispatch<SetStateAction<T>> = useCallback(
+    (action: SetStateAction<T>) => {
+      setValue((prev) => {
+        const next = typeof action === "function" ? (action as (prevState: T) => T)(prev) : action;
 
-    if (typeof window === "undefined") return;
+        if (typeof window !== "undefined") {
+          try {
+            sessionStorage.setItem(key, JSON.stringify(next));
+          } catch {
+            // Silently handle quota exceeded errors or private browsing mode
+          }
+        }
 
-    sessionStorage.setItem(key, JSON.stringify(newValue));
-  };
+        return next;
+      });
+    },
+    [key]
+  );
 
   useEffect(() => {
     setValue(readValue());
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [key]);
+  }, [key, readValue]);
 
   return [value, setStoredValue] as const;
 }
+
+export default useSessionStorage;

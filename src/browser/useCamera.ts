@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useCallback, useEffect, useRef, useState, type RefObject } from "react";
 
 const DEFAULT_CONSTRAINTS: MediaStreamConstraints = { video: true };
@@ -53,6 +52,7 @@ export function useCamera(
   const recordedChunksRef = useRef<Blob[]>([]);
   const imageUrlRef = useRef<string | null>(null);
   const recordedVideoUrlRef = useRef<string | null>(null);
+  const isMountedRef = useRef(true);
 
   const replaceObjectUrl = useCallback(
     (
@@ -82,17 +82,26 @@ export function useCamera(
     try {
       const mediaStream = await navigator.mediaDevices.getUserMedia(constraints);
 
+      if (!isMountedRef.current) {
+        mediaStream.getTracks().forEach((track) => track.stop());
+        return;
+      }
+
       streamRef.current?.getTracks().forEach((track) => track.stop());
       streamRef.current = mediaStream;
       setStream(mediaStream);
       setStatus("granted");
-    } catch (err: any) {
-      const denied = err?.name === "NotAllowedError";
+    } catch (err: unknown) {
+      if (!isMountedRef.current) return;
+      const isError = err instanceof Error;
+      const denied = isError && err.name === "NotAllowedError";
       setStatus(denied ? "denied" : "error");
       setError(
         denied
           ? "Camera access is blocked. Enable Camera in this site's browser permissions and try again."
-          : err?.message || "Unable to access the camera"
+          : isError
+            ? err.message
+            : "Unable to access the camera"
       );
     }
   }, [constraints]);
@@ -164,18 +173,27 @@ export function useCamera(
         const audioStream = await navigator.mediaDevices.getUserMedia({
           audio: true,
         });
+
+        if (!isMountedRef.current) {
+          audioStream.getTracks().forEach((track) => track.stop());
+          return false;
+        }
+
         recordingAudioStreamRef.current = audioStream;
         recordingStream = new MediaStream([
           ...recordingStream.getVideoTracks(),
           ...audioStream.getAudioTracks(),
         ]);
       }
-    } catch (err: any) {
-      const denied = err?.name === "NotAllowedError";
+    } catch (err: unknown) {
+      const isError = err instanceof Error;
+      const denied = isError && err.name === "NotAllowedError";
       setError(
         denied
           ? "Microphone permission is required to record video with sound. Enable Microphone in this site's browser permissions and try again."
-          : err?.message || "Unable to access the microphone for recording"
+          : isError
+            ? err.message
+            : "Unable to access the microphone for recording"
       );
       recordingRequestRef.current = false;
       setIsPreparingRecording(false);
@@ -216,12 +234,12 @@ export function useCamera(
       setIsRecording(true);
       setError(null);
       return true;
-    } catch (err: any) {
+    } catch (err: unknown) {
       recordingAudioStreamRef.current?.getTracks().forEach((track) => track.stop());
       recordingAudioStreamRef.current = null;
       recordingRequestRef.current = false;
       setIsPreparingRecording(false);
-      setError(err?.message || "Unable to start video recording");
+      setError(err instanceof Error ? err.message : "Unable to start video recording");
       return false;
     }
   }, [replaceObjectUrl]);
@@ -262,7 +280,9 @@ export function useCamera(
   }, [stream]);
 
   useEffect(() => {
+    isMountedRef.current = true;
     return () => {
+      isMountedRef.current = false;
       const recorder = recorderRef.current;
 
       if (recorder && recorder.state !== "inactive") {
