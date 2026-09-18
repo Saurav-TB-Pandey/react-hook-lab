@@ -25,7 +25,7 @@
     "format": "prettier --write \"src/**/*.{ts,tsx}\"",
     "prepublishOnly": "npm run validate",
     "check:version": "node scripts/check-version.js",
-    "validate": "npm run check:version && npm run format && npm run lint && npm run typecheck && npm test && npm run build",
+    "validate": "npm run check:version && npm run format && npm run lint && npm run typecheck && npm run test && npm run build",
     "pack:dry-run": "npm pack --dry-run",
     "update:secret": "node scripts/auth/update-github-secret.js",
     "delete:branch": "node scripts/delete-branch.js"
