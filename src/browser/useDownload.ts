@@ -1,5 +1,4 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 function triggerBlobDownload(blob: Blob, filename: string) {
   const url = URL.createObjectURL(blob);
@@ -53,6 +52,14 @@ export interface UseDownloadReturn {
 export function useDownload(): UseDownloadReturn {
   const [status, setStatus] = useState<DownloadStatus>("idle");
   const [error, setError] = useState<string | null>(null);
+  const isMountedRef = useRef(true);
+
+  useEffect(() => {
+    isMountedRef.current = true;
+    return () => {
+      isMountedRef.current = false;
+    };
+  }, []);
 
   const download = useCallback(
     async (source: Blob | string | object, filename: string, options: UseDownloadOptions = {}) => {
@@ -94,11 +101,17 @@ export function useDownload(): UseDownloadReturn {
         }
 
         triggerBlobDownload(blob, filename.trim());
-        setStatus("success");
+        if (isMountedRef.current) {
+          setStatus("success");
+        }
         return true;
-      } catch (downloadError: any) {
-        setStatus("error");
-        setError(downloadError?.message || "Unable to download the file");
+      } catch (downloadError: unknown) {
+        if (isMountedRef.current) {
+          setStatus("error");
+          setError(
+            downloadError instanceof Error ? downloadError.message : "Unable to download the file"
+          );
+        }
         return false;
       }
     },
@@ -107,3 +120,5 @@ export function useDownload(): UseDownloadReturn {
 
   return { status, error, download };
 }
+
+export default useDownload;

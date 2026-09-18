@@ -91,6 +91,7 @@ pnpm add react-hook-lab
 | Hook | Description |
 |------|-------------|
 | `useResource` | 🚀 Ultimate data fetching hook with SWR caching, polling, and IndexedDB persistence. |
+| `useResourceCompose` | 🚀 Compose and combine multiple `useResource` instances into a single derived reactive state. |
 | `useSharedState` | Share state seamlessly across components *and* browser tabs in real-time. |
 | `useIndexedDB` | Powerful, async state management backed by IndexedDB with cross-tab syncing. |
 | `useCookie` | Synchronize state with document cookies, securely handling SSR and JSON parsing. |
@@ -139,29 +140,37 @@ function UserProfile({ userId }) {
 ```
 
 #### `useAsyncDebounce`
-Debounce an asynchronous callback. Useful for preventing spam API calls when a user types in an autocomplete search box.
+Debounce an asynchronous callback. Useful for preventing spam API calls when a user types in an autocomplete search box. Returns `{ result, loading, error }`.
 ```tsx
 import { useAsyncDebounce } from "react-hook-lab";
 
-function Search() {
-  const { result, loading } = useAsyncDebounce(
-    useCallback(async () => {
+function Search({ query }) {
+  const { result, loading, error } = useAsyncDebounce(
+    async () => {
       return await api.get(`/search?q=${query}`);
-    }, [query]), 
-    300 // Only fires 300ms after the last keystroke
+    }, 
+    300,
+    [query] // Debounces execution until 300ms after the last change to query
   );
+
+  if (loading) return <div>Searching...</div>;
+  if (error) return <div>Error searching</div>;
+  return <ul>{result?.map(item => <li key={item.id}>{item.title}</li>)}</ul>;
 }
 ```
 
 #### `useDebounce`
-Debounce a fast-changing state value. The debounced value will only reflect the latest value after the specified delay has passed.
+Debounce a fast-changing state value. The debounced value will only reflect the latest value after the specified delay has passed. By default, string values are automatically trimmed; pass `{ trim: false }` to strictly preserve raw whitespace.
 ```tsx
 import { useState } from "react";
 import { useDebounce } from "react-hook-lab";
 
 function Input() {
   const [term, setTerm] = useState("");
+  // Trimmed by default:
   const debouncedTerm = useDebounce(term, 500);
+  // Or preserve exact whitespace without trimming:
+  const debouncedRaw = useDebounce(term, 500, { trim: false });
 
   // 'debouncedTerm' only updates 500ms after the user stops typing
   return <input onChange={(e) => setTerm(e.target.value)} />;
@@ -560,6 +569,45 @@ function UserProfile({ userId }) {
       <button onClick={() => mutate(prev => ({ ...prev, name: "New Name" }))}>
         Optimistic Update
       </button>
+    </div>
+  );
+}
+```
+
+#### `useResourceCompose` 🚀 *(New)*
+Combine and merge multiple independent `useResource` instances into a single derived reactive state. Automatically updates whenever any dependency emits new data, with custom equality checks to prevent unnecessary re-renders.
+
+```tsx
+import { useResource, useResourceCompose } from "react-hook-lab";
+
+function UserDashboard({ userId }) {
+  const user = useResource({
+    key: `user:${userId}`,
+    fetcher: () => fetch(`/api/users/${userId}`).then(res => res.json()),
+  });
+
+  const posts = useResource({
+    key: `posts:${userId}`,
+    fetcher: () => fetch(`/api/users/${userId}/posts`).then(res => res.json()),
+  });
+
+  const dashboard = useResourceCompose({
+    key: `dashboard:${userId}`,
+    deps: { user, posts },
+    selector: ({ user, posts }) => ({
+      author: user?.name ?? "Anonymous",
+      totalPosts: posts?.length ?? 0,
+      recentPost: posts?.[0]?.title ?? "No posts yet",
+    }),
+  });
+
+  if (dashboard.loading && !dashboard.data) return <div>Loading dashboard...</div>;
+
+  return (
+    <div>
+      <h2>{dashboard.data?.author}'s Overview</h2>
+      <p>Total Posts: {dashboard.data?.totalPosts}</p>
+      <p>Latest: {dashboard.data?.recentPost}</p>
     </div>
   );
 }

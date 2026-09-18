@@ -3,6 +3,13 @@ import { useEffect, useRef, useState } from "react";
 export interface UseDebounceOptions<T> {
   initialValue?: T;
   leading?: boolean;
+  /**
+   * If true, string values will have leading and trailing whitespace trimmed.
+   * Defaults to true for string types to maintain backwards compatibility.
+   * Set to `false` if spaces should be strictly preserved (e.g. text inputs).
+   * @default true
+   */
+  trim?: boolean;
 }
 
 /**
@@ -11,18 +18,19 @@ export interface UseDebounceOptions<T> {
  *
  * @param value - The state value to debounce.
  * @param delay - The delay in milliseconds (default: 300).
- * @param options - Additional options (e.g., auto-trim strings).
+ * @param options - Additional options (`initialValue`, `leading`, and `trim`).
  * @returns The debounced value.
  *
  * @example
  * ```tsx
  * const [term, setTerm] = useState("");
  * const debouncedTerm = useDebounce(term, 500);
- * // debouncedTerm only updates 500ms after the user stops typing
+ * // To preserve raw input whitespace without trimming:
+ * const debouncedRaw = useDebounce(term, 500, { trim: false });
  * ```
  */
 export function useDebounce<T>(value: T, delay = 300, options: UseDebounceOptions<T> = {}): T {
-  const { initialValue = value, leading = false } = options;
+  const { initialValue = value, leading = false, trim = true } = options;
 
   const [debouncedValue, setDebouncedValue] = useState<T>(initialValue);
 
@@ -36,13 +44,15 @@ export function useDebounce<T>(value: T, delay = 300, options: UseDebounceOption
     }
 
     const timeout = setTimeout(() => {
-      const nextValue = typeof value === "string" ? value.trim() : value;
+      const nextValue = typeof value === "string" && trim ? value.trim() : value;
 
       setDebouncedValue(nextValue as T);
     }, delay);
 
     return () => clearTimeout(timeout);
-  }, [value, delay, leading]);
+  }, [value, delay, leading, trim]);
 
   return debouncedValue;
 }
+
+export default useDebounce;

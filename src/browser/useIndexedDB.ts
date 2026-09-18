@@ -56,7 +56,10 @@ export function createIndexedDB(config: IndexedDBConfig): void {
   dbConnectionPromise = null;
 }
 
-/** Exposed for tests: fully resets the singleton connection manager. */
+/**
+ * @internal
+ * Exposed for tests: fully resets the singleton connection manager.
+ */
 export function __resetIndexedDBForTests(): void {
   registeredConfig = null;
   dbConnectionPromise = null;

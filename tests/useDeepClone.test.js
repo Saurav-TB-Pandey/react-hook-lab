@@ -14,11 +14,25 @@ test('deepClone deep clones plain objects completely', () => {
   assert.deepEqual(original, cloned);
 });
 
-test('deepClone skips cloning frozen objects for performance', () => {
+test('deepClone clones frozen objects into new mutable objects', () => {
   const original = Object.freeze({ a: 1, b: 2 });
   const cloned = deepClone(original);
   
-  assert.equal(original, cloned); // Should return the exact same reference
+  assert.notEqual(original, cloned);
+  assert.deepEqual(original, cloned);
+  assert.equal(Object.isFrozen(cloned), false);
+  cloned.a = 42;
+  assert.equal(cloned.a, 42);
+  assert.equal(original.a, 1);
+});
+
+test('deepClone preserves own constructor property', () => {
+  const original = { constructor: 'special', a: 1 };
+  const cloned = deepClone(original);
+  
+  assert.notEqual(original, cloned);
+  assert.equal(cloned.constructor, 'special');
+  assert.equal(cloned.a, 1);
 });
 
 test('deepClone avoids prototype pollution', () => {

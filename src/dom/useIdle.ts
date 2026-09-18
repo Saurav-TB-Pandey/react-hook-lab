@@ -52,6 +52,8 @@ export function useIdle(
     }, timeout);
   }, [timeout]);
 
+  const eventsKey = events.join(",");
+
   useEffect(() => {
     if (typeof window === "undefined") return;
 
@@ -68,7 +70,8 @@ export function useIdle(
         clearTimeout(timerRef.current);
       }
     };
-  }, [events, resetTimer]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [eventsKey, resetTimer]);
 
   return isIdle;
 }

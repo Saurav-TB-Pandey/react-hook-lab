@@ -175,8 +175,18 @@ function setCookieValue(key: string, value: string, options: CookieOptions = {})
   document.cookie = cookieString;
 
   // Best-effort client-side verification
-  const verify = getCookie(key);
-  return verify === value;
+  // If no path or path is root "/", or matches current window path, we can verify it directly.
+  // Otherwise, the browser may not expose a subpath/scoped cookie to document.cookie on the current URL.
+  const currentPath = typeof window !== "undefined" ? window.location?.pathname || "/" : "/";
+  const isPathAccessible =
+    !options.path || options.path === "/" || currentPath.startsWith(options.path);
+
+  if (isPathAccessible && !options.domain) {
+    const verify = getCookie(key);
+    return verify === value;
+  }
+
+  return true;
 }
 
 /**

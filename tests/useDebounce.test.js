@@ -34,3 +34,29 @@ test('useDebounce delays updates and trims string values', async () => {
   assert.equal(renderer.toJSON().children[0], 'hello');
   assert.equal(latestValue, 'hello');
 });
+
+test('useDebounce preserves raw whitespace when trim is false', async () => {
+  let latestValue = '';
+  let renderer;
+
+  function TestComponent({ value, delay }) {
+    latestValue = useDebounce(value, delay, { trim: false });
+    return React.createElement('span', null, latestValue);
+  }
+
+  act(() => {
+    renderer = TestRenderer.create(
+      React.createElement(TestComponent, {
+        value: '  keep spaces  ',
+        delay: 20,
+      })
+    );
+  });
+
+  await act(async () => {
+    await wait(30);
+  });
+
+  assert.equal(renderer.toJSON().children[0], '  keep spaces  ');
+  assert.equal(latestValue, '  keep spaces  ');
+});

@@ -49,3 +49,30 @@ test('useCounter increments, decrements, clamps, sets, and resets', () => {
   });
   assert.equal(latestState.count, 2);
 });
+
+test('useCounter clamps initialValue and resets within bounds', () => {
+  let latestState;
+
+  function TestComponent() {
+    latestState = useCounter(100, { min: 0, max: 10 });
+    return null;
+  }
+
+  act(() => {
+    TestRenderer.create(React.createElement(TestComponent));
+  });
+
+  // initialValue 100 should be clamped to max 10
+  assert.equal(latestState.count, 10);
+
+  act(() => {
+    latestState.set(5);
+  });
+  assert.equal(latestState.count, 5);
+
+  act(() => {
+    latestState.reset();
+  });
+  // reset should clamp back to 10
+  assert.equal(latestState.count, 10);
+});

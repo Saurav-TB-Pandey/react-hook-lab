@@ -35,6 +35,7 @@ import {
   useIndexedDB,
   createIndexedDB,
   useResource,
+  useResourceCompose,
   useFileSystem,
   usePip,
   useCookie,
@@ -97,6 +98,12 @@ export function ReactHookLabExamples() {
       await new Promise(r => setTimeout(r, 1000));
       return "Fetched Resource Data!";
     }
+  });
+
+  const composedResource = useResourceCompose({
+    key: "example-composed-resource",
+    deps: { resource },
+    selector: ({ resource }) => `Composed: ${resource || "pending"}`,
   });
 
   const fileSystem = useFileSystem({ accept: { 'text/plain': ['.txt'] } });
@@ -209,6 +216,7 @@ export function ReactHookLabExamples() {
         <p>Shared State: {shared}</p>
         <p>IndexedDB [{dbStatus}]: {dbVal}</p>
         <p>Resource: {resource.loading ? "Loading..." : resource.data}</p>
+        <p>Composed Resource: {composedResource.data}</p>
         <p>URL Path: {url.pathname}</p>
         <p>FileSystem File: {fileSystem.file?.name || "None"}</p>
         <p>FileSystem Content: {fileSystem.content ? fileSystem.content.slice(0, 20) + "..." : "None"}</p>

@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 
 /**
  * Tracks the global inner window width dynamically.
- * Automatically handles window resize events and debounces/throttles are not applied by default.
+ * Automatically handles window resize events, debounced by 150ms to prevent performance thrashing.
  *
  * @returns The current `window.innerWidth` in pixels.
  *

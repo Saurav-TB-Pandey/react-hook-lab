@@ -28,12 +28,7 @@ export function deepClone<T>(value: T, seen = new WeakMap<any, any>()): T {
     return seen.get(value);
   }
 
-  // 3. Frozen objects can never mutate — safe to share the reference (Performance Optimization)
-  if (Object.isFrozen(value)) {
-    return value;
-  }
-
-  // 4. Fast paths for common non-plain-object types
+  // 3. Fast paths for common non-plain-object types
   if (value instanceof Date) {
     return new Date(value.getTime()) as any;
   }
@@ -83,8 +78,8 @@ export function deepClone<T>(value: T, seen = new WeakMap<any, any>()): T {
   // Iterate over own string and symbol properties
   const keys = Reflect.ownKeys(value as object);
   for (const key of keys) {
-    // Prototype Pollution protection
-    if (key === "__proto__" || key === "constructor") {
+    // Prototype Pollution protection: only skip __proto__
+    if (key === "__proto__") {
       continue;
     }
 

@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 export interface LocationData {
   lat: number;
@@ -25,18 +25,24 @@ export function useLocation(): UseLocationReturn {
   const [location, setLocation] = useState<LocationData | null>(null);
   const [status, setStatus] = useState<LocationStatus>("idle");
   const [error, setError] = useState<string | null>(null);
+  const isMountedRef = useRef(true);
 
   const requestLocation = useCallback(() => {
     if (typeof navigator === "undefined" || !navigator.geolocation) {
-      setStatus("unsupported");
-      setError("Geolocation is not supported by this browser");
+      if (isMountedRef.current) {
+        setStatus("unsupported");
+        setError("Geolocation is not supported by this browser");
+      }
       return;
     }
 
-    setStatus("prompting");
+    if (isMountedRef.current) {
+      setStatus("prompting");
+    }
 
     navigator.geolocation.getCurrentPosition(
       (position) => {
+        if (!isMountedRef.current) return;
         setLocation({
           lat: position.coords.latitude,
           lng: position.coords.longitude,
@@ -46,6 +52,7 @@ export function useLocation(): UseLocationReturn {
         setError(null);
       },
       (err) => {
+        if (!isMountedRef.current) return;
         if (err.code === err.PERMISSION_DENIED) {
           setStatus("denied");
           setError(
@@ -62,11 +69,12 @@ export function useLocation(): UseLocationReturn {
   }, []);
 
   useEffect(() => {
+    isMountedRef.current = true;
     let permissionStatus: PermissionStatus | undefined;
     let active = true;
 
     const syncPermission = () => {
-      if (!active || !permissionStatus) return;
+      if (!active || !isMountedRef.current || !permissionStatus) return;
 
       if (permissionStatus.state === "granted") {
         requestLocation();
@@ -82,7 +90,7 @@ export function useLocation(): UseLocationReturn {
       navigator.permissions
         .query({ name: "geolocation" as PermissionName })
         .then((result) => {
-          if (!active) return;
+          if (!active || !isMountedRef.current) return;
 
           permissionStatus = result;
 
@@ -98,7 +106,7 @@ export function useLocation(): UseLocationReturn {
           result.addEventListener("change", syncPermission);
         })
         .catch(() => {
-          if (active) requestLocation();
+          if (active && isMountedRef.current) requestLocation();
         });
     } else {
       requestLocation();
@@ -106,6 +114,7 @@ export function useLocation(): UseLocationReturn {
 
     return () => {
       active = false;
+      isMountedRef.current = false;
       permissionStatus?.removeEventListener("change", syncPermission);
     };
   }, [requestLocation]);
