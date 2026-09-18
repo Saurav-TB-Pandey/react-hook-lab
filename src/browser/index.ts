@@ -31,4 +31,9 @@ export {
 export { useOnlineStatus } from "./useOnlineStatus";
 export { usePip, UsePipOptions, UsePipResult } from "./usePip";
 export { useSessionStorage } from "./useSessionStorage";
+export {
+  useTabVisibility,
+  UseTabVisibilityOptions,
+  UseTabVisibilityResult,
+} from "./useTabVisibility";
 export { useURL, Breadcrumb, UseURLReturn } from "./useURL";

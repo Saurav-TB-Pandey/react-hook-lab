@@ -36,6 +36,7 @@ import {
   createIndexedDB,
   useResource,
   useResourceCompose,
+  useTabVisibility,
   useFileSystem,
   usePip,
   useCookie,
@@ -108,6 +109,10 @@ export function ReactHookLabExamples() {
 
   const fileSystem = useFileSystem({ accept: { 'text/plain': ['.txt'] } });
   const pip = usePip();
+  const tabVisibility = useTabVisibility({
+    onActivate: () => console.log("Tab became active"),
+    onDeactivate: () => console.log("Tab became inactive"),
+  });
 
   const panelRef = useRef<HTMLDivElement>(null);
   const measuredRef = useRef<HTMLDivElement>(null);
@@ -220,6 +225,7 @@ export function ReactHookLabExamples() {
         <p>URL Path: {url.pathname}</p>
         <p>FileSystem File: {fileSystem.file?.name || "None"}</p>
         <p>FileSystem Content: {fileSystem.content ? fileSystem.content.slice(0, 20) + "..." : "None"}</p>
+        <p>Tab Visibility: {tabVisibility.isActive ? "Active" : "Inactive"} (Visible={tabVisibility.isVisible ? "yes" : "no"}, Focused={tabVisibility.isFocused ? "yes" : "no"})</p>
         <p>PIP Status: Supported={pip.isSupported ? "yes" : "no"}, Open={pip.isOpen ? "yes" : "no"}</p>
         
         <pip.Pip width={300} height={200}>
