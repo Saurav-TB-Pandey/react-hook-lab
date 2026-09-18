@@ -25,25 +25,25 @@ We use TypeScript, ESLint, and Prettier to ensure a consistent, high-quality cod
 - **Format Code**: `npm run format` (Automatically formats all source code using Prettier)
 - **Lint Code**: `npm run lint` (Checks for ESLint rule violations)
 - **Typecheck**: `npm run typecheck` (Ensures there are no TypeScript errors)
-- **Test**: `npm test` (Runs the test suite)
-- **Build**: `npm run build` (Compiles the project)
+- **Test All**: `npm test` (Runs both unit and integration test suites)
+- **Test Unit**: `npm run test:unit` (Runs isolated unit tests)
+- **Test Integration**: `npm run test:integration` (Runs composite multi-hook integration tests)
+- **Build**: `npm run build` (Compiles the project via `tsc`)
+- **Validate**: `npm run validate` (Runs version check, format, lint, typecheck, tests, and build)
 
 ### Adding a new Hook
 If you are contributing a new hook:
 1. Place it in the appropriate subfolder inside `src/` (e.g., `src/async/`, `src/dom/`).
 2. Ensure you export it from the `index.ts` file in that folder, as well as the root `src/index.ts`.
-3. Add a test case in `test.js` to ensure the hook behaves properly.
-4. Add documentation for the hook in the `README.md`.
+3. Add a dedicated unit test in `tests/unit/<hookName>.test.js` (and an integration test in `tests/integration/<flowName>.integration.test.js` if applicable). Refer to `tests/README.md` for conventions and templates.
+4. Add documentation for the hook in the `README.md` and `react-hook-lab.wiki/`.
 
 ## 3. Submitting a Pull Request
 
 1. Create a new branch for your feature/fix (`git checkout -b feature/my-new-hook`).
-2. Ensure all tests and linting checks pass:
+2. Ensure the full validation pipeline passes:
    ```bash
-   npm run format
-   npm run lint
-   npm run typecheck
-   npm test
+   npm run validate
    ```
 3. Commit your changes with a descriptive commit message.
 4. Push to your fork and submit a Pull Request.

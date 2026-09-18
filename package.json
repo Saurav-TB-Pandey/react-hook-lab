@@ -1,6 +1,6 @@
 {
   "name": "react-hook-lab",
-  "version": "1.13.1",
+  "version": "1.14.1",
   "description": "Lightweight, zero-compromise TypeScript React hooks. Offers an extensive toolkit for modern web apps, spanning advanced browser capabilities, robust caching, DOM intersection/resizing, strict timers, and SSR-ready state management.",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -20,12 +20,14 @@
   "scripts": {
     "build": "tsc",
     "typecheck": "tsc --noEmit",
-    "test": "node --test tests/*.test.js",
+    "test": "node --test tests/unit/*.test.js tests/integration/*.test.js",
+    "test:unit": "node --test tests/unit/*.test.js",
+    "test:integration": "node --test tests/integration/*.test.js",
     "lint": "eslint \"src/**/*.{ts,tsx}\"",
     "format": "prettier --write \"src/**/*.{ts,tsx}\"",
     "prepublishOnly": "npm run validate",
     "check:version": "node scripts/check-version.js",
-    "validate": "npm run check:version && npm run format && npm run lint && npm run typecheck && npm test && npm run build",
+    "validate": "npm run check:version && npm run format && npm run lint && npm run typecheck && npm run test && npm run build",
     "pack:dry-run": "npm pack --dry-run",
     "update:secret": "node scripts/auth/update-github-secret.js",
     "delete:branch": "node scripts/delete-branch.js"
@@ -44,6 +46,7 @@
     "useURL",
     "useResource",
     "useResourceCompose",
+    "useTabVisibility",
     "useAsync",
     "useAsyncDebounce",
     "useDebounce",
