@@ -1,6 +1,6 @@
 {
   "name": "react-hook-lab",
-  "version": "1.14.2",
+  "version": "1.14.3",
   "description": "Lightweight, zero-compromise TypeScript React hooks. Offers an extensive toolkit for modern web apps, spanning advanced browser capabilities, robust caching, DOM intersection/resizing, strict timers, and SSR-ready state management.",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -23,7 +23,8 @@
     "test:unit": "node --test tests/unit/*.unit.test.js",
     "test:integration": "node --test tests/integration/*.integration.test.js",
     "test:ssr": "node --test tests/ssr/*.ssr.test.js",
-    "test": "npm run test:unit && npm run test:integration && npm run test:ssr",
+    "test:types": "tsc --project tests/types/tsconfig.json",
+    "test": "npm run test:types && npm run test:unit && npm run test:integration && npm run test:ssr",
     "lint": "eslint \"src/**/*.{ts,tsx}\"",
     "format": "prettier --write \"src/**/*.{ts,tsx}\"",
     "prepublishOnly": "npm run validate",

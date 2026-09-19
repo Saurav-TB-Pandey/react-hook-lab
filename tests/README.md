@@ -24,11 +24,18 @@ tests/
 │   ├── responsiveContainerLayout.integration.test.js
 │   ├── sessionAuthIdleTimeout.integration.test.js
 │   └── tabVisibilityPoller.integration.test.js
-└── ssr/                      # Dedicated Server-Side Rendering (SSR) & hydration tests (1 file per hook/utility)
-    ├── hydrationConsistency.ssr.test.js
-    ├── useAsync.ssr.test.js
-    ├── useLocalStorage.ssr.test.js
-    ├── useTabVisibility.ssr.test.js
+├── ssr/                      # Dedicated Server-Side Rendering (SSR) & hydration tests (1 file per hook/utility)
+│   ├── hydrationConsistency.ssr.test.js
+│   ├── useAsync.ssr.test.js
+│   ├── useLocalStorage.ssr.test.js
+│   ├── useTabVisibility.ssr.test.js
+│   └── ... (42 test files)
+└── types/                    # Compile-time TypeScript type assertion tests (1 file per hook/utility)
+    ├── type-assertions.ts    # Zero-runtime Expect<Equal<A, B>> helpers
+    ├── tsconfig.json         # Strict compile configuration for type tests
+    ├── useAsync.type.test.ts
+    ├── useLocalStorage.type.test.ts
+    ├── useResource.type.test.ts
     └── ... (42 test files)
 ```
 
@@ -38,10 +45,11 @@ tests/
 
 | Command | Purpose |
 | :--- | :--- |
-| `npm test` | Runs the entire test suite (unit, integration, and SSR tests). |
+| `npm test` | Runs the entire test suite (Unit, Integration, SSR, and Type tests). |
 | `npm run test:unit` | Runs only unit tests under `tests/unit/*.unit.test.js`. |
 | `npm run test:integration` | Runs only composite integration tests under `tests/integration/*.integration.test.js`. |
 | `npm run test:ssr` | Runs dedicated SSR & hydration tests under `tests/ssr/*.ssr.test.js`. |
+| `npm run test:types` | Runs compile-time TypeScript type tests via `tsc --project tests/types/tsconfig.json`. |
 | `node --test tests/unit/useToggle.unit.test.js` | Runs a specific unit test file in isolation. |
 | `node --test tests/integration/sessionAuthIdleTimeout.integration.test.js` | Runs a specific integration test file in isolation. |
 | `node --test tests/ssr/hydrationConsistency.ssr.test.js` | Runs a specific SSR hydration test file in isolation. |
@@ -176,9 +184,35 @@ test('SSR: useYourHook renders safe fallback on server without browser globals',
 
 ---
 
-## 7. Testing Best Practices
+## 7. Writing TypeScript Type Tests (`tests/types/<hookName>.type.test.ts`)
+
+Type tests validate generic inference, return type contracts, and negative compiler checks with zero runtime overhead using [`tests/types/type-assertions.ts`](./types/type-assertions.ts):
+
+```typescript
+import { useYourHook } from "../../src/category";
+import type { UseYourHookReturn } from "../../src/category";
+import type { Expect, Equal, NotAny } from "./type-assertions";
+
+interface CustomData {
+  id: string;
+}
+
+// 1. Validate generic inference and return type equality
+const res = useYourHook<CustomData>({ initial: { id: "1" } });
+type TestData = Expect<Equal<typeof res.data, CustomData>>;
+type TestNotAny = Expect<NotAny<typeof res.data>>;
+
+// 2. Validate negative compile-time type errors
+// @ts-expect-error - requires valid options
+useYourHook({ initial: 12345 });
+```
+
+---
+
+## 8. Testing Best Practices
 
 1. **Wrap All State Updates in `act()`**: Always use `act()` or `await act(async () => ...)` when mounting, triggering events, or waiting for timers to ensure React finishes flush cycles.
 2. **SSR & Hydration Safety**: Test that browser hooks do not access `window` or `document` during the initial server render pass.
 3. **Timer & Listener Cleanup**: If your hook uses `setInterval`, `setTimeout`, or adds event listeners, verify that unmounting the component cleans them up without leaving hanging timers on Node's event loop.
 4. **Isolated Globals**: Use `setGlobal` rather than directly assigning to `global.<name>` so that `restoreGlobals()` cleans it up automatically after each test.
+5. **Strict Type Assertions**: Ensure generic parameters cannot silently degrade to `any` and verify negative error paths with `// @ts-expect-error`.
