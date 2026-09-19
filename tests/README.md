@@ -11,20 +11,25 @@ tests/
 ├── README.md                 # This testing guide
 ├── setup.js                  # Global test environment, mocking helpers & auto-cleanup
 ├── unit/                     # Isolated tests for individual hooks & utilities
-│   ├── deepEqual.test.js
-│   ├── useAsync.test.js
-│   ├── useDebounce.test.js
-│   ├── useIdle.test.js
-│   └── ... (40 test files)
-└── integration/              # Multi-hook composite workflow tests
-    ├── asyncSearchTimeoutRetry.integration.test.js
-    ├── autosaveStorageDebounce.integration.test.js
-    ├── counterThrottlePrevious.integration.test.js
-    ├── modalClickOutsideClipboard.integration.test.js
-    ├── offlineNotificationSync.integration.test.js
-    ├── responsiveContainerLayout.integration.test.js
-    ├── sessionAuthIdleTimeout.integration.test.js
-    └── tabVisibilityPoller.integration.test.js
+│   ├── deepEqual.unit.test.js
+│   ├── useAsync.unit.test.js
+│   ├── useDebounce.unit.test.js
+│   └── ... (42 test files)
+├── integration/              # Multi-hook composite workflow tests
+│   ├── asyncSearchTimeoutRetry.integration.test.js
+│   ├── autosaveStorageDebounce.integration.test.js
+│   ├── counterThrottlePrevious.integration.test.js
+│   ├── modalClickOutsideClipboard.integration.test.js
+│   ├── offlineNotificationSync.integration.test.js
+│   ├── responsiveContainerLayout.integration.test.js
+│   ├── sessionAuthIdleTimeout.integration.test.js
+│   └── tabVisibilityPoller.integration.test.js
+└── ssr/                      # Dedicated Server-Side Rendering (SSR) & hydration tests (1 file per hook/utility)
+    ├── hydrationConsistency.ssr.test.js
+    ├── useAsync.ssr.test.js
+    ├── useLocalStorage.ssr.test.js
+    ├── useTabVisibility.ssr.test.js
+    └── ... (42 test files)
 ```
 
 ---
@@ -33,11 +38,13 @@ tests/
 
 | Command | Purpose |
 | :--- | :--- |
-| `npm test` | Runs the entire test suite (all unit and integration tests). |
-| `npm run test:unit` | Runs only unit tests under `tests/unit/*.test.js`. |
-| `npm run test:integration` | Runs only composite integration tests under `tests/integration/*.test.js`. |
-| `node --test tests/unit/useToggle.test.js` | Runs a specific unit test file in isolation. |
+| `npm test` | Runs the entire test suite (unit, integration, and SSR tests). |
+| `npm run test:unit` | Runs only unit tests under `tests/unit/*.unit.test.js`. |
+| `npm run test:integration` | Runs only composite integration tests under `tests/integration/*.integration.test.js`. |
+| `npm run test:ssr` | Runs dedicated SSR & hydration tests under `tests/ssr/*.ssr.test.js`. |
+| `node --test tests/unit/useToggle.unit.test.js` | Runs a specific unit test file in isolation. |
 | `node --test tests/integration/sessionAuthIdleTimeout.integration.test.js` | Runs a specific integration test file in isolation. |
+| `node --test tests/ssr/hydrationConsistency.ssr.test.js` | Runs a specific SSR hydration test file in isolation. |
 
 ---
 
@@ -52,7 +59,7 @@ Because tests run in Node.js where DOM and Web APIs are not natively available, 
 
 ---
 
-## 4. Writing Unit Tests (`tests/unit/<hookName>.test.js`)
+## 4. Writing Unit Tests (`tests/unit/<hookName>.unit.test.js`)
 
 Each hook in `src/` must have a dedicated unit test file in `tests/unit/`.
 
@@ -140,9 +147,38 @@ test('Integration: useHookA + useHookB + useHookC coordinates realistic workflow
 
 ---
 
-## 6. Testing Best Practices
+## 6. Writing SSR & Hydration Tests (`tests/ssr/<category>.ssr.test.js`)
+
+SSR tests guarantee Next.js, Remix, and Astro compatibility using `react-dom/server`'s `renderToString`:
+
+```javascript
+const { test } = require('node:test');
+const assert = require('node:assert/strict');
+const React = require('react');
+const { renderToString } = require('react-dom/server');
+const hooks = require('../..');
+
+test('SSR: useYourHook renders safe fallback on server without browser globals', () => {
+  delete global.window;
+  delete global.document;
+
+  let renderedState;
+  function Component() {
+    renderedState = hooks.useYourHook('fallback');
+    return React.createElement('div', null, renderedState.value);
+  }
+
+  const html = renderToString(React.createElement(Component));
+  assert.match(html, /fallback/);
+  assert.equal(renderedState.value, 'fallback');
+});
+```
+
+---
+
+## 7. Testing Best Practices
 
 1. **Wrap All State Updates in `act()`**: Always use `act()` or `await act(async () => ...)` when mounting, triggering events, or waiting for timers to ensure React finishes flush cycles.
-2. **SSR Safety Tests**: Test that the hook does not throw errors when `window` is undefined (`typeof window === "undefined"`).
+2. **SSR & Hydration Safety**: Test that browser hooks do not access `window` or `document` during the initial server render pass.
 3. **Timer & Listener Cleanup**: If your hook uses `setInterval`, `setTimeout`, or adds event listeners, verify that unmounting the component cleans them up without leaving hanging timers on Node's event loop.
 4. **Isolated Globals**: Use `setGlobal` rather than directly assigning to `global.<name>` so that `restoreGlobals()` cleans it up automatically after each test.
