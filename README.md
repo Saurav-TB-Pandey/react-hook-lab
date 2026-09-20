@@ -69,6 +69,7 @@ pnpm add react-hook-lab
 ### Browser & DOM
 | Hook | Description |
 |------|-------------|
+| `useTabVisibility` | 🚀 Accurately track tab active/hidden/blur state with multi-monitor & mobile BFCache support. |
 | `usePip` | 🚀 Portal React components into a separate Document Picture-in-Picture window seamlessly. |
 | `useFileSystem` | 🚀 Powerful local-first hook using the File System Access API to read/overwrite native files continuously. |
 | `useFullscreen` | Robust, cross-browser hook to make elements fullscreen programmatically. |
@@ -232,6 +233,35 @@ function Welcome() {
 ---
 
 ### 🌐 Browser & DOM Hooks
+
+#### `useTabVisibility` 🚀 *(New)*
+Accurately track whether the user is actively viewing your application. Unlike naive visibility hooks, it handles multi-monitor window blurring, mobile app minimization / BFCache freezing, and prevents hydration false-positives when users open background tabs.
+
+```tsx
+import { useTabVisibility } from "react-hook-lab";
+
+function VideoPlayer() {
+  const { isActive, isVisible, isFocused, wasActive, lastActiveAt } = useTabVisibility({
+    requireWindowFocus: true, // Requires window focus in addition to document visibility
+    onActivate: () => {
+      console.log("Tab resumed!");
+      videoRef.current?.play();
+    },
+    onDeactivate: () => {
+      console.log("Tab inactive/blurred");
+      videoRef.current?.pause();
+    },
+  });
+
+  return (
+    <div>
+      <p>Status: {isActive ? "🟢 Active & Focused" : "🔴 Inactive"}</p>
+      <p>Visible on screen: {isVisible ? "Yes" : "No"}</p>
+      <p>Window has focus: {isFocused ? "Yes" : "No"}</p>
+    </div>
+  );
+}
+```
 
 #### `usePip` 🚀 *(New)*
 Portal React components into an always-on-top Document Picture-in-Picture window. It handles the API lifecycle, seamlessly copies your stylesheets so the PIP window looks identical to your main app, and cleans up cleanly on unmount.
