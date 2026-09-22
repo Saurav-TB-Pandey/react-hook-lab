@@ -25,14 +25,15 @@ export function useIdle(
 ): boolean {
   const [isIdle, setIsIdle] = useState(false);
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const lastActiveRef = useRef<number>(0);
+  const lastActiveRef = useRef<number>(-THROTTLE_MS);
   const isIdleRef = useRef<boolean>(false);
 
   const resetTimer = useCallback(() => {
     const now = performance.now();
+    const effectiveThrottle = Math.min(THROTTLE_MS, Math.floor(timeout / 2));
 
     // Throttle the resets so we aren't clearing/setting timeouts on every pixel of mouse movement
-    if (now - lastActiveRef.current < THROTTLE_MS) {
+    if (now - lastActiveRef.current < effectiveThrottle) {
       return;
     }
     lastActiveRef.current = now;
