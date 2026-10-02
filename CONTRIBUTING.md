@@ -25,9 +25,10 @@ We use TypeScript, ESLint, and Prettier to ensure a consistent, high-quality cod
 - **Format Code**: `npm run format` (Automatically formats all source code using Prettier)
 - **Lint Code**: `npm run lint` (Checks for ESLint rule violations)
 - **Typecheck**: `npm run typecheck` (Ensures there are no TypeScript errors)
-- **Test All**: `npm test` (Runs both unit and integration test suites)
+- **Test All**: `npm test` (Runs unit, integration, and SSR test suites)
 - **Test Unit**: `npm run test:unit` (Runs isolated unit tests)
 - **Test Integration**: `npm run test:integration` (Runs composite multi-hook integration tests)
+- **Test SSR**: `npm run test:ssr` (Runs dedicated Server-Side Rendering & hydration tests)
 - **Build**: `npm run build` (Compiles the project via `tsc`)
 - **Validate**: `npm run validate` (Runs version check, format, lint, typecheck, tests, and build)
 
@@ -35,7 +36,7 @@ We use TypeScript, ESLint, and Prettier to ensure a consistent, high-quality cod
 If you are contributing a new hook:
 1. Place it in the appropriate subfolder inside `src/` (e.g., `src/async/`, `src/dom/`).
 2. Ensure you export it from the `index.ts` file in that folder, as well as the root `src/index.ts`.
-3. Add a dedicated unit test in `tests/unit/<hookName>.test.js` (and an integration test in `tests/integration/<flowName>.integration.test.js` if applicable). Refer to `tests/README.md` for conventions and templates.
+3. Add a dedicated unit test in `tests/unit/<hookName>.unit.test.js`, a dedicated SSR test in `tests/ssr/<hookName>.ssr.test.js` (and an integration test in `tests/integration/<flowName>.integration.test.js` if applicable). Refer to `tests/README.md` for conventions and templates.
 4. Add documentation for the hook in the `README.md` and `react-hook-lab.wiki/`.
 
 ## 3. Submitting a Pull Request
